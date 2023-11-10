@@ -1,5 +1,7 @@
 import Counter from '../components/Counter.jsx';
 import Title from '../components/Title.astro';
+import Astro from 'astro:global'
+
 export const components = { h1: Title };
 
 export const authors = [
@@ -7,6 +9,8 @@ export const authors = [
 	{ name: 'John', twitter: '@john2002' },
 ];
 export const published = new Date('2022-02-01');
+
+### You are currently at {Astro.url.pathname}
 
 # Hello world!
 

@@ -22,7 +22,8 @@
     }
   },
   "scripts": {
-    "check": "tsc"
+    "check": "tsc",
+    "test": "vitest"
   },
   "type": "module",
   "devDependencies": {

@@ -1,0 +1,12 @@
+---
+import PreactComponent from "../components/ServerRenderOnly.tsx"
+
+export function getStaticPaths() {
+    return [
+        { params: { rest: "x" } },
+        { params: { rest: "y" } },
+        { params: { rest: "z" } },
+    ]
+}
+---
+<PreactComponent />
