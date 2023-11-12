@@ -59,14 +59,6 @@ export default function () {
 ```
 Note that the Astro global is only usable on the server. This means that the component using it must not have a [client directive](https://docs.astro.build/en/reference/directives-reference/#client-directives). If you need data from the Astro global to be available to interactive components, manually provide the relevant data as props so that it can be serialized and sent to the client.
 
-### Intellisense and Typescript Support
-
-For typescript support for the virtual module `"astro:global"`, add the following line to `src/env.d.ts`.
-```diff lang="ts" "declare module 'astro:global';"
-/// <reference types="astro/client" />
-+ /// <reference types="astro-global/client" />
-```
-
 ## Troubleshooting
 
 For help, check out the `Discussions` tab on the [GitHub repo](https://github.com/lilnasy/gratelets/discussions).
