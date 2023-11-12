@@ -1,20 +1,11 @@
 {
-  "name": "mdx-preact",
-  "type": "module",
-  "version": "0.0.1",
+  "name": "@test/mdx-preact",
   "private": true,
-  "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
   "dependencies": {
     "astro-global": "workspace:*",
     "@astrojs/mdx": "^1.1.4",
     "@astrojs/preact": "^3.0.1",
-    "astro": "0.0.0-name-20231110143304",
+    "astro": "^3.5.2",
     "preact": "^10.17.1"
   }
 }

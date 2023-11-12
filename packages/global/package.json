@@ -23,14 +23,17 @@
   },
   "scripts": {
     "check": "tsc",
-    "test": "vitest"
+    "test": "vitest --run --threads false"
   },
   "type": "module",
+  "peerDependencies": {
+    "astro": "^3.5.2"
+  },
   "devDependencies": {
     "@types/node": "20",
     "astro": "3",
     "astro-global": "workspace:*",
-    "typescript": "^5.2.2",
+    "typescript": "5.2",
     "vitest": "0.34"
   }
 }

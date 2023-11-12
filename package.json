@@ -1,0 +1,7 @@
+{
+    "private": "true",
+    "scripts": {
+        "check": "pnpm --filter astro-global check",
+        "test": "pnpm --filter astro-global test"
+    }
+}
