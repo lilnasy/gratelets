@@ -14,6 +14,7 @@
     "url": "https://github.com/lilnasy/gratelets",
     "directory": "packages/global"
   },
+  "files": [ "integration.ts", "runtime", "client.d.ts" ],
   "exports": {
     ".": "./integration.ts",
     "./runtime/*": "./runtime/*",

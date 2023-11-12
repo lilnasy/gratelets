@@ -1,7 +1,13 @@
 {
+    "name": "root",
     "private": "true",
     "scripts": {
         "check": "pnpm --filter astro-global check",
         "test": "pnpm --filter astro-global test"
+    },
+    "workspaces": [ "packages/*" ],
+    "packageManager": "pnpm@8.6.12",
+    "devDependencies": {
+        "@changesets/cli": "^2.26.2"
     }
 }
