@@ -8,7 +8,12 @@ function resolve(relativePath: string) {
 
 export async function build(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig) {
     const root = resolve(relativeRootPath)
-    await Astro.build({ root, logLevel: 'silent', vite: { logLevel: 'silent' }, ...options })
+    await Astro.build({
+        root,
+        logLevel: 'silent',
+        ...options,
+        vite: { logLevel: 'silent', ...options?.vite },
+    })
 }
 
 export function readTextFile(path: string): string {
