@@ -1,0 +1,41 @@
+name: Release Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  changelog:
+    name: Changelog PR or Release
+    if: ${{ github.repository_owner == 'lilnasy' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm exec changeset version
+          publish: pnpm exec changeset publish
+          commit: "[ci] release"
+          title: "[ci] release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

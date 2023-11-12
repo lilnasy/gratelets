@@ -1,0 +1,51 @@
+name: CI Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  merge_group:
+  pull_request:
+    paths-ignore:
+      - ".vscode/**"
+      - "**/*.md"
+      - ".github/ISSUE_TEMPLATE/**"
+
+# Automatically cancel older in-progress jobs on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  ASTRO_TELEMETRY_DISABLED: true
+
+jobs:
+  test:
+    name: "Test: ${{ matrix.os }} (node@${{ matrix.NODE_VERSION }})"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        OS: [ubuntu-latest, macos-latest, windows-latest]
+        NODE_VERSION: [18, 20, 21]
+      fail-fast: false
+    env:
+      NODE_VERSION: ${{ matrix.NODE_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+
+      - name: Setup node@${{ matrix.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Test
+        run: pnpm run test
