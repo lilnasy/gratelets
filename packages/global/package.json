@@ -1,6 +1,6 @@
 {
   "name": "astro-global",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Access the Astro global from MDX, React, and other framework components.",
   "author": "Arsh",
   "license": "Public Domain",
@@ -14,7 +14,11 @@
     "url": "https://github.com/lilnasy/gratelets",
     "directory": "packages/global"
   },
-  "files": [ "integration.ts", "runtime", "client.d.ts" ],
+  "files": [
+    "integration.ts",
+    "runtime",
+    "client.d.ts"
+  ],
   "exports": {
     ".": "./integration.ts",
     "./runtime/*": "./runtime/*",
