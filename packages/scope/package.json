@@ -7,7 +7,7 @@
     "withastro",
     "astro-component"
   ],
-  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/global",
+  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/scope",
   "repository": {
     "type": "git",
     "url": "https://github.com/lilnasy/gratelets",
