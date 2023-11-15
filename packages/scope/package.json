@@ -1,0 +1,41 @@
+{
+  "name": "astro-scope",
+  "version": "1.0.0",
+  "author": "Arsh",
+  "license": "Public Domain",
+  "keywords": [
+    "withastro",
+    "astro-component"
+  ],
+  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/scope",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lilnasy/gratelets",
+    "directory": "packages/scope"
+  },
+  "files": [
+    "integration.ts",
+    "client.d.ts"
+  ],
+  "exports": {
+    ".": "./integration.ts",
+    "./client": {
+      "types": "./client.d.ts"
+    }
+  },
+  "scripts": {
+    "check": "tsc",
+    "test": "vitest --run --threads false"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "astro": "3"
+  },
+  "devDependencies": {
+    "@types/node": "20",
+    "astro": "3",
+    "astro-global": "workspace:*",
+    "typescript": "5.2",
+    "vitest": "0.34"
+  }
+}
