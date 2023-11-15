@@ -34,18 +34,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+      
       - name: Setup PNPM
         uses: pnpm/action-setup@v2
-
+      
       - name: Setup node@${{ matrix.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.NODE_VERSION }}
           cache: "pnpm"
-
+      
       - name: Install dependencies
         run: pnpm install
-
-      - name: Test
-        run: pnpm run test
+      
+      - name: Check changed packages
+        if: ${{ github.event_name == 'pull_request' }}
+        run: pnpm run check:changed
+      
+      - name: Check all packages
+        if: ${{ github.event_name != 'pull_request' }}
+        run: pnpm run check:all
+      
+      - name: Test changed packages
+        if: ${{ github.event_name == 'pull_request' }}
+        run: pnpm run test:changed
+      
+      - name: Test all packages
+        if: ${{ github.event_name != 'pull_request' }}
+        run: pnpm run test:all
