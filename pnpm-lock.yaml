@@ -54,6 +54,30 @@ importers:
         specifier: '10'
         version: 10.19.2
 
+  packages/prerender-patterns:
+    devDependencies:
+      '@types/node':
+        specifier: '20'
+        version: 20.9.0
+      astro:
+        specifier: '3'
+        version: 3.5.4(@types/node@20.9.0)(typescript@5.2.2)
+      typescript:
+        specifier: '5.2'
+        version: 5.2.2
+      vitest:
+        specifier: '0.34'
+        version: 0.34.6
+
+  packages/prerender-patterns/tests/fixtures/prerender-patterns:
+    dependencies:
+      astro:
+        specifier: '3'
+        version: 3.5.4(@types/node@20.9.0)(typescript@5.2.2)
+      astro-prerender-patterns:
+        specifier: workspace:*
+        version: link:../../..
+
   packages/scope:
     devDependencies:
       '@types/node':
