@@ -34,7 +34,6 @@
   "devDependencies": {
     "@types/node": "20",
     "astro": "3",
-    "astro-global": "workspace:*",
     "typescript": "5.2",
     "vitest": "0.34"
   }
