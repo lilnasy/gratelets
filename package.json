@@ -2,12 +2,10 @@
     "name": "root",
     "private": "true",
     "scripts": {
-        "check": "pnpm check:all",
-        "check:all": "pnpm --filter ./packages/* check",
-        "check:changed": "pnpm --filter ./packages/*[origin/main] check",
-        "test": "pnpm test:all",
-        "test:all": "pnpm --filter ./packages/* test",
-        "test:changed": "pnpm --filter ./packages/*[origin/main] test"
+        "check"  : "pnpm run all check",
+        "test"   : "pnpm run all test",
+        "all"    : "pnpm run --workspace-concurrency 1 --bail false --filter \"./packages/*\"",
+        "changed": "pnpm run --workspace-concurrency 1 --bail false --filter \"./packages/*[origin/main]\""
     },
     "workspaces": [ "packages/*" ],
     "packageManager": "pnpm@8.6.12",
