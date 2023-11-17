@@ -1,6 +1,6 @@
 # astro-scope 🔭
 
-This **[Astro integration][astro-integration]** allows you get the hash used by the astro compiler to scope css rules.
+This **[Astro integration][astro-integration]** allows you to get the hash used by the astro compiler to scope css rules.
 
 - <strong>[Why astro-scope?](#why-astro-scope)</strong>
 - <strong>[Installation](#installation)</strong>
