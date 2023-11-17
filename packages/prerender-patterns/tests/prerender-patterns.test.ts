@@ -35,7 +35,7 @@ describe("with server output", () => {
                 }
             } ]
         })
-        const entrypoint = "./fixtures/prerender-patterns/dist/server/entry.mjs"
+        const entrypoint = "./fixtures/prerender-patterns/dist/server/entry.mjs?1"
         const exports = await import(entrypoint)
         manifest = exports.manifest
     })
@@ -62,9 +62,9 @@ describe("with server output", () => {
         
         // ssr chunk exports noop
         const { page } = await manifest.pageMap!.get("src/pages/page-default.astro")!()
-        const { default: factory } = await page()
-        expect(factory).to.deep.include({ name: "noop" })
-        expect(factory.toString()).to.equal("() => {}")
+        const module = await page()
+        expect(module).to.deep.include({ name: "noop" })
+        expect(module.toString()).to.equal("() => {}")
     })
     
     test("page: prerender -> rendered on demand", async () => {
@@ -88,9 +88,9 @@ describe("with server output", () => {
         
         // ssr chunk exports noop
         const { page } = await manifest.pageMap!.get("src/pages/page-set-to-render-on-demand.astro")!()
-        const { default: factory } = await page()
-        expect(factory).to.deep.include({ name: "noop" })
-        expect(factory.toString()).to.equal("() => {}")
+        const module = await page()
+        expect(module).to.deep.include({ name: "noop" })
+        expect(module.toString()).to.equal("() => {}")
     })
     
     test("endpoint: unspecified -> prerendered", async () => {
@@ -102,9 +102,9 @@ describe("with server output", () => {
         // ssr chunk exports noop
         const { page } = await manifest.pageMap!.get("src/pages/endpoint-default.ts")!()
         // @ts-ignore
-        const { GET } = await page()
-        expect(GET).to.deep.include({ name: "noop" })
-        expect(GET.toString()).to.equal("() => {}")
+        const module = await page()
+        expect(module).to.deep.include({ name: "noop" })
+        expect(module.toString()).to.equal("() => {}")
     })
     
     test("endpoint: prerendered -> rendered on demand", async () => {
@@ -130,10 +130,9 @@ describe("with server output", () => {
         
         // ssr chunk exports noop
         const { page } = await manifest.pageMap!.get("src/pages/endpoint-set-to-render-on-demand.ts")!()
-        // @ts-expect-error
-        const { GET } = await page()
-        expect(GET).to.deep.include({ name: "noop" })
-        expect(GET.toString()).to.equal("() => {}")
+        const module = await page()
+        expect(module).to.deep.include({ name: "noop" })
+        expect(module.toString()).to.equal("() => {}")
     })
 })
 
@@ -169,11 +168,10 @@ describe("hybrid output", () => {
                 }
             } ]
         })
-        const entrypoint = "./fixtures/prerender-patterns/dist/server/entry.mjs"
+        const entrypoint = "./fixtures/prerender-patterns/dist/server/entry.mjs?2"
         const exports = await import(entrypoint)
         manifest = exports.manifest
     })
-    
     
     test("provides the current decision to the callback", () => {
         expect(currentDecisions).to.deep.include({
@@ -223,9 +221,9 @@ describe("hybrid output", () => {
         
         // ssr chunk exports noop
         const { page } = await manifest.pageMap!.get("src/pages/page-set-to-render-on-demand.astro")!()
-        const { default: factory } = await page()
-        expect(factory).to.deep.include({ name: "noop" })
-        expect(factory.toString()).to.equal("() => {}")
+        const module = await page()
+        expect(module).to.deep.include({ name: "noop" })
+        expect(module.toString()).to.equal("() => {}")
     })
     
     test("endpoint: unspecified -> rendered on demand", async () => {
@@ -267,8 +265,8 @@ describe("hybrid output", () => {
         // ssr chunk exports noop
         const { page } = await manifest.pageMap!.get("src/pages/endpoint-set-to-render-on-demand.ts")!()
         // @ts-ignore
-        const { GET } = await page()
-        expect(GET).to.deep.include({ name: "noop" })
-        expect(GET.toString()).to.equal("() => {}")
+        const module = await page()
+        expect(module).to.deep.include({ name: "noop" })
+        expect(module.toString()).to.equal("() => {}")
     })
 })
