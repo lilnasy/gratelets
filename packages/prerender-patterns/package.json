@@ -1,6 +1,6 @@
 {
   "name": "astro-prerender-patterns",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Control rendering modes for all pages and endpoints in your Astro project right from the configuration.",
   "author": "Arsh",
   "license": "Public Domain",
@@ -14,7 +14,9 @@
     "url": "https://github.com/lilnasy/gratelets",
     "directory": "packages/prerender-patterns"
   },
-  "files": [ "integration.ts" ],
+  "files": [
+    "integration.ts"
+  ],
   "exports": {
     ".": "./integration.ts"
   },
