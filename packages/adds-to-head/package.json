@@ -1,0 +1,33 @@
+{
+    "name": "astro-adds-to-head",
+    "version": "0.1.0",
+    "description": "",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+      "withastro",
+      "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/adds-to-head",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/lilnasy/gratelets",
+      "directory": "packages/adds-to-head"
+    },
+    "files": [ "integration.ts" ],
+    "exports": {
+      ".": "./integration.ts"
+    },
+    "scripts": {
+      "check": "tsc",
+      "test": "vitest --run --threads false"
+    },
+    "type": "module",
+    "devDependencies": {
+      "@types/node": "20",
+      "astro": "3",
+      "typescript": "5.2",
+      "vitest": "0.34"
+    }
+  }
+  

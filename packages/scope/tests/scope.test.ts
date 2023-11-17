@@ -15,7 +15,7 @@ describe('astro-scope', () => {
         expect(attribute).to.equal(textContent)
     })
 
-    test('Page A', async () => {
+    test('Page B', async () => {
         const page = readTextFile('./fixtures/scope/dist/page-b/index.html')
         const { script, attribute, textContent } = page.match(resultRegex)!.groups!
         expect(script).to.equal(attribute)
