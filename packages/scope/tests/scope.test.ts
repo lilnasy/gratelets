@@ -5,18 +5,18 @@ const resultRegex = /<script type="module">const o="(?<script>.{8})";console.log
 
 describe('astro-scope', () => {
     beforeAll(async () => {
-        await build('./fixtures/minimal')
+        await build('./fixtures/scope')
     })
 
     test('Page A', async () => {
-        const page = readTextFile('./fixtures/minimal/dist/page-a/index.html')
+        const page = readTextFile('./fixtures/scope/dist/page-a/index.html')
         const { script, attribute, textContent } = page.match(resultRegex)!.groups!
         expect(script).to.equal(attribute)
         expect(attribute).to.equal(textContent)
     })
 
     test('Page A', async () => {
-        const page = readTextFile('./fixtures/minimal/dist/page-b/index.html')
+        const page = readTextFile('./fixtures/scope/dist/page-b/index.html')
         const { script, attribute, textContent } = page.match(resultRegex)!.groups!
         expect(script).to.equal(attribute)
         expect(attribute).to.equal(textContent)

@@ -1,0 +1,7 @@
+{
+  "name": "@test/prerender-patterns",
+  "private": true,
+  "dependencies": {
+    "astro": "3"
+  }
+}

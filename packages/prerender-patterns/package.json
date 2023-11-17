@@ -1,37 +1,28 @@
 {
-  "name": "astro-scope",
-  "version": "1.0.0",
-  "description": "Get the hash used by the Astro compiler to scope css rules.",
+  "name": "astro-prerender-patterns",
+  "version": "0.1.0",
+  "description": "Control rendering modes for all pages and endpoints in your Astro project right from the configuration.",
   "author": "Arsh",
   "license": "Public Domain",
   "keywords": [
     "withastro",
     "astro-component"
   ],
-  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/scope",
+  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/prerender-patterns",
   "repository": {
     "type": "git",
     "url": "https://github.com/lilnasy/gratelets",
-    "directory": "packages/scope"
+    "directory": "packages/prerender-patterns"
   },
-  "files": [
-    "integration.ts",
-    "client.d.ts"
-  ],
+  "files": [ "integration.ts" ],
   "exports": {
-    ".": "./integration.ts",
-    "./client": {
-      "types": "./client.d.ts"
-    }
+    ".": "./integration.ts"
   },
   "scripts": {
     "check": "tsc",
     "test": "vitest --run --threads false"
   },
   "type": "module",
-  "peerDependencies": {
-    "astro": "3"
-  },
   "devDependencies": {
     "@types/node": "20",
     "astro": "3",
