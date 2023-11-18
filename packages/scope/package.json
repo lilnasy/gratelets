@@ -25,8 +25,7 @@
     }
   },
   "scripts": {
-    "check": "tsc",
-    "test": "vitest --run --threads false"
+    "test": "pnpm -w test tests/scope.test.ts"
   },
   "type": "module",
   "peerDependencies": {
@@ -34,8 +33,6 @@
   },
   "devDependencies": {
     "@types/node": "20",
-    "astro": "3",
-    "typescript": "5.2",
-    "vitest": "0.34"
+    "astro": "3"
   }
 }

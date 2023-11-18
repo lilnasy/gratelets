@@ -19,15 +19,12 @@
       ".": "./integration.ts"
     },
     "scripts": {
-      "check": "tsc",
-      "test": "vitest --run --threads false"
+      "test": "pnpm -w test tests/adds-to-head.test.ts"
     },
     "type": "module",
     "devDependencies": {
       "@types/node": "20",
-      "astro": "3",
-      "typescript": "5.2",
-      "vitest": "0.34"
+      "astro": "3"
     }
   }
   

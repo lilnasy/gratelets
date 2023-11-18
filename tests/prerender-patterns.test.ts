@@ -1,6 +1,6 @@
 import { describe, beforeAll, test, expect } from "vitest"
 import { build, fileExists, testAdapter } from "./utils.ts"
-import prerenderPatterns from "../integration.ts"
+import prerenderPatterns from "../packages/prerender-patterns/integration.ts"
 import type { SSRManifest } from "astro"
 
 describe("with server output", () => {
@@ -10,7 +10,7 @@ describe("with server output", () => {
     beforeAll(async () => {
         await build("./fixtures/prerender-patterns", {
             output: "server",
-            adapter: testAdapter(),
+            adapter: testAdapter,
             integrations: [ prerenderPatterns((path, currentDecision) => {
                 currentDecisions[path] = currentDecision
                 if (path === "src/pages/page-default.astro") return "prerender"
@@ -153,7 +153,7 @@ describe("hybrid output", () => {
     beforeAll(async () => {
         await build("./fixtures/prerender-patterns", {
             output: "hybrid",
-            adapter: testAdapter(),
+            adapter: testAdapter,
             integrations: [ prerenderPatterns((path, currentDecision) => {
                 currentDecisions[path] = currentDecision
                 if (path === "src/pages/page-default.astro") return "render on demand"

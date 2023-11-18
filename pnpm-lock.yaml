@@ -17,15 +17,6 @@ importers:
       astro:
         specifier: '3'
         version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
-
-  packages/adds-to-head:
-    devDependencies:
-      '@types/node':
-        specifier: '20'
-        version: 20.9.1
-      astro:
-        specifier: '3'
-        version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
       typescript:
         specifier: '5.2'
         version: 5.2.2
@@ -33,11 +24,11 @@ importers:
         specifier: '0.34'
         version: 0.34.6
 
-  packages/adds-to-head/tests/fixtures/adds-to-head:
-    dependencies:
-      '@astrojs/mdx':
-        specifier: '1'
-        version: 1.1.5(astro@3.5.5)
+  packages/adds-to-head:
+    devDependencies:
+      '@types/node':
+        specifier: '20'
+        version: 20.9.1
       astro:
         specifier: '3'
         version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
@@ -53,48 +44,12 @@ importers:
       astro-global:
         specifier: workspace:*
         version: 'link:'
-      typescript:
-        specifier: '5.2'
-        version: 5.2.2
-      vitest:
-        specifier: '0.34'
-        version: 0.34.6
-
-  packages/global/tests/fixtures/global:
-    dependencies:
-      '@astrojs/mdx':
-        specifier: '1'
-        version: 1.1.5(astro@3.5.5)
-      '@astrojs/preact':
-        specifier: '3'
-        version: 3.0.1(@babel/core@7.23.3)(preact@10.19.2)(vite@5.0.0)
-      astro:
-        specifier: '3'
-        version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
-      astro-global:
-        specifier: workspace:*
-        version: link:../../..
-      preact:
-        specifier: '10'
-        version: 10.19.2
 
   packages/prerender-patterns:
     devDependencies:
       '@types/node':
         specifier: '20'
         version: 20.9.1
-      astro:
-        specifier: '3'
-        version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
-      typescript:
-        specifier: '5.2'
-        version: 5.2.2
-      vitest:
-        specifier: '0.34'
-        version: 0.34.6
-
-  packages/prerender-patterns/tests/fixtures/prerender-patterns:
-    dependencies:
       astro:
         specifier: '3'
         version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
@@ -107,21 +62,54 @@ importers:
       astro:
         specifier: '3'
         version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
-      typescript:
-        specifier: '5.2'
-        version: 5.2.2
-      vitest:
-        specifier: '0.34'
-        version: 0.34.6
 
-  packages/scope/tests/fixtures/scope:
+  tests/fixtures/adds-to-head:
+    dependencies:
+      '@astrojs/mdx':
+        specifier: '1'
+        version: 1.1.5(astro@3.5.5)
+      astro:
+        specifier: '3'
+        version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
+      astro-adds-to-head:
+        specifier: workspace:*
+        version: link:../../../packages/adds-to-head
+
+  tests/fixtures/global:
+    dependencies:
+      '@astrojs/mdx':
+        specifier: '1'
+        version: 1.1.5(astro@3.5.5)
+      '@astrojs/preact':
+        specifier: '3'
+        version: 3.0.1(@babel/core@7.23.3)(preact@10.19.2)(vite@5.0.0)
+      astro:
+        specifier: '3'
+        version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
+      astro-global:
+        specifier: workspace:*
+        version: link:../../../packages/global
+      preact:
+        specifier: '10'
+        version: 10.19.2
+
+  tests/fixtures/prerender-patterns:
+    dependencies:
+      astro:
+        specifier: '3'
+        version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
+      astro-prerender-patterns:
+        specifier: workspace:*
+        version: link:../../../packages/prerender-patterns
+
+  tests/fixtures/scope:
     dependencies:
       astro:
         specifier: '3'
         version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
       astro-scope:
         specifier: workspace:*
-        version: link:../../..
+        version: link:../../../packages/scope
 
 packages:
 

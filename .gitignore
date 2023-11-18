@@ -1,6 +1,6 @@
 node_modules
 packages/*/node_modules
-packages/*/tests/fixtures/*/node_modules
-packages/*/tests/fixtures/*/src/env.d.ts
-packages/*/tests/fixtures/*/dist
-packages/*/tests/fixtures/*/.astro
+tests/fixtures/*/node_modules
+tests/fixtures/*/src/env.d.ts
+tests/fixtures/*/dist
+tests/fixtures/*/.astro
