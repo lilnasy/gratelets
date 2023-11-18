@@ -31,20 +31,20 @@ export default function (callback?: Callback): AstroIntegration {
                             name: "prerender-patterns",
                             outputOptions() {
                                 const absolutePathPrefix = url.fileURLToPath(config.root).replaceAll("\\", "/")
-
+                                
                                 for (const moduleId of this.getModuleIds()) {
                                     if (moduleId.startsWith(absolutePathPrefix) === false) continue
                                     const moduleInfo = this.getModuleInfo(moduleId)
-
+                                    
                                     const pageOptions = moduleInfo?.meta?.astro?.pageOptions
                                     if (pageOptions === undefined) continue
-
+                                    
                                     const current: boolean = pageOptions.prerender
                                     const { filename } = parseAstroRequest(moduleId)
                                     const relativePath = filename.slice(absolutePathPrefix.length)
                                     
                                     let override: ReturnType<Callback>
-
+                                    
                                     if (cache.has(relativePath)) {
                                         override = cache.get(relativePath)
                                     } else {

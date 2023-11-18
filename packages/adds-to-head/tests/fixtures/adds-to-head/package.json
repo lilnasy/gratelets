@@ -1,0 +1,8 @@
+{
+  "name": "@test/adds-to-head",
+  "private": true,
+  "dependencies": {
+    "astro": "3",
+    "@astrojs/mdx": "1"
+  }
+}

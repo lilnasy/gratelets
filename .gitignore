@@ -3,3 +3,4 @@ packages/*/node_modules
 packages/*/tests/fixtures/*/node_modules
 packages/*/tests/fixtures/*/src/env.d.ts
 packages/*/tests/fixtures/*/dist
+packages/*/tests/fixtures/*/.astro

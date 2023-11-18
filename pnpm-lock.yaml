@@ -33,6 +33,15 @@ importers:
         specifier: '0.34'
         version: 0.34.6
 
+  packages/adds-to-head/tests/fixtures/adds-to-head:
+    dependencies:
+      '@astrojs/mdx':
+        specifier: '1'
+        version: 1.1.5(astro@3.5.5)
+      astro:
+        specifier: '3'
+        version: 3.5.5(@types/node@20.9.1)(typescript@5.2.2)
+
   packages/global:
     devDependencies:
       '@types/node':
