@@ -1,7 +1,7 @@
 {
     "name": "astro-adds-to-head",
     "version": "0.1.0",
-    "description": "",
+    "description": "Fix a corner case in content collections rendering.",
     "author": "Arsh",
     "license": "Public Domain",
     "keywords": [
