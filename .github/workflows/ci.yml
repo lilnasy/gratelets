@@ -47,8 +47,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
             
-      - name: Check all packages
-        run: pnpm run all check
+      - name: Check
+        run: pnpm run check
       
-      - name: Test all packages
-        run: pnpm run all test
+      - name: Test
+        run: pnpm run test

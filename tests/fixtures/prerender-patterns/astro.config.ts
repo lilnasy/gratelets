@@ -1,11 +1,11 @@
 import { defineConfig } from "astro/config"
-import prerenderPatterns, { prerender, renderOnDemand } from "../../../integration.ts"
+import prerenderPatterns, { prerender, renderOnDemand } from "astro-prerender-patterns"
 import { testAdapter } from "../../utils.ts"
 
 
 export default defineConfig({
     output: "hybrid",
-	adapter: testAdapter(),
+	adapter: testAdapter,
     /* uncomment to test manually */
 	// integrations: [
 	// 	prerenderPatterns((path) => {

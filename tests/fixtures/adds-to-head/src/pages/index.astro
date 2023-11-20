@@ -1,0 +1,14 @@
+---
+import { getEntryBySlug } from "astro:content"
+import IndirectRenderer from "../components/IndirectRenderer.astro"
+
+const entry = await getEntryBySlug("blog", "promo/launch-week-component")
+---
+<html>
+	<head>
+		<title>Launch Week</title>
+	</head>
+	<body>
+		<IndirectRenderer {entry}/>
+	</body>
+</html>
