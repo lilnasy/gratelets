@@ -61,7 +61,7 @@ For help, check out the `Discussions` tab on the [GitHub repo](https://github.co
 
 ## Contributing
 
-This package is maintained by [lilnasy](https://github.com/lilnasy) independently from Astro. The integration code is located at [packages/global/integration.ts](https://github.com/lilnasy/gratelets/blob/main/packages/adds-to-head/integration.ts). You're welcome to contribute by submitting an issue or opening a PR!
+This package is maintained by [lilnasy](https://github.com/lilnasy) independently from Astro. The integration code is located at [packages/adds-to-head/integration.ts](https://github.com/lilnasy/gratelets/blob/main/packages/adds-to-head/integration.ts). You're welcome to contribute by submitting an issue or opening a PR!
 
 ## Changelog
 
