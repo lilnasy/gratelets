@@ -2,7 +2,7 @@
 
 This **[Astro integration][astro-integration]** lets you explicitly mark components that add scripts and styles to the parent page.
 
-- <strong>[Why astro-global?](#why-astro-global)</strong>
+- <strong>[Why astro-adds-to-head?](#why-astro-adds-to-head)</strong>
 - <strong>[Installation](#installation)</strong>
 - <strong>[Usage](#usage)</strong>
 - <strong>[Troubleshooting](#troubleshooting)</strong>
