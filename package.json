@@ -3,7 +3,7 @@
     "private": "true",
     "scripts": {
         "check": "pnpm exec tsc",
-        "test" : "pnpm exec vitest --run --threads false"
+        "test" : "pnpm exec vitest --run --single-thread"
     },
     "workspaces": [
         "packages/*"

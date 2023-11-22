@@ -1,0 +1,34 @@
+{
+  "name": "astro-deno",
+  "version": "0.1.0",
+  "description": "Deploy your statically-built or server-rendered app to Deno.",
+  "author": "Arsh",
+  "license": "Public Domain",
+  "keywords": [
+    "withastro",
+    "astro-component"
+  ],
+  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/deno",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lilnasy/gratelets",
+    "directory": "packages/deno"
+  },
+  "files": [
+    "integration.ts",
+    "runtime"
+  ],
+  "exports": {
+    ".": "./integration.ts",
+    "./runtime/*": "./runtime/*"
+  },
+  "scripts": {
+    "test": "pnpm -w test tests/deno.test.ts"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "20",
+    "astro": "3",
+    "astro-global": "workspace:*"
+  }
+}
