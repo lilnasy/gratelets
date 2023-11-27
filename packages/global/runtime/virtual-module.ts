@@ -63,6 +63,11 @@ export default {
         const ctx = storage.getStore()
         if (ctx === undefined) throw new NoRequestError("url")
         return ctx.url
+    },
+    get currentLocale() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("currentLocale")
+        return ctx.currentLocale
     }
 } satisfies AstroGlobal
 
