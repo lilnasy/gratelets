@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useState } from "preact/hooks"
 
 export default function Counter({ children }) {
 	const [count, setCount] = useState(0);

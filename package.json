@@ -5,13 +5,15 @@
         "check": "pnpm exec tsc",
         "test" : "pnpm exec vitest --run --threads false"
     },
-    "workspaces": [ "packages/*" ],
+    "workspaces": [
+        "packages/*"
+    ],
     "packageManager": "pnpm@8.6.12",
     "devDependencies": {
-        "astro": "3",
-        "vitest": "0.34",
-        "typescript": "5.3",
+        "@changesets/changelog-github": "0.4.8",
         "@changesets/cli": "2",
-        "@changesets/changelog-github": "0.4.8"
+        "astro": "3",
+        "typescript": "5.3",
+        "vitest": "0.34"
     }
 }
