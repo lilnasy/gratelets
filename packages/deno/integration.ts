@@ -1,5 +1,5 @@
 import { passthroughImageService } from "astro/config"
-import type { AstroAdapter, AstroIntegration } from "astro"
+import type { AstroAdapter, AstroConfig, AstroIntegration } from "astro"
 
 // REF: https://github.com/denoland/deno/tree/main/ext/node/polyfills
 const COMPATIBLE_NODE_MODULES = [
@@ -31,6 +31,17 @@ export interface Options {
 	port?: number
 	hostname?: string
 }
+// Allow the user to create a type where all keys are optional.
+// Useful for functions where props are merged.
+export type DeepPartial<T> = {
+	[Key in keyof T]?: T[Key] extends infer Value
+		? Value extends (infer U)[] ? DeepPartial<U>[]
+		: Value extends URL ? Value
+		: Value extends Function ? Value
+		: Value extends {} ? DeepPartial<Value>
+		: Value
+		: never;
+};
 
 export default function createIntegration(options?: Options): AstroIntegration {
 	return {
@@ -41,7 +52,7 @@ export default function createIntegration(options?: Options): AstroIntegration {
                 if (
 					config.image.service.entrypoint === 'astro/assets/services/sharp' ||
 					config.image.service.entrypoint === 'astro/assets/services/squoosh'
-				) updateConfig({ image: passthroughImageService() })
+				) updateConfig({ image: { service: passthroughImageService() } } satisfies DeepPartial<AstroConfig>)
             },
 			"astro:config:done" ({ setAdapter }) {
 				setAdapter(getAdapter(options))
