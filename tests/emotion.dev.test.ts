@@ -4,7 +4,7 @@ import { dev, type DevServer } from "./utils.ts"
 const stylesheetRegex = /(?<=<style data-vite-dev-id="[^"]*">)[\s\S]*(?=<\/style>)/
 
 let server: DevServer
-beforeAll(async () => { server = await dev("./fixtures/emotion") }, 10000)
+beforeAll(async () => { server = await dev("./fixtures/emotion") })
 
 describe("basics", () => {
     test("hoists scoped styles", async () => {
