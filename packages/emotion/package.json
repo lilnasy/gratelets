@@ -16,6 +16,7 @@
   },
   "files": [
     "integration.ts",
+    "ast-scanner.ts",
     "client.d.ts"
   ],
   "exports": {
