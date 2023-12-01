@@ -2,12 +2,30 @@ import { fileURLToPath } from "node:url"
 import { readFileSync, existsSync } from "node:fs"
 import * as Astro from "astro"
 
-export async function dev(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig) {
-    return command("dev", relativeRootPath, options)
+export interface DevServer {
+    address: { address: string, port: number }
+    stop(): Promise<void>
+    fetch(path: string): Promise<string>
 }
 
-export function build(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig) {
-    return command("build", relativeRootPath, options)
+export interface BuildFixture {
+    readTextFile(path: string): string
+}
+
+export async function build(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig): Promise<BuildFixture> {
+    await command("build", relativeRootPath, options)
+    return {
+        readTextFile: path => readTextFile(`${relativeRootPath}/dist${path}`)
+    }
+}
+
+export async function dev(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig): Promise<DevServer> {
+    const server = await command("dev", relativeRootPath, options)
+    return {
+        address: server.address,
+        stop: server.stop,
+        fetch: path => fetch(`http://localhost:${server.address.port}${path}`).then(r => r.text())
+    }
 }
 
 async function command<Command extends "dev" | "build">(
@@ -27,7 +45,7 @@ async function command<Command extends "dev" | "build">(
 export const testAdapter: Astro.AstroIntegration = {
     name: "test-adapter",
     hooks: {
-        "astro:config:setup": ({ updateConfig }) => {
+        "astro:config:setup" ({ updateConfig }) {
             updateConfig({
                 vite: {
                     plugins: [{
@@ -46,7 +64,7 @@ export const testAdapter: Astro.AstroIntegration = {
                 }
             } satisfies Partial<Astro.AstroConfig>)
         },
-        "astro:config:done": ({ setAdapter }) => {
+        "astro:config:done" ({ setAdapter }) {
             setAdapter({
                 name: "test-adapter",
                 serverEntrypoint: "virtual:adapter",
