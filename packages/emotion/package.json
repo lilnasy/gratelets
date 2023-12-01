@@ -1,6 +1,6 @@
 {
   "name": "astro-emotion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Use Emotion CSS to style your Astro site.",
   "author": "Arsh",
   "license": "Public Domain",
