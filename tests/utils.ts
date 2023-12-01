@@ -38,7 +38,17 @@ async function command<Command extends "dev" | "build">(
         root,
         logLevel: "silent",
         ...options,
-        vite: { logLevel: "silent", ...options?.vite },
+        vite: {
+            logLevel: "silent",
+            build: {
+                rollupOptions: {
+                    logLevel: "silent",
+                    ...options?.vite?.build?.rollupOptions
+                },
+                ...options?.vite?.build
+            },
+            ...options?.vite
+        }
     }) as Command extends "dev" ? ReturnType<typeof Astro.dev> : void
 }
 

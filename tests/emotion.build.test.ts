@@ -55,21 +55,6 @@ describe("react", () => {
     })
 })
 
-describe("preact", () => {
-    test("hoists scoped styles", () => {
-        const html = fixture.readTextFile("/preact/index.html")
-        const [ sheet ] = stylesheetRegex.exec(html)!
-        const divElement = /id="counter" class="(?<class>[^"]*)"/.exec(html)!.groups!
-        expect(sheet).toContain("." + divElement.class)
-    })
-
-    test("global styles are injected", () => {
-        const html = fixture.readTextFile("/preact/index.html")
-        const [ sheet ] = stylesheetRegex.exec(html)!
-        expect(sheet).toContain("body{margin:0")
-    })
-})
-
 describe("solid", () => {
     test("hoists scoped styles", () => {
         const html = fixture.readTextFile("/solid/index.html")
@@ -80,6 +65,21 @@ describe("solid", () => {
 
     test("global styles are injected", () => {
         const html = fixture.readTextFile("/solid/index.html")
+        const [ sheet ] = stylesheetRegex.exec(html)!
+        expect(sheet).toContain("body{margin:0")
+    })
+})
+
+describe("preact", () => {
+    test("hoists scoped styles", () => {
+        const html = fixture.readTextFile("/preact/index.html")
+        const [ sheet ] = stylesheetRegex.exec(html)!
+        const divElement = /id="counter" class="(?<class>[^"]*)"/.exec(html)!.groups!
+        expect(sheet).toContain("." + divElement.class)
+    })
+
+    test("global styles are injected", () => {
+        const html = fixture.readTextFile("/preact/index.html")
         const [ sheet ] = stylesheetRegex.exec(html)!
         expect(sheet).toContain("body{margin:0")
     })

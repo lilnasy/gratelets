@@ -33,6 +33,8 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
                     },
                     resolveId(source) {
                         if (source.startsWith("astro_emotion_internal_")) return source
+                        // HACK: prevent warnings from vite when it scans a file before letting it be transformed
+                        if (source === "astro:emotion") return source
                     },
                     load(id) {
                         if (id.startsWith("astro_emotion_internal_")) {

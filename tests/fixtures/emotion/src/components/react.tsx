@@ -1,6 +1,3 @@
-/** @jsx react-jsx */
-/** @jsxFrag Fragment */
-/** @jsxImportSource react */
 import { useState } from "react"
 import { css, injectGlobal } from "astro:emotion"
 
