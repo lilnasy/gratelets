@@ -1,0 +1,25 @@
+---
+import * as Emotion from "astro:emotion"
+
+Emotion.injectGlobal`
+@font-face {
+    font-family: Hand;
+    font-style: normal;
+    font-weight: 400;
+    src: local('Patrick Hand SC')
+}`
+---
+<html>
+    <head>
+        <title>Title</title>
+    </head>
+    <body>
+        <h1 id="test" class={Emotion.css`
+            padding: 32px;
+            background-color: hotpink;
+            font-size: 24px;
+            border-radius: 4px;
+            &:hover { color: white; }
+        `}>Test</h1>
+    </body>
+</html>

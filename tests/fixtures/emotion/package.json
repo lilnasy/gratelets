@@ -1,0 +1,20 @@
+{
+  "name": "@test/emotion",
+  "private": true,
+  "dependencies": {
+    "@astrojs/preact": "3",
+    "@astrojs/react": "^3.0.6",
+    "@astrojs/solid-js": "^3.0.2",
+    "@astrojs/svelte": "^4.0.4",
+    "@preact/signals": "^1.2.2",
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
+    "astro": "3",
+    "astro-emotion": "workspace:*",
+    "preact": "10",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "solid-js": "^1.4.3",
+    "svelte": "4"
+  }
+}
