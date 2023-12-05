@@ -2,8 +2,8 @@
     "name": "root",
     "private": "true",
     "scripts": {
-        "check": "pnpm exec tsc",
-        "test" : "pnpm exec vitest --run --threads false"
+        "check": "tsc",
+        "test" : "vitest --run --threads false"
     },
     "workspaces": [
         "packages/*"
