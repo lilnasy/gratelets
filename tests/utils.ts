@@ -78,7 +78,8 @@ export const testAdapter: Astro.AstroIntegration = {
             setAdapter({
                 name: "test-adapter",
                 serverEntrypoint: "virtual:adapter",
-                exports: ["manifest"]
+                exports: ["manifest"],
+                supportedAstroFeatures: {}
             })
         }
     }

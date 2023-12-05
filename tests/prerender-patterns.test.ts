@@ -25,7 +25,7 @@ describe("with server output", () => {
                 hooks: {
                     "astro:config:setup" ({ injectRoute }) {
                         injectRoute({
-                            entryPoint: "./src/not-pages/added-by-integration.astro",
+                            entrypoint: "./src/not-pages/added-by-integration.astro",
                             pattern: "/added-by-integration"
                         })
                     }
@@ -168,7 +168,7 @@ describe("hybrid output", () => {
                 hooks: {
                     "astro:config:setup" ({ injectRoute }) {
                         injectRoute({
-                            entryPoint: "./src/not-pages/added-by-integration.astro",
+                            entrypoint: "./src/not-pages/added-by-integration.astro",
                             pattern: "/added-by-integration"
                         })
                     }
