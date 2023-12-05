@@ -1,5 +1,11 @@
 # astro-global
 
+## 1.2.1
+
+### Patch Changes
+
+- [#18](https://github.com/lilnasy/gratelets/pull/18) [`d3d79d9`](https://github.com/lilnasy/gratelets/commit/d3d79d9cee8b501f81b9105ede6cb0551a91b505) Thanks [@lilnasy](https://github.com/lilnasy)! - Prevents errors and warnings when installing alongside Astro v4.
+
 ## 1.2.0
 
 ### Minor Changes
