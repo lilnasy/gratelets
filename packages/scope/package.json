@@ -29,10 +29,10 @@
   },
   "type": "module",
   "peerDependencies": {
-    "astro": "3"
+    "astro": "4"
   },
   "devDependencies": {
     "@types/node": "20",
-    "astro": "3"
+    "astro": "4"
   }
 }
