@@ -56,23 +56,19 @@ export const testAdapter: Astro.AstroIntegration = {
     name: "test-adapter",
     hooks: {
         "astro:config:setup" ({ updateConfig }) {
-            updateConfig({
-                vite: {
-                    plugins: [{
-                        name: "test-adapter-vite",
-                        resolveId(id) {
-                            if (id === "virtual:adapter") return id
-                        },
-                        load(id) {
-                            if (id === "virtual:adapter") return `
-                                export function createExports(manifest) {
-                                    return { manifest }
-                                }
-                            `
-                        }
-                    }]
+            updateConfig({ vite: { plugins: [{
+                name: "test-adapter-vite",
+                resolveId(id) {
+                    if (id === "virtual:adapter") return id
+                },
+                load(id) {
+                    if (id === "virtual:adapter") {
+                        return "export function createExports(manifest) {\n" +
+                        "    return { manifest }\n" +
+                        "}"
+                    }
                 }
-            } satisfies Partial<Astro.AstroConfig>)
+            }] } })
         },
         "astro:config:done" ({ setAdapter }) {
             setAdapter({
