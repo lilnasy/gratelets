@@ -9,7 +9,7 @@ import type { AstroConfig, AstroIntegration, AstroIntegrationLogger } from "astr
 
 interface Options {}
 
-export default function (options: Partial<Options> = {}): AstroIntegration {
+export default function (_: Partial<Options> = {}): AstroIntegration {
     return {
         name: "astro-emotion",
         hooks: {
@@ -53,7 +53,7 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
                     config() {
                         injectEnvDTS(config, logger, "astro-emotion/client")
                     }
-                }] } } satisfies Partial<AstroConfig>)
+                }] } })
             }
         }
     }

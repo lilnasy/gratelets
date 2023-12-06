@@ -8,11 +8,11 @@
     "withastro",
     "astro-component"
   ],
-  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/scope",
+  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/emotion",
   "repository": {
     "type": "git",
     "url": "https://github.com/lilnasy/gratelets",
-    "directory": "packages/scope"
+    "directory": "packages/emotion"
   },
   "files": [
     "integration.ts",
