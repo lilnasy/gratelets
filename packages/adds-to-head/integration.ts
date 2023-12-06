@@ -3,7 +3,7 @@ import url from "node:url"
 
 interface Options {}
 
-export default function (options?: Options): AstroIntegration {
+export default function (_?: Options): AstroIntegration {
     return {
         name: "adds-to-head",
         hooks: {
@@ -33,8 +33,8 @@ export default function (options?: Options): AstroIntegration {
                             }
                         }]
                     }
-                } satisfies Partial<AstroConfig>)
+                })
             }
         }
-    } satisfies AstroIntegration
+    }
 }

@@ -4,6 +4,6 @@
   "dependencies": {
     "astro": "4",
     "astro-adds-to-head": "workspace:*",
-    "@astrojs/mdx": "1"
+    "@astrojs/mdx": "2"
   }
 }

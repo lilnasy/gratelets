@@ -68,7 +68,7 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
                             }
                         }]
                     }
-                } satisfies Partial<AstroConfig>)
+                })
             }
         }
     }
