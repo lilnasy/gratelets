@@ -1,14 +1,15 @@
 import { describe, beforeAll, test, expect } from "vitest"
-import { build, fileExists, testAdapter } from "./utils.ts"
+import { build, type BuildFixture, testAdapter } from "./utils.ts"
 import prerenderPatterns from "../packages/prerender-patterns/integration.ts"
 import type { SSRManifest } from "astro"
 
 describe("with server output", () => {
     let manifest: SSRManifest
+    let fixture: BuildFixture
     const currentDecisions: Record<string, "prerender" | "render on demand"> = {}
     
     beforeAll(async () => {
-        await build("./fixtures/prerender-patterns", {
+        fixture = await build("./fixtures/prerender-patterns", {
             output: "server",
             adapter: testAdapter,
             integrations: [ prerenderPatterns((path, currentDecision) => {
@@ -54,7 +55,7 @@ describe("with server output", () => {
     test("page: unspecified -> prerendered", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/page-default/index.html")
+            fixture.fileExists("client/page-default/index.html")
         ).to.equal(true)
         
         // ssr chunk exports noop
@@ -67,7 +68,7 @@ describe("with server output", () => {
     test("page: prerender -> rendered on demand", async () => {
         // static file is not created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/page-set-to-prerender/index.html")
+            fixture.fileExists("client/page-set-to-prerender/index.html")
         ).to.equal(false)
         
         // ssr chunk is functional
@@ -80,7 +81,7 @@ describe("with server output", () => {
     test("page: render on demand -> prerendered", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/page-set-to-render-on-demand/index.html")
+            fixture.fileExists("client/page-set-to-render-on-demand/index.html")
         ).to.equal(true)
         
         // ssr chunk exports noop
@@ -93,7 +94,7 @@ describe("with server output", () => {
     test("endpoint: unspecified -> prerendered", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/endpoint-default")
+            fixture.fileExists("client/endpoint-default")
         ).to.equal(true)
         
         // ssr chunk exports noop
@@ -107,7 +108,7 @@ describe("with server output", () => {
     test("endpoint: prerendered -> rendered on demand", async () => {
         // static file is not created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/endpoint-set-to-prerender")
+            fixture.fileExists("client/endpoint-set-to-prerender")
         ).to.equal(false)
         
         // ssr chunk is functional
@@ -122,7 +123,7 @@ describe("with server output", () => {
     test("endpoint: render on demand -> prerendered", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/endpoint-set-to-render-on-demand")
+            fixture.fileExists("client/endpoint-set-to-render-on-demand")
         ).to.equal(true)
         
         // ssr chunk exports noop
@@ -135,7 +136,7 @@ describe("with server output", () => {
     test("injected page: render on demand -> prerendered", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/added-by-integration/index.html")
+            fixture.fileExists("client/added-by-integration/index.html")
         ).to.equal(true)
 
         // ssr chunk exports noop
@@ -148,10 +149,11 @@ describe("with server output", () => {
 
 describe("hybrid output", () => {
     let manifest: SSRManifest
+    let fixture: BuildFixture
     const currentDecisions: Record<string, "prerender" | "render on demand"> = {}
     
     beforeAll(async () => {
-        await build("./fixtures/prerender-patterns", {
+        fixture = await build("./fixtures/prerender-patterns", {
             output: "hybrid",
             adapter: testAdapter,
             integrations: [ prerenderPatterns((path, currentDecision) => {
@@ -197,7 +199,7 @@ describe("hybrid output", () => {
     test("page: unspecified -> rendered on demand", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/page-default/index.html")
+            fixture.fileExists("client/page-default/index.html")
         ).to.equal(false)
         
         // ssr chunk is functional
@@ -210,7 +212,7 @@ describe("hybrid output", () => {
     test("page: prerender -> rendered on demand", async () => {
         // static file is not created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/page-set-to-prerender/index.html")
+            fixture.fileExists("client/page-set-to-prerender/index.html")
         ).to.equal(false)
         
         // ssr chunk is functional
@@ -223,7 +225,7 @@ describe("hybrid output", () => {
     test("page: render on demand -> prerendered", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/page-set-to-render-on-demand/index.html")
+            fixture.fileExists("client/page-set-to-render-on-demand/index.html")
         ).to.equal(true)
         
         // ssr chunk exports noop
@@ -236,7 +238,7 @@ describe("hybrid output", () => {
     test("endpoint: unspecified -> rendered on demand", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/endpoint-default")
+            fixture.fileExists("client/endpoint-default")
         ).to.equal(false)
         
         // ssr chunk is functional
@@ -251,7 +253,7 @@ describe("hybrid output", () => {
     test("endpoint: prerender -> rendered on demand", async () => {
         // static file is not created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/endpoint-set-to-prerender")
+            fixture.fileExists("client/endpoint-set-to-prerender")
         ).to.equal(false)
     
         // ssr chunk is functional
@@ -266,7 +268,7 @@ describe("hybrid output", () => {
     test("endpoint: render on demand -> prerendered", async () => {
         // static file is created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/endpoint-set-to-render-on-demand")
+            fixture.fileExists("client/endpoint-set-to-render-on-demand")
         ).to.equal(true)
         
         // ssr chunk exports noop
@@ -280,7 +282,7 @@ describe("hybrid output", () => {
     test("injected page: prerendered -> render on demand", async () => {
         // static file is not created
         expect(
-            fileExists("./fixtures/prerender-patterns/dist/client/added-by-integration/index.html")
+            fixture.fileExists("client/added-by-integration/index.html")
         ).to.equal(false)
 
         // ssr chunk is functional
