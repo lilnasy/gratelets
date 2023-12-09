@@ -22,7 +22,7 @@
     "./runtime/*": "./runtime/*"
   },
   "scripts": {
-    "test": "pnpm -w test tests/hono/adapter-middleware.test.ts"
+    "test": "pnpm -w test tests/hono"
   },
   "type": "module",
   "dependencies": {

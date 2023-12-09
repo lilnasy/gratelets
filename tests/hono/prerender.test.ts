@@ -1,26 +1,14 @@
-import { describe, beforeAll, test, expect } from "vitest"
-import * as cheerio from "cheerio"
-import { Hono } from "hono"
-import { build } from "../utils.ts"
-import type { Exports } from "../../packages/hono/runtime/server.ts"
+import { describe } from "vitest"
+import { testFactory } from "./utils.ts"
+
+const testPrerenderServer     = testFactory("./fixtures/hono/prerender/", { env: { PRERENDER: "true" } })
+const testPrerenderServerBase = testFactory("./fixtures/hono/prerender/", { env: { PRERENDER: "true" }, base: "/some-base" })
+const testPrerenderHybrid     = testFactory("./fixtures/hono/prerender/", { env: { PRERENDER: "false" }, output: "hybrid" })
+const testPrerenderHybridBase = testFactory("./fixtures/hono/prerender/", { env: { PRERENDER: "false" }, output: "hybrid", base: "/some-base" })
 
 describe("prerendering - with base", async () => {
-    let server: Hono
-    
-    beforeAll(async () => {
-        process.env.PRERENDER = "true"
-        const fixture = await build("./fixtures/hono/prerender/", {
-            base: "/some-base"
-        })
-        process.env.ASTRO_HONO_AUTOSTART = "disabled"
-        const exports = await import(fixture.resolve("server/entry.mjs")) as Exports
-        const hono = new Hono
-        hono.use("*", exports.handler)
-        server = hono
-    })
-    
-    test("can render SSR route", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/one"))
+    testPrerenderServerBase("can render SSR route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/one"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -28,8 +16,8 @@ describe("prerendering - with base", async () => {
         expect($("h1").text()).to.equal("One")
     })
     
-    test("can render prerendered route", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/two"))
+    testPrerenderServerBase("can render prerendered route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/two"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -37,8 +25,8 @@ describe("prerendering - with base", async () => {
         expect($("h1").text()).to.equal("Two")
     })
     
-    test("can render prerendered route with redirect and query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/two?foo=bar"))
+    testPrerenderServerBase("can render prerendered route with redirect and query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/two?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -46,8 +34,8 @@ describe("prerendering - with base", async () => {
         expect($("h1").text()).to.equal("Two")
     })
     
-    test("can render prerendered route with query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/two/?foo=bar"))
+    testPrerenderServerBase("can render prerendered route with query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/two/?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -55,28 +43,16 @@ describe("prerendering - with base", async () => {
         expect($("h1").text()).to.equal("Two")
     })
     
-    test("omitting the trailing slash results in a redirect that includes the base", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/two"))
+    testPrerenderServerBase("omitting the trailing slash results in a redirect that includes the base", async ({ expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/two"))
         expect(res.status).to.equal(301)
         expect(res.headers.get("location")).to.equal("/some-base/two/")
     })
 })
 
 describe("prerendering - without base", async () => {
-    let server: Hono
-    
-    beforeAll(async () => {
-        process.env.PRERENDER = "true"
-        const fixture = await build("./fixtures/hono/prerender/")
-        process.env.ASTRO_HONO_AUTOSTART = "disabled"
-        const exports = await import(fixture.resolve("server/entry.mjs")) as Exports
-        const hono = new Hono
-        hono.use("*", exports.handler)
-        server = hono
-    })
-    
-    test("can render SSR route", async () => {
-        const res = await server.fetch(new Request("http://example.com/one"))
+    testPrerenderServer("can render SSR route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/one"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -84,8 +60,8 @@ describe("prerendering - without base", async () => {
         expect($("h1").text()).to.equal("One")
     })
     
-    test("can render prerendered route", async () => {
-        const res = await server.fetch(new Request("http://example.com/two"))
+    testPrerenderServer("can render prerendered route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/two"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -93,8 +69,8 @@ describe("prerendering - without base", async () => {
         expect($("h1").text()).to.equal("Two")
     })
     
-    test("can render prerendered route with redirect and query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/two?foo=bar"))
+    testPrerenderServer("can render prerendered route with redirect and query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/two?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -102,8 +78,8 @@ describe("prerendering - without base", async () => {
         expect($("h1").text()).to.equal("Two")
     })
     
-    test("can render prerendered route with query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/two/?foo=bar"))
+    testPrerenderServer("can render prerendered route with query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/two/?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
        
@@ -113,31 +89,16 @@ describe("prerendering - without base", async () => {
 })
 
 describe("hybrid rendering - with base", () => {
-    let server: Hono
-    
-    beforeAll(async () => {
-        process.env.PRERENDER = "false"
-        const fixture = await build("./fixtures/hono/prerender/", {
-            base: "/some-base",
-            output: "hybrid"
-        })
-        process.env.ASTRO_HONO_AUTOSTART = "disabled"
-        const exports = await import(fixture.resolve("server/entry.mjs")) as Exports
-        const hono = new Hono
-        hono.use("*", exports.handler)
-        server = hono
-    })
-    
-    test("Can render SSR route", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/one"))
+    testPrerenderHybridBase("Can render SSR route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/one"))
         const html = await res.text()
         const $ = cheerio.load(html)
         expect(res.status).to.equal(200)
         expect($("h1").text()).to.equal("Two")
     })
     
-    test("Can render prerendered route", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/one"))
+    testPrerenderHybridBase("Can render prerendered route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/one"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -145,8 +106,8 @@ describe("hybrid rendering - with base", () => {
         expect($("h1").text()).to.equal("One")
     })
     
-    test("Can render prerendered route with redirect and query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/one?foo=bar"))
+    testPrerenderHybridBase("Can render prerendered route with redirect and query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/one?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -154,8 +115,8 @@ describe("hybrid rendering - with base", () => {
         expect($("h1").text()).to.equal("One")
     })
     
-    test("Can render prerendered route with query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/one/?foo=bar"))
+    testPrerenderHybridBase("Can render prerendered route with query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/one/?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -163,30 +124,16 @@ describe("hybrid rendering - with base", () => {
         expect($("h1").text()).to.equal("One")
     })
     
-    test("Omitting the trailing slash results in a redirect that includes the base", async () => {
-        const res = await server.fetch(new Request("http://example.com/some-base/one"))
+    testPrerenderHybridBase("Omitting the trailing slash results in a redirect that includes the base", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/some-base/one"))
         expect(res.status).to.equal(301)
         expect(res.headers.get("location")).to.equal("/some-base/one/")
     })
 })
 
 describe("hybrid rendering - without base", async () => {
-    let server: Hono
-    
-    beforeAll(async () => {
-        process.env.PRERENDER = "false"
-        const fixture = await build("./fixtures/hono/prerender/", {
-            output: "hybrid"
-        })
-        process.env.ASTRO_HONO_AUTOSTART = "disabled"
-        const exports = await import(fixture.resolve("server/entry.mjs")) as Exports
-        const hono = new Hono
-        hono.use("*", exports.handler)
-        server = hono
-    })
-    
-    test("can render SSR route", async () => {
-        const res = await server.fetch(new Request("http://example.com/two"))
+    testPrerenderHybrid("can render SSR route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/two"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -194,8 +141,8 @@ describe("hybrid rendering - without base", async () => {
         expect($("h1").text()).to.equal("Two")
     })
     
-    test("can render prerendered route", async () => {
-        const res = await server.fetch(new Request("http://example.com/one"))
+    testPrerenderHybrid("can render prerendered route", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/one"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -203,8 +150,8 @@ describe("hybrid rendering - without base", async () => {
         expect($("h1").text()).to.equal("One")
     })
     
-    test("can render prerendered route with redirect and query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/one?foo=bar"))
+    testPrerenderHybrid("can render prerendered route with redirect and query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/one?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
@@ -212,8 +159,8 @@ describe("hybrid rendering - without base", async () => {
         expect($("h1").text()).to.equal("One")
     })
     
-    test("Can render prerendered route with query params", async () => {
-        const res = await server.fetch(new Request("http://example.com/one/?foo=bar"))
+    testPrerenderHybrid("Can render prerendered route with query params", async ({ cheerio, expect, hono }) => {
+        const res = await hono.fetch(new Request("http://example.com/one/?foo=bar"))
         const html = await res.text()
         const $ = cheerio.load(html)
         
