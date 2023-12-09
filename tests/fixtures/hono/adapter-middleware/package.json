@@ -1,0 +1,8 @@
+{
+  "name": "@test/hono-middleware",
+  "private": true,
+  "dependencies": {
+    "astro": "4",
+    "astro-hono": "workspace:*"
+  }
+}

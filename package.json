@@ -3,7 +3,7 @@
     "private": "true",
     "scripts": {
         "check": "tsc",
-        "test" : "vitest --run --threads false"
+        "test": "vitest --run --threads false"
     },
     "workspaces": [
         "packages/*"
@@ -12,7 +12,10 @@
     "devDependencies": {
         "@changesets/changelog-github": "0.5",
         "@changesets/cli": "2",
+        "@hono/node-server": "1",
         "astro": "4",
+        "cheerio": "1.0.0-rc.12",
+        "hono": "3",
         "typescript": "5.3",
         "vitest": "0.34"
     }
