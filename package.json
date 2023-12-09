@@ -9,14 +9,6 @@
         "packages/*"
     ],
     "packageManager": "pnpm@8.6.12",
-    "//": "vite-plugin-solid's peer dependency rule is outdated",
-    "pnpm": {
-        "peerDependencyRules": {
-            "allowedVersions": {
-                "vite": "5"
-            }
-        }
-    },
     "devDependencies": {
         "@changesets/changelog-github": "0.5",
         "@changesets/cli": "2",

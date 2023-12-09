@@ -1,9 +1,9 @@
 {
-  "name": "@test/adds-to-head",
-  "private": true,
-  "dependencies": {
-    "astro": "4",
-    "astro-adds-to-head": "workspace:*",
-    "@astrojs/mdx": "2"
-  }
+    "name": "@test/adds-to-head",
+    "private": true,
+    "dependencies": {
+        "astro": "4",
+        "astro-adds-to-head": "workspace:*",
+        "@astrojs/mdx": "2"
+    }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "@test/prerender-patterns",
-  "private": true,
-  "dependencies": {
-    "astro": "4",
-    "astro-prerender-patterns": "workspace:*"
-  }
+    "name": "@test/prerender-patterns",
+    "private": true,
+    "dependencies": {
+        "astro": "4",
+        "astro-prerender-patterns": "workspace:*"
+    }
 }

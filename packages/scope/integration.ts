@@ -1,11 +1,11 @@
 import fs from "node:fs"
 import { cachedCompilation } from "./node_modules/astro/dist/core/compile/cache.js"
 import { parseAstroRequest } from "./node_modules/astro/dist/vite-plugin-astro/query.js"
-import type { AstroConfig, AstroIntegration } from "astro"
+import type { AstroIntegration } from "astro"
 
 interface Options {}
 
-export default function (options: Partial<Options> = {}): AstroIntegration {
+export default function (_: Partial<Options> = {}): AstroIntegration {
     return {
         name: "astro-scope",
         hooks: {
@@ -35,9 +35,10 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
                                 
                                 const result = await cachedCompilation({
                                     astroConfig: config,
-                                    viteConfig: config.vite,
+                                    viteConfig: {} as any,
                                     filename,
-                                    source: fs.readFileSync(filename, "utf-8")
+                                    source: fs.readFileSync(filename, "utf-8"),
+                                    preferences: {} as any
                                 })
                                 
                                 // @ts-expect-error what?!

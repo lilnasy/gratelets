@@ -1,41 +1,41 @@
 {
-  "name": "astro-emotion",
-  "version": "1.0.1",
-  "description": "Use Emotion CSS to style your Astro site.",
-  "author": "Arsh",
-  "license": "Public Domain",
-  "keywords": [
-    "withastro",
-    "astro-component"
-  ],
-  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/emotion",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lilnasy/gratelets",
-    "directory": "packages/emotion"
-  },
-  "files": [
-    "integration.ts",
-    "ast-scanner.ts",
-    "client.d.ts"
-  ],
-  "exports": {
-    ".": "./integration.ts",
-    "./client": {
-      "types": "./client.d.ts"
+    "name": "astro-emotion",
+    "version": "1.0.1",
+    "description": "Use Emotion CSS to style your Astro site.",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+        "withastro",
+        "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/emotion",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/emotion"
+    },
+    "files": [
+        "integration.ts",
+        "ast-scanner.ts",
+        "client.d.ts"
+    ],
+    "exports": {
+        ".": "./integration.ts",
+        "./client": {
+            "types": "./client.d.ts"
+        }
+    },
+    "scripts": {
+        "test": "pnpm -w test tests/emotion.dev.test.ts tests/emotion.build.test.ts"
+    },
+    "type": "module",
+    "dependencies": {
+        "@emotion/css": "11",
+        "acorn-walk": "8",
+        "magic-string": "0.30"
+    },
+    "devDependencies": {
+        "@types/node": "20",
+        "astro": "4"
     }
-  },
-  "scripts": {
-    "test": "pnpm -w test tests/emotion.dev.test.ts tests/emotion.build.test.ts"
-  },
-  "type": "module",
-  "dependencies": {
-    "@emotion/css": "11",
-    "acorn-walk": "8",
-    "magic-string": "0.30"
-  },
-  "devDependencies": {
-    "@types/node": "20",
-    "astro": "4"
-  }
 }

@@ -1,22 +1,28 @@
 import { fileURLToPath } from "node:url"
+import { join } from "node:path"
 import { readFileSync, existsSync } from "node:fs"
 import * as Astro from "astro"
+
+export interface BuildFixture {
+    resolve(path: string): string
+    readTextFile(path: string): string
+    fileExists(path: string): boolean
+}
+
+export async function build(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig): Promise<BuildFixture> {
+    await command("build", relativeRootPath, options)
+    const resolve: BuildFixture["resolve"] = path => join(fileURLToPath(import.meta.url), "..", relativeRootPath, "dist", path)
+    return {
+        resolve,
+        readTextFile: path => readFileSync(resolve(path), "utf8"),
+        fileExists: path => existsSync(resolve(path))
+    }
+}
 
 export interface DevServer {
     address: { address: string, port: number }
     stop(): Promise<void>
     fetch(path: string): Promise<string>
-}
-
-export interface BuildFixture {
-    readTextFile(path: string): string
-}
-
-export async function build(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig): Promise<BuildFixture> {
-    await command("build", relativeRootPath, options)
-    return {
-        readTextFile: path => readTextFile(`${relativeRootPath}/dist${path}`)
-    }
 }
 
 export async function dev(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig): Promise<DevServer> {
@@ -33,7 +39,7 @@ async function command<Command extends "dev" | "build">(
     relativeRootPath: string,
     options?: Astro.AstroInlineConfig
 ) {
-    const root = resolve(relativeRootPath)
+    const root = fileURLToPath(new URL(relativeRootPath, import.meta.url))
     return await Astro[command]({
         root,
         logLevel: "silent",
@@ -79,16 +85,4 @@ export const testAdapter: Astro.AstroIntegration = {
             })
         }
     }
-}
-
-export function readTextFile(path: string): string {
-    return readFileSync(resolve(path), "utf8").toString()
-}
-
-export function fileExists(path: string): boolean {
-    return existsSync(resolve(path))
-}
-
-function resolve(relativePath: string) {
-    return fileURLToPath(new URL(relativePath, import.meta.url))
 }

@@ -1,8 +1,8 @@
 {
-  "name": "@test/scope",
-  "private": true,
-  "dependencies": {
-    "astro": "4",
-    "astro-scope": "workspace:*"
-  }
+    "name": "@test/scope",
+    "private": true,
+    "dependencies": {
+        "astro": "4",
+        "astro-scope": "workspace:*"
+    }
 }
