@@ -1,10 +1,8 @@
 name: CI
 
 on:
+  workflow_call:
   workflow_dispatch:
-  push:
-    branches:
-      - main
   merge_group:
   pull_request:
     paths-ignore:
@@ -21,34 +19,42 @@ env:
   ASTRO_TELEMETRY_DISABLED: true
 
 jobs:
-  test:
-    name: "Test: ${{ matrix.os }} (node@${{ matrix.NODE_VERSION }})"
-    runs-on: ${{ matrix.os }}
+  prelim:
+    name: "Linux - Node 18"
+    uses: ./.github/workflows/test.yml
+    with:
+      node: 18
+      os: ubuntu-latest
+  Linux:
+    name: "Linux - Node ${{ matrix.NODE_VERSION }}"
+    needs: prelim
+    uses: ./.github/workflows/test.yml
+    with:
+      node: ${{ matrix.NODE_VERSION }}
+      os: ubuntu-latest
     strategy:
       matrix:
-        OS: [ubuntu-latest, macos-latest, windows-latest]
+        NODE_VERSION: [20, 21]
+      fail-fast: false
+  Windows:
+    name: "Windows - Node ${{ matrix.NODE_VERSION }}"
+    needs: prelim
+    uses: ./.github/workflows/test.yml
+    with:
+      node: ${{ matrix.NODE_VERSION }}
+      os: windows-latest
+    strategy:
+      matrix:
         NODE_VERSION: [18, 20, 21]
       fail-fast: false
-    env:
-      NODE_VERSION: ${{ matrix.NODE_VERSION }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v2
-      
-      - name: Setup node@${{ matrix.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.NODE_VERSION }}
-          cache: "pnpm"
-      
-      - name: Install dependencies
-        run: pnpm install
-            
-      - name: Check
-        run: pnpm run check
-      
-      - name: Test
-        run: pnpm run test
+  macOS:
+    name: "macOS - Node ${{ matrix.NODE_VERSION }}"
+    needs: prelim
+    uses: ./.github/workflows/test.yml
+    with:
+      node: ${{ matrix.NODE_VERSION }}
+      os: macos-latest
+    strategy:
+      matrix:
+        NODE_VERSION: [18, 20, 21]
+      fail-fast: false

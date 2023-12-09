@@ -6,8 +6,11 @@ on:
       - main
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
   changelog:
     name: Changelog PR or Release
+    needs: ci
     if: ${{ github.repository_owner == 'lilnasy' }}
     runs-on: ubuntu-latest
     permissions:

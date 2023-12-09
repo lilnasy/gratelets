@@ -3,7 +3,7 @@
     "private": "true",
     "scripts": {
         "check": "tsc",
-        "test": "vitest --run --threads false"
+        "test": "vitest --run --threads false --bail 1"
     },
     "workspaces": [
         "packages/*"
