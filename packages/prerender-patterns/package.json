@@ -1,31 +1,31 @@
 {
-  "name": "astro-prerender-patterns",
-  "version": "1.0.0",
-  "description": "Control rendering modes for all pages and endpoints in your Astro project right from the configuration.",
-  "author": "Arsh",
-  "license": "Public Domain",
-  "keywords": [
-    "withastro",
-    "astro-component"
-  ],
-  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/prerender-patterns",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lilnasy/gratelets",
-    "directory": "packages/prerender-patterns"
-  },
-  "files": [
-    "integration.ts"
-  ],
-  "exports": {
-    ".": "./integration.ts"
-  },
-  "scripts": {
-    "test": "pnpm -w test tests/prerender-patterns.test.ts"
-  },
-  "type": "module",
-  "devDependencies": {
-    "@types/node": "20",
-    "astro": "4"
-  }
+    "name": "astro-prerender-patterns",
+    "version": "1.0.0",
+    "description": "Control rendering modes for all pages and endpoints in your Astro project right from the configuration.",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+        "withastro",
+        "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/prerender-patterns",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/prerender-patterns"
+    },
+    "files": [
+        "integration.ts"
+    ],
+    "exports": {
+        ".": "./integration.ts"
+    },
+    "scripts": {
+        "test": "pnpm -w test tests/prerender-patterns.test.ts"
+    },
+    "type": "module",
+    "devDependencies": {
+        "@types/node": "20",
+        "astro": "4"
+    }
 }

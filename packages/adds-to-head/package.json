@@ -1,31 +1,31 @@
 {
-  "name": "astro-adds-to-head",
-  "version": "1.0.0",
-  "description": "Fix a corner case in content collections rendering.",
-  "author": "Arsh",
-  "license": "Public Domain",
-  "keywords": [
-    "withastro",
-    "astro-component"
-  ],
-  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/adds-to-head",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lilnasy/gratelets",
-    "directory": "packages/adds-to-head"
-  },
-  "files": [
-    "integration.ts"
-  ],
-  "exports": {
-    ".": "./integration.ts"
-  },
-  "scripts": {
-    "test": "pnpm -w test tests/adds-to-head.test.ts"
-  },
-  "type": "module",
-  "devDependencies": {
-    "@types/node": "20",
-    "astro": "4"
-  }
+    "name": "astro-adds-to-head",
+    "version": "1.0.0",
+    "description": "Fix a corner case in content collections rendering.",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+        "withastro",
+        "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/adds-to-head",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/adds-to-head"
+    },
+    "files": [
+        "integration.ts"
+    ],
+    "exports": {
+        ".": "./integration.ts"
+    },
+    "scripts": {
+        "test": "pnpm -w test tests/adds-to-head.test.ts"
+    },
+    "type": "module",
+    "devDependencies": {
+        "@types/node": "20",
+        "astro": "4"
+    }
 }

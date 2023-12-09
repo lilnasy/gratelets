@@ -1,11 +1,11 @@
 {
-  "name": "@test/global",
-  "private": true,
-  "dependencies": {
-    "@astrojs/mdx": "2",
-    "@astrojs/preact": "3",
-    "astro": "4",
-    "astro-global": "workspace:*",
-    "preact": "10"
-  }
+    "name": "@test/global",
+    "private": true,
+    "dependencies": {
+        "@astrojs/mdx": "2",
+        "@astrojs/preact": "3",
+        "astro": "4",
+        "astro-global": "workspace:*",
+        "preact": "10"
+    }
 }
