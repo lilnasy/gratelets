@@ -1,6 +1,6 @@
 {
     "name": "astro-dynamic-import",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Let your CMS decide which components to import.",
     "author": "Arsh",
     "license": "Public Domain",
@@ -15,7 +15,9 @@
         "directory": "packages/dynamic-import"
     },
     "files": [
-        "integration.ts"
+        "integration.ts",
+        "runtime",
+        "client.d.ts"
     ],
     "exports": {
         ".": "./integration.ts",
