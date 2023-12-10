@@ -8,12 +8,12 @@ interface Options {}
 
 export default function (_?: Options): AstroIntegration {
     return {
-        name: "adds-dynamic-import",
+        name: "astro-dynamic-import",
         hooks: {
             "astro:config:setup" ({ config, updateConfig, logger }) {
                 const srcDirName = path.relative(url.fileURLToPath(config.root), url.fileURLToPath(config.srcDir)).replaceAll("\\", "/")
                 updateConfig({ vite: { plugins: [{
-                    name: "adds-dynamic-import/vite",
+                    name: "astro-dynamic-import/vite",
                     resolveId(source) {
                         if (source === "astro:import") { return this.resolve("astro-dynamic-import/runtime/virtual-module.ts") }
                         if (source === "astro-dynamic-import:internal") return source

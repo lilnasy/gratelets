@@ -27,7 +27,7 @@ Next, apply this integration to your `astro.config.*` file using the `integratio
 ```diff lang="js" "dynamicImport()"
   // astro.config.mjs
   import { defineConfig } from 'astro/config';
-+ import dynamicImport() from 'astro-dynamic-import';
++ import dynamicImport from 'astro-dynamic-import';
 
   export default defineConfig({
     // ...
