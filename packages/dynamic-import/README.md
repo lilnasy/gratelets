@@ -1,4 +1,4 @@
-# astro-dynamic-import 👩‍🎤
+# astro-dynamic-import 🌊
 
 This **[Astro integration][astro-integration]** lets you import components dynamically, allowing you to pick and choose which components add their scripts and styles to the page. Now you can let a CMS or DB query decide your components without astro sending JS and CSS for all of them!
 
