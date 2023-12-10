@@ -33,6 +33,15 @@ importers:
         specifier: '4'
         version: 4.0.3(@types/node@20.10.4)(typescript@5.3.3)
 
+  packages/dynamic-import:
+    devDependencies:
+      '@types/node':
+        specifier: '20'
+        version: 20.10.4
+      astro:
+        specifier: '4'
+        version: 4.0.3(@types/node@20.10.4)(typescript@5.3.3)
+
   packages/emotion:
     dependencies:
       '@emotion/css':
@@ -115,6 +124,15 @@ importers:
       astro-adds-to-head:
         specifier: workspace:*
         version: link:../../../packages/adds-to-head
+
+  tests/fixtures/dynamic-import:
+    dependencies:
+      astro:
+        specifier: '4'
+        version: 4.0.3(@types/node@20.10.4)(typescript@5.3.3)
+      astro-dynamic-import:
+        specifier: workspace:*
+        version: link:../../../packages/dynamic-import
 
   tests/fixtures/emotion:
     dependencies:
