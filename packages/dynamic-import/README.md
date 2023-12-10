@@ -52,7 +52,7 @@ const initial = 3
 
 The `dynamic` function takes the path to a component relative to your source directory (`"/src"` by default). It returns a promise that resolves to the astro component.
 
-Note that only `.astro` components can be imported. The components must be located in the `src/components` folder.
+Note that only `.astro` components can be imported. The components must be located in the `src/components` folder. The imported component must be used in an `.astro` file located within `src/pages` due to reasons explained [here](https://github.com/lilnasy/gratelets/tree/main/packages/adds-to-head#why-astro-adds-to-head).
 
 ## Troubleshooting
 
