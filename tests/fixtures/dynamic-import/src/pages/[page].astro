@@ -1,0 +1,21 @@
+---
+import type { GetStaticPaths } from "astro"
+import dynamic from "astro:import"
+
+interface Props {
+    component: "A" | "B"
+}
+
+export function getStaticPaths(): ReturnType<GetStaticPaths> {
+    return [
+        { params: { page: "A" }, props: { component: "A" } },
+        { params: { page: "B" }, props: { component: "B" } },
+        { params: { page: "C" }, props: { component: "in-a-folder/C" } },
+        { params: { page: "D" }, props: { component: "needs-props" } }
+    ]
+}
+
+const { component } = Astro.props
+const Component = await dynamic(`components/${component}.astro`)
+---
+<Component x={5}/>
