@@ -1,0 +1,8 @@
+---
+interface Props {
+    x: number;
+}
+const { x } = Astro.props
+if (!x) throw new Error('x is required')
+---
+{Array.from({ length: x }).map((_, i) => <div>{i}</div>)}

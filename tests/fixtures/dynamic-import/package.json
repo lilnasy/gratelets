@@ -1,0 +1,8 @@
+{
+    "name": "@test/dynamic-import",
+    "private": true,
+    "dependencies": {
+        "astro": "4",
+        "astro-dynamic-import": "workspace:*"
+    }
+}
