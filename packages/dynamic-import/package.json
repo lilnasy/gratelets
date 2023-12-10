@@ -1,0 +1,38 @@
+{
+    "name": "astro-dynamic-import",
+    "version": "0.1.0",
+    "description": "",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+        "withastro",
+        "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/dynamic-import",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/dynamic-import"
+    },
+    "files": [
+        "integration.ts"
+    ],
+    "exports": {
+        ".": "./integration.ts",
+        "./runtime/*": "./runtime/*",
+        "./client": {
+            "types": "./client.d.ts"
+        }
+    },
+    "scripts": {
+        "test": "pnpm -w test tests/dynamic-import.test.ts"
+    },
+    "type": "module",
+    "peerDependencies": {
+        "astro": "4"
+    },
+    "devDependencies": {
+        "@types/node": "20",
+        "astro": "4"
+    }
+}
