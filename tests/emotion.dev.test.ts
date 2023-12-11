@@ -1,10 +1,11 @@
-import { describe, beforeAll, test, expect } from "vitest"
+import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer } from "./utils.ts"
 
 const stylesheetRegex = /(?<=<style data-vite-dev-id="[^"]*">)[\s\S]*(?=<\/style>)/
 
 let server: DevServer
 beforeAll(async () => { server = await dev("./fixtures/emotion") })
+afterAll(async () => { await server.stop() })
 
 describe("basics", () => {
     test("hoists scoped styles", async () => {
