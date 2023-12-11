@@ -63,7 +63,7 @@ describe("output:server - with base", () => {
         const $ = cheerio.load(html)
         // length will be 0 if the stylesheet does not get included
         expect($("style")).to.have.a.lengthOf(1)
-        server.close()
+        await new Promise<void>((resolve,reject) => server.close(err => err ? reject(err) : resolve()))
     })
 })
 
