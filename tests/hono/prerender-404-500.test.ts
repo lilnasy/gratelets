@@ -1,13 +1,13 @@
 import { describe } from "vitest"
 import { testFactory } from "./utils.ts"
 
-const testPrerenderServer     = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.dev/" })
-const testPrerenderServerBase = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.net/", base: "/some-base" })
-const testPrerenderHybrid     = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.com/", output: "hybrid" })
-const testPrerenderHybridBase = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.org/", output: "hybrid", base: "/some-base" })
+const testServer     = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.dev/" })
+const testServerBase = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.net/", base: "/some-base" })
+const testHybrid     = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.com/", output: "hybrid" })
+const testHybridBase = testFactory("./fixtures/hono/prerender-404-500/", { site: "https://test.org/", output: "hybrid", base: "/some-base" })
 
-describe("output server - with base", () => {
-    testPrerenderServerBase("can render SSR route", async ({ cheerio, expect, hono }) => {
+describe("output:server - with base", () => {
+    testServerBase("can serve on-demand rendered route", async ({ cheerio, expect, hono }) => {
         const response = await hono.fetch(new Request("http://example.com/some-base/static"))
         const html = await response.text()
         const $ = cheerio.load(html)
@@ -15,7 +15,7 @@ describe("output server - with base", () => {
         expect($("h1").text()).to.equal("Hello world!")
     })
     
-    testPrerenderServerBase("can handle prerendered 404", async ({ cheerio, expect, hono }) => {
+    testServerBase("can serve prerendered 404", async ({ cheerio, expect, hono }) => {
         const url = "http://example.com/some-base/missing"
         const res1 = await hono.fetch(new Request(url))
         const res2 = await hono.fetch(new Request(url))
@@ -37,35 +37,38 @@ describe("output server - with base", () => {
         expect($("body").text()).to.equal("Page does not exist")
     })
     
-    testPrerenderServerBase("can handle prerendered 500 called indirectly", async ({ cheerio, expect, hono }) => {
-        const url = "http://example.com/some-base/fivehundred"
-        const response1 = await hono.fetch(new Request(url))
-        const response2 = await hono.fetch(new Request(url))
-        const response3 = await hono.fetch(new Request(url))
+    // this test can't be mocked because astro code makes a fetch request to the server running it
+    testServerBase("can serve prerendered 500 called indirectly", async ({ server, expect }) => {
+        const url = "http://localhost:4321/some-base/fivehundred"
+        const response1 = await fetch(url)
+        const response2 = await fetch(url)
+        const response3 = await fetch(url)
         
         expect(response1.status).to.equal(500)
         
         const html1 = await response1.text()
         const html2 = await response2.text()
         const html3 = await response3.text()
-        
+
         expect(html1).to.contain("Something went wrong")
         
         expect(html1).to.equal(html2)
         expect(html2).to.equal(html3)
     })
     
-    testPrerenderServerBase("prerendered 500 page includes expected styles", async ({ cheerio, expect, hono }) => {
-        const response = await hono.fetch(new Request("http://example.com/some-base/fivehundred"))
+    // this test can't be mocked because astro code makes a fetch request to the server running it
+    testServerBase("prerendered 500 page includes expected styles", async ({ server, cheerio, expect }) => {
+        const response = await fetch("http://localhost:4321/some-base/fivehundred")
         const html = await response.text()
         const $ = cheerio.load(html)
         // length will be 0 if the stylesheet does not get included
         expect($("style")).to.have.a.lengthOf(1)
+        server.close()
     })
 })
 
-describe("output server - without base", async () => {
-    testPrerenderServer("can render SSR route", async ({ cheerio, expect, hono }) => {
+describe("output:server - without base", () => {
+    testServer("can serve on-demand rendered route", async ({ cheerio, expect, hono }) => {
         const response = await hono.fetch(new Request("http://example.com/static"))
         const html = await response.text()
         const $ = cheerio.load(html)
@@ -73,7 +76,7 @@ describe("output server - without base", async () => {
         expect($("h1").text()).to.equal("Hello world!")
     })
     
-    testPrerenderServer("can handle prerendered 404", async ({ cheerio, expect, hono }) => {
+    testServer("can serve prerendered 404", async ({ cheerio, expect, hono }) => {
         const url = "http://example.com/missing"
         const res1 = await hono.fetch(new Request(url))
         const res2 = await hono.fetch(new Request(url))
@@ -96,8 +99,8 @@ describe("output server - without base", async () => {
     })
 })
 
-describe("output hybrid - with base", () => {
-    testPrerenderHybridBase("can render SSR route", async ({ cheerio, expect, hono }) => {
+describe("output:hybrid - with base", () => {
+    testHybridBase("can serve on-demand rendered route", async ({ cheerio, expect, hono }) => {
         const response = await hono.fetch(new Request("http://example.com/some-base/static"))
         const html = await response.text()
         const $ = cheerio.load(html)
@@ -106,7 +109,7 @@ describe("output hybrid - with base", () => {
         expect($("h1").text()).to.equal("Hello world!")
     })
     
-    testPrerenderHybridBase("can handle prerendered 404", async ({ cheerio, expect, hono }) => {
+    testHybridBase("can serve prerendered 404", async ({ cheerio, expect, hono }) => {
         const url = "http://example.com/some-base/missing"
         const res1 = await hono.fetch(new Request(url))
         const res2 = await hono.fetch(new Request(url))
@@ -129,8 +132,8 @@ describe("output hybrid - with base", () => {
     })
 })
 
-describe("output hybrid - without base", async () => {
-    testPrerenderHybrid("can render SSR route", async ({ cheerio, expect, hono }) => {
+describe("output:hybrid - without base", () => {
+    testHybrid("can serve on-demand rendered route", async ({ cheerio, expect, hono }) => {
         const response = await hono.fetch(new Request("http://example.com/static"))
         const html = await response.text()
         const $ = cheerio.load(html)
@@ -139,7 +142,7 @@ describe("output hybrid - without base", async () => {
         expect($("h1").text()).to.equal("Hello world!")
     })
 
-    testPrerenderHybrid("can handle prerendered 404", async ({ cheerio, expect, hono }) => {
+    testHybrid("can serve prerendered 404", async ({ cheerio, expect, hono }) => {
         const url = "http://example.com/missing"
         const res1 = await hono.fetch(new Request(url))
         const res2 = await hono.fetch(new Request(url))

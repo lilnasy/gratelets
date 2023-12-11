@@ -19,6 +19,7 @@ for (const weirdUrl of weirdURLs) {
         const stillWork = await fetch("http://localhost:4321/")
         const text = await stillWork.text()
         expect(text).to.equal("<!DOCTYPE html>Hello!")
-        server.close()
     })
 }
+
+test("close server", async ({ server }) => { server.close() })

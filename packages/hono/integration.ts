@@ -38,8 +38,11 @@ export default function (options?: Partial<Options>): AstroIntegration {
                         endpoint: config.image.endpoint ?? "astro/assets/endpoint/node",
                     },
                     vite: {
+                        define: {
+                            "import.meta.env.ASTRO_HONO_STANDALONE": options?.mode === "middleware" ? "false" : "true"
+                        },
                         ssr: {
-                            noExternal: ["astro-hono", "hono", "@hono/node-server"]
+                            noExternal: ["astro-hono"]
                         }
                     }
                 })

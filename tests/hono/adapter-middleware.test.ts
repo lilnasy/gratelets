@@ -12,7 +12,7 @@ test("standalone mode - 404 page", async ({ cheerio, expect, server }) => {
     server.close()
 })
 
-test("middleware mode - SSR page", async ({ cheerio, expect, hono }) => {
+test("middleware mode - on-demand rendered page", async ({ cheerio, expect, hono }) => {
     const res = await hono.fetch(new Request("http://example.com/ssr"))
     expect(res.status).to.equal(200)
     const html = await res.text()
