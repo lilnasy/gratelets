@@ -2,7 +2,9 @@
 Forked from https://github.com/honojs/node-server/blob/3575d60/src/serve-static.ts
 to add support for an absolute path as "root" and cache-control headers.
 
-In total, 4 lines are changed:
+In total, 6 lines are changed:
+- let path = getFilePath({
++ const path = ((globalThis as any).process.platform === "win32" ? "" : "/") + getFilePath({
 - path = `./${path}`
 + c.header("Cache-Control", "public, max-age=31536000, immutable")
 + c.header("Cache-Control", "public, max-age=31536000, immutable")
@@ -71,7 +73,7 @@ export const serveStatic = (options: ServeStaticOptions = { root: "" }): Middlew
         const url = new URL(c.req.url)
 
         const filename = options.path ?? decodeURIComponent(url.pathname)
-        const path = getFilePath({
+        const path = ((globalThis as any).process.platform === "win32" ? "" : "/") + getFilePath({
             filename: options.rewriteRequestPath ? options.rewriteRequestPath(filename) : filename,
             root: options.root,
             defaultDocument: options.index ?? "index.html",
