@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "astro": "4",
+    "sharp": "0.33",
     "astro-hono": "workspace:*"
   }
 }

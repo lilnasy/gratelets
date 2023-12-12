@@ -10,6 +10,7 @@ interface TestExtension {
     exports: Exports
     hono: Hono
     server: Server
+    close: (server: Server) => Promise<void>
 }
 
 type FixturePath = Parameters<typeof build>[0]
@@ -41,6 +42,9 @@ export function testFactory(fixturePath: FixturePath, options?: FixtureOptions &
         async server({ exports }, use) {
             server ??= exports.startServer!()
             await use(server)
+        },
+        async close({}, use) {
+            await use(server => new Promise<void>((resolve,reject) => server.close(err => err ? reject(err) : resolve())))
         }
     })
     return test
