@@ -57,13 +57,13 @@ describe("output:server - with base", () => {
     })
     
     // this test can't be mocked because astro code makes a fetch request to the server running it
-    testServerBase("prerendered 500 page includes expected styles", async ({ server, cheerio, expect }) => {
+    testServerBase("prerendered 500 page includes expected styles", async ({ close, server, cheerio, expect }) => {
         const response = await fetch("http://localhost:4321/some-base/fivehundred")
         const html = await response.text()
         const $ = cheerio.load(html)
         // length will be 0 if the stylesheet does not get included
         expect($("style")).to.have.a.lengthOf(1)
-        await new Promise<void>((resolve,reject) => server.close(err => err ? reject(err) : resolve()))
+        await close(server)
     })
 })
 

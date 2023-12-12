@@ -22,4 +22,4 @@ for (const weirdUrl of weirdURLs) {
     })
 }
 
-test("close server", async ({ server }) => { server.close() })
+test("close server", async ({ close, server }) => { await close(server) })
