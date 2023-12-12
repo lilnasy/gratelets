@@ -54,11 +54,10 @@ test("can post large binary data", async ({ expect, hono }) => {
     expect(new Uint8Array(arrayBuffer)).to.deep.equal(expectedDigest)
 })
 
-test.skip("can bail on streaming", async ({ expect, hono }) => {
+test("can bail on streaming", async ({ expect, hono }) => {
     const locals = { cancelledByTheServer: false }
     const request = new Request("https://example.com/streaming")
-    Reflect.set(request, Symbol.for("astro.locals"), locals)
-    const response = await hono.fetch(request)
+    const response = await hono.fetch(request, { locals })
     await response.body?.getReader().cancel()
     expect(locals).to.deep.include({ cancelledByTheServer: true })
 })

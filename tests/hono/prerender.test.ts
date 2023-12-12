@@ -43,6 +43,7 @@ describe("output:server - with base", () => {
         expect($("h1").text()).to.equal("Two")
     })
     
+    // https://github.com/withastro/astro/issues/7026 does not affect this adapter negatively
     testServerBase.skip("omitting the trailing slash results in a redirect that includes the base", async ({ expect, hono }) => {
         const res = await hono.fetch(new Request("http://example.com/some-base/two"))
         expect(res.status).to.equal(301)
@@ -124,6 +125,7 @@ describe("output:hybrid - with base", () => {
         expect($("h1").text()).to.equal("One")
     })
     
+    // https://github.com/withastro/astro/issues/7026 does not affect this adapter negatively
     testHybridBase.skip("omitting the trailing slash results in a redirect that includes the base", async ({ expect, hono }) => {
         const res = await hono.fetch(new Request("http://example.com/some-base/one"))
         expect(res.status).to.equal(301)
