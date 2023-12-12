@@ -1,4 +1,4 @@
-import { describe, beforeAll, test, expect } from "vitest"
+import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { build, dev, type BuildFixture, type DevServer } from "./utils.ts"
 
 const buildScriptRegex = /(?<=<script src=")[\-/_.?&#;=a-zA-Z0-9]*(?=" type="module"><\/script>)/
@@ -72,9 +72,8 @@ describe("dev", () => {
     let A: string
     let B: string
     
-    beforeAll(async () => {
-        server = await dev("./fixtures/dynamic-import")
-    })
+    beforeAll(async () => { server = await dev("./fixtures/dynamic-import") })
+    afterAll(async () => { await server.stop() })
     
     test("Page A includes styles and scripts from component A", async () => {
         A = await server.fetch("/A")

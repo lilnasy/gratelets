@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  workflow_call:
+    inputs:
+      node:
+        description: "Node.js version"
+        type: string
+        default: "18"
+      os:
+        description: "Operating system"
+        type: string
+        default: ubuntu-latest
+  workflow_dispatch:
+    inputs:
+      node:
+        description: "Node.js version"
+        type: string
+        default: "18"
+      os:
+        description: "Operating system"
+        default: ubuntu-latest
+        type: choice
+        options: 
+          - ubuntu-latest
+          - ubuntu-22.04
+          - ubuntu-20.04
+          - macos-latest
+          - macos-13
+          - macos-12
+          - macos-11
+          - windows-latest
+          - windows-2022
+          - windows-2019
+
+env:
+  ASTRO_TELEMETRY_DISABLED: true
+
+jobs:
+  test:
+    name: "Test"
+    runs-on: ${{ inputs.os }}
+    env:
+      NODE_VERSION: ${{ inputs.node }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+      
+      - name: Setup Node ${{ inputs.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ inputs.node }}
+          cache: "pnpm"
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Check
+        run: pnpm run check
+      
+      - name: Test
+        run: pnpm run test

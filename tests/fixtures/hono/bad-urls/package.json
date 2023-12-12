@@ -1,0 +1,8 @@
+{
+  "name": "@test/hono-bad-urls",
+  "private": true,
+  "dependencies": {
+    "astro": "4",
+    "astro-hono": "workspace:*"
+  }
+}

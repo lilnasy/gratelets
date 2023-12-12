@@ -1,0 +1,8 @@
+{
+  "name": "@test/locals",
+  "private": true,
+  "dependencies": {
+    "astro": "4",
+    "astro-hono": "workspace:*"
+  }
+}

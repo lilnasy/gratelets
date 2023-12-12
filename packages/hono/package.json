@@ -1,0 +1,36 @@
+{
+  "name": "astro-hono",
+  "version": "0",
+  "description": "Deploy your Astro app to a Node.js server powered by Hono.",
+  "author": "Arsh",
+  "license": "Public Domain",
+  "keywords": [
+    "withastro",
+    "astro-component"
+  ],
+  "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/hono",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lilnasy/gratelets",
+    "directory": "packages/hono"
+  },
+  "files": [
+    "integration.ts",
+    "runtime"
+  ],
+  "exports": {
+    ".": "./integration.ts",
+    "./runtime/*": "./runtime/*"
+  },
+  "scripts": {
+    "test": "pnpm -w test tests/hono"
+  },
+  "type": "module",
+  "dependencies": {
+    "hono": "3",
+    "@hono/node-server": "1"
+  },
+  "devDependencies": {
+    "astro": "4"
+  }
+}
