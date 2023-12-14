@@ -1,0 +1,9 @@
+{
+    "name": "@test/typed-api",
+    "private": true,
+    "dependencies": {
+        "@astrojs/node": "7",
+        "astro": "4",
+        "astro-typed-api": "workspace:*"
+    }
+}
