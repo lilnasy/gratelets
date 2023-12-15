@@ -1,7 +1,8 @@
-import { test as base, test } from "vitest"
+import { test as base } from "vitest"
 import * as cheerio from "cheerio"
 import { Hono } from "hono" 
 import { build, type BuildFixture } from "../utils.ts"
+import type { AstroInlineConfig } from "astro"
 import type { Exports, Server } from "../../packages/hono/runtime/server.ts"
 
 interface TestExtension {
@@ -10,13 +11,9 @@ interface TestExtension {
     exports: Exports
     hono: Hono
     server: Server
-    close: (server: Server) => Promise<void>
 }
 
-type FixturePath = Parameters<typeof build>[0]
-type FixtureOptions = Parameters<typeof build>[1]
-
-export function testFactory(fixturePath: FixturePath, options?: FixtureOptions & { env?: Record<string, string> }) {
+export function testFactory(fixturePath: `./fixtures/hono/${string}`, options?: AstroInlineConfig & { env?: Record<string, string> }) {
     let fixture: BuildFixture
     let exports: Exports
     let server: Server
@@ -43,9 +40,6 @@ export function testFactory(fixturePath: FixturePath, options?: FixtureOptions &
             server ??= exports.startServer!()
             await use(server)
         },
-        async close({}, use) {
-            await use(server => new Promise<void>((resolve,reject) => server.close(err => err ? reject(err) : resolve())))
-        }
     })
     return test
 }

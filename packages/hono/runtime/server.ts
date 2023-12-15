@@ -55,7 +55,13 @@ function startServer(handler: Handler, options: RuntimeOptions) {
         logger.info(`Listening on http://${address.address}:${address.port}`)
     })
     server.on("close", () => logger.info("Server closed"))
-    return server
+    return Object.assign(server, {
+        destroy() {
+            return new Promise<void>((resolve, reject) => {
+                server.close(err => err ? reject(err) : resolve())
+            })
+        }
+    })
 }
 
 function middleware(manifest: SSRManifest, options: RuntimeOptions): MiddlewareHandler<{ Bindings: { locals?: {} } }> {
