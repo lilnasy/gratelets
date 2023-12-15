@@ -3,7 +3,7 @@
     "private": "true",
     "scripts": {
         "check": "tsc",
-        "test": "vitest --run --threads false --bail 1"
+        "test": "vitest --run --api.port 51204 --poolOptions.threads.singleThread --bail 1"
     },
     "workspaces": [
         "packages/*"
@@ -17,6 +17,6 @@
         "cheerio": "1.0.0-rc.12",
         "hono": "3",
         "typescript": "5.3",
-        "vitest": "0.34"
+        "vitest": "1.0.4"
     }
 }
