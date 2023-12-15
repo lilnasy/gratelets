@@ -1,7 +1,4 @@
-declare const typeLevelMetadata: unique symbol
-
-export type TypeLevelMetadata<Metadata extends { input: unknown, output: unknown }> =
-    { [typeLevelMetadata]: Metadata }
+import type { TypedHandler } from "./runtime/server.ts"
 
 export type CreateRouter<Routes extends [string, unknown][]> =
     _CreateRouter<Routes, {}>
@@ -19,7 +16,7 @@ export type Route<Filename extends string, EndpointModule> =
 
 type ClientProxy<EndpointModule> = {
     [Method in keyof EndpointModule]:
-        EndpointModule[Method] extends { [typeLevelMetadata]: { input: infer Input, output: infer Output } }
+        EndpointModule[Method] extends TypedHandler<infer Input, infer Output>
         ? { fetch(input: Input): Promise<Output> }
         : never
 }

@@ -1,69 +1,23 @@
+import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext, AstroGlobal } from "astro"
-import type { TypeLevelMetadata } from "./internal.ts"
-import { encode, decode } from "es-codec"
+import type * as z from "zod"
 
-interface TypedAPIContext extends APIContext {
-    response: AstroGlobal["response"]
-}
+export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
 
-interface TypedHandler<Input, Output> {
-    validateInput?: unknown
+export interface TypedHandler<Input, Output> {
     fetch(input: Input, context: TypedAPIContext): Promise<Output> | Output
 }
 
-export function defineApiRoute<
-    Input,
-    Output,
-    Handler extends APIRoute | TypedHandler<Input, Output>
->(handler: Handler): APIRoute & (Handler extends TypedHandler<infer I, infer O> ? TypeLevelMetadata<{ input: I, output: O }> : never) {
-    if ("fetch" in handler === false) return handler as any
-    const apiRoute: APIRoute = async ctx => {
-        let input: any
-        if (ctx.request.method === "GET") {
-            const inputParam = new URL(ctx.request.url).searchParams.get("input")
-            if (inputParam === null) return new Response("Bad Request", { status: 400 })
-            try { input = decode(stringToArrayBuffer(inputParam)) }
-            catch (error) { throw new TypedAPIError("The input for fetch handler could not be deserialized from the request.", error) }
-        } else if (ctx.request.headers.get("Content-Type") === "application/escodec") {
-            try { input = decode(await ctx.request.arrayBuffer()) }
-            catch (error) { throw new TypedAPIError("The input for fetch handler could not be deserialized from the request.", error) }
-        } else return new Response("Bad Request", { status: 400 })
-        
-        const headers = new Headers({ "Content-Type": "application/escodec" })
-        const response = { status: 200, statusText: "OK", headers }
-        
-        Object.defineProperty(response, "headers", {
-            value: headers,
-            enumerable: true,
-            writable: false
-        })
-        
-        const context: TypedAPIContext = Object.assign(ctx, { response })
-        
-        let output: any
-        try { output = await handler.fetch(input, context) }
-        catch (error) { throw new TypedAPIError("The fetch handler threw an error.", error) }
-        
-        let outputBody
-        try { outputBody = encode(output) }
-        catch (error) { throw new TypedAPIError("The output from fetch handler could not be serialized.", error) }
-        
-        return new Response(outputBody, response)
-    }
-    return apiRoute as any
+export interface ZodHandler<Schema extends z.ZodTypeAny, Output> extends TypedHandler<z.infer<Schema>, Output> {
+    schema: Schema
 }
 
-function stringToArrayBuffer(str: string) {
-    return Uint8Array.from(str, c => c.charCodeAt(0)).buffer
-}
+type Prettify<T> = { [K in keyof T]: T[K] } & {}
 
-function arrayBufferToString(buf: ArrayBuffer) {
-    return String.fromCharCode(...new Uint8Array(buf))
-}
-
-class TypedAPIError extends Error {
-    name = "TypedAPIError"
-    constructor(message: string, cause?: any) {
-        super(message, { cause })
-    }
+export function defineApiRoute<Schema extends z.ZodTypeAny, Handler extends ZodHandler<Schema, unknown>>(handler: Handler & ZodHandler<Schema, unknown>): APIRoute & Prettify<Pick<Handler, "fetch">>
+export function defineApiRoute<Handler extends TypedHandler<unknown, unknown>>(handler: Handler): APIRoute & Pick<Handler, "fetch">
+export function defineApiRoute<Handler extends APIRoute>(handler: Handler): Handler
+export function defineApiRoute(handler: any) {
+    if ("fetch" in handler === false) return handler
+    return Object.assign(createApiRoute(handler), { fetch: handler.fetch })
 }

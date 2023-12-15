@@ -20,14 +20,17 @@
     ],
     "exports": {
         ".": "./integration.ts",
+        "./types": "./types.ts",
         "./client": "./runtime/client.ts",
-        "./server": "./runtime/server.ts",
-        "./internal": "./runtime/internal.ts"
+        "./server": "./runtime/server.ts"
     },
     "scripts": {
         "test": "pnpm -w test tests/typed-api.test.ts"
     },
     "type": "module",
+    "peerDependencies": {
+        "zod": "3"
+    },
     "dependencies": {
         "es-codec": "0.5",
         "globby": "14"

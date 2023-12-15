@@ -4,6 +4,7 @@
     "dependencies": {
         "@astrojs/node": "7",
         "astro": "4",
-        "astro-typed-api": "workspace:*"
+        "astro-typed-api": "workspace:*",
+        "zod": "3"
     }
 }

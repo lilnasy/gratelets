@@ -1,7 +1,4 @@
----
----
 <script>
     import { client } from "astro-typed-api/client"
-    const x = await client.x.POST.fetch({ x: "5" })
+    const x = await client.api.x.POST.fetch({ x: "", y: 6 })
 </script>
-<div></div>

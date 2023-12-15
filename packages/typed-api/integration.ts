@@ -21,6 +21,7 @@ export default function (_?: Partial<Options>): AstroIntegration {
                         generateTypes(pagesDir, declarationFileUrl)
                     }
                 }] } })
+                updateConfig({ vite: { ssr: { noExternal: ["astro-typed-api"] } } })
             }
         }
     }
@@ -35,7 +36,7 @@ async function generateTypes(pagesDir: URL, declarationFileUrl: URL) {
         return path.relative(typesPath, path.join(pagesPath, endpoint)).replaceAll("\\", "/")
     }
     let declaration = ``
-    declaration += `type CreateRouter<Routes> = import("astro-typed-api/internal").CreateRouter<Routes>\n\n`
+    declaration += `type CreateRouter<Routes> = import("astro-typed-api/internal-types").CreateRouter<Routes>\n\n`
     declaration += `declare namespace TypedAPI {\n`
     declaration += `    interface Client extends CreateRouter<[\n`
     for (const endpoint of endpoints) {
