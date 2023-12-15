@@ -9,7 +9,7 @@ test("standalone mode - 404 page", async ({ cheerio, expect, server }) => {
     const $ = cheerio.load(html)
     const body = $("body")
     expect(body.text()).to.equal("Page does not exist")
-    server.close()
+    await server.destroy()
 })
 
 test("middleware mode - on-demand rendered page", async ({ cheerio, expect, hono }) => {
