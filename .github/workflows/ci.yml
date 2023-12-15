@@ -25,6 +25,7 @@ jobs:
     with:
       node: 18
       os: ubuntu-latest
+      check: true
   Linux:
     name: "Linux - Node ${{ matrix.NODE_VERSION }}"
     needs: prelim

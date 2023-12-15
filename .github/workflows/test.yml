@@ -4,13 +4,17 @@ on:
   workflow_call:
     inputs:
       node:
-        description: "Node.js version"
+        description: Node.js version
         type: string
         default: "18"
       os:
-        description: "Operating system"
+        description: Operating system
         type: string
         default: ubuntu-latest
+      check:
+        description: Type-check with tsc
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       node:
@@ -59,6 +63,7 @@ jobs:
         run: pnpm install
       
       - name: Check
+        if: ${{ inputs.check }}
         run: pnpm run check
       
       - name: Test
