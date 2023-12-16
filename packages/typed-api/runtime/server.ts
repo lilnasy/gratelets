@@ -1,6 +1,10 @@
+import { ZodNotInstalled, InvalidSchema, ValidationFailed } from "./error.ts"
 import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext, AstroGlobal } from "astro"
-import type * as z from "zod"
+
+type ZodTypeAny = import("zod").ZodTypeAny
+let zod: typeof import("zod") | undefined
+try { zod = await import("zod") } catch {}
 
 export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
 
@@ -8,16 +12,27 @@ export interface TypedHandler<Input, Output> {
     fetch(input: Input, context: TypedAPIContext): Promise<Output> | Output
 }
 
-export interface ZodHandler<Schema extends z.ZodTypeAny, Output> extends TypedHandler<z.infer<Schema>, Output> {
+export interface ZodHandler<Schema extends ZodTypeAny, Output> extends TypedHandler<import("zod").infer<Schema>, Output> {
     schema: Schema
 }
 
-type Prettify<T> = { [K in keyof T]: T[K] } & {}
-
-export function defineApiRoute<Schema extends z.ZodTypeAny, Handler extends ZodHandler<Schema, unknown>>(handler: Handler & ZodHandler<Schema, unknown>): APIRoute & Prettify<Pick<Handler, "fetch">>
-export function defineApiRoute<Handler extends TypedHandler<unknown, unknown>>(handler: Handler): APIRoute & Pick<Handler, "fetch">
-export function defineApiRoute<Handler extends APIRoute>(handler: Handler): Handler
+export function defineApiRoute<Schema extends ZodTypeAny, Handler extends ZodHandler<Schema, unknown>>(handler: Handler & ZodHandler<Schema, unknown>): APIRoute & Handler
+export function defineApiRoute<Handler extends TypedHandler<unknown, unknown>>(handler: Handler): APIRoute & Handler
+export function defineApiRoute<SimpleRoute extends APIRoute>(handler: SimpleRoute): SimpleRoute
 export function defineApiRoute(handler: any) {
-    if ("fetch" in handler === false) return handler
-    return Object.assign(createApiRoute(handler), { fetch: handler.fetch })
+    if ("schema" in handler && "fetch" in handler) {
+        if (zod === undefined) throw new ZodNotInstalled
+        const { schema, fetch } = handler
+        if (schema instanceof zod.ZodType === false) throw new InvalidSchema
+        function schemaValidatedFetch(input: any, context: TypedAPIContext) {
+            try { input = schema.parse(input) }
+            catch (error) { throw new ValidationFailed(error, context.request.url) }
+            return fetch(input, context)
+        }
+        return Object.assign(createApiRoute(schemaValidatedFetch), handler)
+    }
+    if ("fetch" in handler) {
+        return Object.assign(createApiRoute(handler.fetch), handler)
+    }
+    return handler
 }

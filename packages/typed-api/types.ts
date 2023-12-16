@@ -5,14 +5,14 @@ export type CreateRouter<Routes extends [string, unknown][]> =
 
 type _CreateRouter<Routes extends [string, unknown][], Router> =
     Routes extends [] ? Router
-    : Routes extends [infer Head, ...infer Tail  extends [string, unknown][]]
+    : Routes extends [infer Head, ...infer Tail extends [string, unknown][]]
         ? Head extends [infer Filename extends string, infer EndpointModule]
             ? _CreateRouter<Tail, DeepMerge<Router, Route<Filename, EndpointModule>>>
             : never
         : Router
 
-export type Route<Filename extends string, EndpointModule> =
-    EndpointToObject<FilenameToEndpoint<Filename>, ClientProxy<EndpointModule>>
+type Route<Endpoint extends string, EndpointModule> =
+    EndpointToObject<Endpoint, ClientProxy<EndpointModule>>
 
 type ClientProxy<EndpointModule> = {
     [Method in keyof EndpointModule]:
@@ -25,11 +25,6 @@ type EndpointToObject<Endpoint extends string, Handler> =
     Endpoint extends `${infer Start}/${infer Rest}`
         ? { [_ in Start]: EndpointToObject<Rest, Handler> }
         : { [_ in Endpoint]: Handler }
-
-type FilenameToEndpoint<Filename extends string> =
-    Filename extends `${infer Start}/index${".ts" | ".mts"}` ? Start
-    : Filename extends `${infer Start}${".ts" | ".mts"}` ? Start
-    : Filename
 
 type DeepMerge<A, B> = {
     [Key in keyof A | keyof B]:

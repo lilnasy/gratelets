@@ -1,10 +1,4 @@
-node_modules
-packages/*/node_modules
-tests/fixtures/*/node_modules
-tests/fixtures/*/src/env.d.ts
-tests/fixtures/*/dist
-tests/fixtures/*/.astro
-tests/fixtures/hono/*/node_modules
-tests/fixtures/hono/*/src/env.d.ts
-tests/fixtures/hono/*/dist
-tests/fixtures/hono/*/.astro
+**/node_modules
+**/src/env.d.ts
+**/dist
+**/.astro

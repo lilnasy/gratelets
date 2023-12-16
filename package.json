@@ -1,22 +1,20 @@
 {
     "name": "root",
     "private": "true",
+    "type": "module",
     "scripts": {
         "check": "tsc",
-        "test": "vitest --run --api.port 51204 --poolOptions.threads.singleThread --bail 1"
+        "test": "pnpm --filter tests exec vitest --run --api.port 51204 --poolOptions.threads.singleThread --bail 1",
+        "test:e2e": "pnpm --filter tests-e2e exec node --no-warnings --experimental-loader playwright/lib/transform/esmLoader node_modules/playwright/cli.js test --timeout 10000 -x"
     },
     "workspaces": [
         "packages/*"
     ],
     "packageManager": "pnpm@8.6.12",
     "devDependencies": {
+        "astro": "4",
         "@changesets/changelog-github": "0.5",
         "@changesets/cli": "2",
-        "@hono/node-server": "1",
-        "astro": "4",
-        "cheerio": "1.0.0-rc.12",
-        "hono": "3",
-        "typescript": "5.3",
-        "vitest": "1.0.4"
+        "typescript": "5.3"
     }
 }

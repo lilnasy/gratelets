@@ -1,5 +1,5 @@
 {
-    "name": "@test/typed-api",
+    "name": "@test/typed-api-basics",
     "private": true,
     "dependencies": {
         "@astrojs/node": "7",

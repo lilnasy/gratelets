@@ -1,0 +1,13 @@
+<script>
+    import { client } from "astro-typed-api/client"
+    const input = document.querySelector("input")!
+    const button = document.querySelector("button")!
+    const output = document.querySelector("output")!
+    button.addEventListener("click", async () => {
+        const { value } = input
+        output.textContent = await client.api.echoReverse.GET.fetch(value)
+    })
+</script>
+<input type="text">
+<button>Click me</button>
+<output>The result of the action should appear here</output>

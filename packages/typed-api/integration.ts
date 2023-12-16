@@ -11,14 +11,15 @@ export default function (_?: Partial<Options>): AstroIntegration {
         name: "astro-typed-api",
         hooks: {
             "astro:config:setup" ({ updateConfig, config, logger }) {
-                const pagesDir = new URL(config.srcDir, "pages")
+                const pagesDir = new URL("pages", config.srcDir)
                 const declarationFileUrl = new URL(".astro/typed-api.d.ts", config.root)
                 updateConfig({ vite: { plugins: [{
                     name: "astro-typed-api/typegen",
                     enforce: "post",
-                    config() {
+                    async config() {
+                        const filenames = await globby("**/*.{ts,mts}", { cwd: pagesDir })
                         injectEnvDTS(config, logger, declarationFileUrl)
-                        generateTypes(pagesDir, declarationFileUrl)
+                        generateTypes(filenames, pagesDir, declarationFileUrl)
                     }
                 }] } })
                 updateConfig({ vite: { ssr: { noExternal: ["astro-typed-api"] } } })
@@ -27,20 +28,20 @@ export default function (_?: Partial<Options>): AstroIntegration {
     }
 }
 
-async function generateTypes(pagesDir: URL, declarationFileUrl: URL) {
-    const typesPath = path.dirname(url.fileURLToPath(declarationFileUrl))
+async function generateTypes(filenames: string[], pagesDir: URL, declarationFileUrl: URL) {
+    const dotAstroPath = path.dirname(url.fileURLToPath(declarationFileUrl))
     const pagesPath = url.fileURLToPath(pagesDir)
-    const endpoints = await globby("**/*.{ts,mts}", { cwd: pagesDir })
     fs.mkdirSync(path.dirname(url.fileURLToPath(declarationFileUrl)), { recursive: true })
-    function relative(endpoint: string) {
-        return path.relative(typesPath, path.join(pagesPath, endpoint)).replaceAll("\\", "/")
-    }
     let declaration = ``
-    declaration += `type CreateRouter<Routes> = import("astro-typed-api/internal-types").CreateRouter<Routes>\n\n`
+    declaration += `type CreateRouter<Routes> = import("astro-typed-api/types").CreateRouter<Routes>\n`
+    declaration += `\n`
     declaration += `declare namespace TypedAPI {\n`
     declaration += `    interface Client extends CreateRouter<[\n`
-    for (const endpoint of endpoints) {
-    declaration += `        [${JSON.stringify(endpoint)}, typeof import(${JSON.stringify(relative(endpoint))})],\n`
+    for (const filename of filenames) {
+        const endpoint = filename.replace(/(\/index)?\.m?ts$/, "")
+        const specifier = path.relative(dotAstroPath, path.join(pagesPath, filename)).replaceAll("\\", "/")
+        declaration += `    `
+        declaration += `    [${JSON.stringify(endpoint)}, typeof import(${JSON.stringify(specifier)})],\n`
     }
     declaration += `    ]> {}\n`
     declaration += `}\n`
@@ -56,7 +57,7 @@ function injectEnvDTS(config: AstroConfig, logger: AstroIntegrationLogger, speci
         specifier = specifier.replaceAll("\\", "/")
     }
     
-    let envDTsContents = fs.readFileSync(envDTsPath, "utf-8")
+    let envDTsContents = fs.readFileSync(envDTsPath, "utf8")
     
     if (envDTsContents.includes(`/// <reference types='${specifier}' />`)) { return }
     if (envDTsContents.includes(`/// <reference types="${specifier}" />`)) { return }
