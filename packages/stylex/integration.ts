@@ -22,17 +22,19 @@ export default function (_: Partial<Options> = {}): AstroIntegration {
                         }) as any
                         if (result?.metadata?.stylex?.length > 0 === false) return
                         stylesheets[id] = result.metadata.stylex
-                        const newCode = result.code + `\nimport "${id}.astro_stylex_internal.css"\n`
+                        const newCode = result.code + `\nimport "${id}.astro_stylex_internal.css?time=${Date.now()}&astro-stylex&lang.css"\n`
                         const map = result.map
                         const metadata = result.metadata
                         return { code: newCode, map, meta: metadata }
                     },
                     resolveId(source) {
-                        if (source.endsWith(".astro_stylex_internal.css")) return source
+                        if (source.endsWith("astro-stylex&lang.css")) return source
                     },
                     async load(id) {
-                        if (id.endsWith(".astro_stylex_internal.css")) {
-                            const sourceFileId = id.slice(0, -".astro_stylex_internal.css".length)
+                        const [source, query] = id.split(`?`, 2)
+                        const params = new URLSearchParams(query)
+                        if (params.has("astro-stylex")) {
+                            const sourceFileId = source.slice(0, -".astro_stylex_internal.css".length)
                             const { id: resolvedId } = await this.resolve(sourceFileId) ?? {}
                             if (resolvedId === undefined) return logger.error("Could not find the real path for " + sourceFileId)
                             const generatedCss = stylesheets[resolvedId]
