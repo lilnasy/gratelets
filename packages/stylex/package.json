@@ -24,7 +24,7 @@
         }
     },
     "scripts": {
-        "test": "pnpm -w test tests/stylex.dev.test.ts tests/stylex.build.test.ts"
+        "test": "pnpm -w test stylex.test.ts"
     },
     "type": "module",
     "peerDependencies": {

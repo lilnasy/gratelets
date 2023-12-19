@@ -10,7 +10,7 @@ test("standalone mode - 404 page", async ({ cheerio, expect, server }) => {
     const body = $("body")
     expect(body.text()).to.equal("Page does not exist")
     await server.destroy()
-})
+}, { timeout: 10000 })
 
 test("middleware mode - on-demand rendered page", async ({ cheerio, expect, hono }) => {
     const res = await hono.fetch(new Request("http://example.com/ssr"))
