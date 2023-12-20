@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ZodNotInstalled, InvalidSchema, ValidationFailed } from "./error.ts"
 import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext, AstroGlobal } from "astro"
@@ -16,15 +17,16 @@ export interface ZodHandler<Schema extends ZodTypeAny, Output> extends TypedHand
     schema: Schema
 }
 
+// this particular overload has some song and dance to make sure type information does not get lost somewhere, be careful when changing it
 export function defineApiRoute<Schema extends ZodTypeAny, Handler extends ZodHandler<Schema, unknown>>(handler: Handler & ZodHandler<Schema, unknown>): APIRoute & Handler
 export function defineApiRoute<Handler extends TypedHandler<unknown, unknown>>(handler: Handler): APIRoute & Handler
 export function defineApiRoute<SimpleRoute extends APIRoute>(handler: SimpleRoute): SimpleRoute
-export function defineApiRoute(handler: any) {
+export function defineApiRoute(handler) {
     if ("schema" in handler && "fetch" in handler) {
         if (zod === undefined) throw new ZodNotInstalled
         const { schema, fetch } = handler
         if (schema instanceof zod.ZodType === false) throw new InvalidSchema
-        function schemaValidatedFetch(input: any, context: TypedAPIContext) {
+        function schemaValidatedFetch(input, context: TypedAPIContext) {
             try { input = schema.parse(input) }
             catch (error) { throw new ValidationFailed(error, context.request.url) }
             return fetch(input, context)

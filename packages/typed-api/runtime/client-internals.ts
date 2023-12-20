@@ -1,5 +1,5 @@
 import { encode, decode } from "es-codec"
-import { IncorrectHTTPVerb, ResponseNotOK, UnknownFormat } from "./error.ts"
+import { IncorrectHTTPVerb, ResponseNotOK, UnknownResponseFormat } from "./error.ts"
 import { dataToParams } from "./param-codec.ts"
 
 export const proxyTarget = { typedApiEndpoint: new Array<string> }
@@ -19,14 +19,15 @@ async function callServer(pathFragments: string[], method: string, input: any) {
     const { origin } = location
     const pathname = pathFragments.join("/")
     if (method !== method.toUpperCase()) throw new IncorrectHTTPVerb(method, pathname)
-    const searchParams = method === "GET" ? "?" + String(new URLSearchParams(dataToParams(input))) : ""
-    const body = method === "GET" ? undefined : encode(input)
-    const headers = method === "GET" ? undefined : { "Content-Type": "application/escodec" }
+    const GET = method === "GET"
+    const searchParams = GET ? "?" + String(new URLSearchParams(dataToParams(input))) : ""
+    const body = GET ? undefined : encode(input)
+    const headers = GET ? undefined : { "Content-Type": "application/escodec" }
     const url = new URL(pathname + searchParams, origin)
     const response = await fetch(url, { method, body, headers })
     if (response.ok === false) throw new ResponseNotOK(response)
     const contentType = response.headers.get("Content-Type")
-    if (contentType !== "application/escodec") throw new UnknownFormat(pathname, contentType, response)
-    const output = decode(await response.arrayBuffer())
-    return output
+    if (contentType === "application/json") return await response.json()
+    if (contentType === "application/escodec") return decode(await response.arrayBuffer())
+    throw new UnknownResponseFormat(response)
 }
