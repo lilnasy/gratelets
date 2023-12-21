@@ -5,7 +5,7 @@
     "scripts": {
         "check": "tsc",
         "test": "pnpm --filter tests exec vitest --run --api.port 51204 --poolOptions.threads.singleThread --bail 1",
-        "test:e2e": "pnpm --filter tests-e2e exec node --no-warnings --experimental-loader playwright/lib/transform/esmLoader node_modules/playwright/cli.js test --timeout 10000 -x"
+        "test:e2e": "pnpm --filter tests-e2e exec node --no-warnings --experimental-loader playwright/lib/transform/esmLoader node_modules/playwright/cli.js test --timeout 3000 -x"
     },
     "workspaces": [
         "packages/*"

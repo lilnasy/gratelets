@@ -43,6 +43,11 @@ const samples = [
         params: ".x="
     },
     {
+        id: "undefined as the only value",
+        data: undefined,
+        params: ""
+    },
+    {
         id: "array as the only value",
         data: [ "value1", "value2", "value3" ],
         params: "0=value1&1=value2&2=value3&.a="

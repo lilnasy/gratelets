@@ -2,17 +2,28 @@ export class TypedAPIError<Cause = unknown> extends Error {
     name = "TypedAPIError"
     cause: Cause
     constructor(cause: Cause, ...messages: string[]) {
-        super(messages.join("\n"), { cause })
+        super(messages.join("\n\n"), { cause })
         this.cause = cause
+    }
+}
+
+export class MissingHTTPVerb extends TypedAPIError<undefined> {
+    name = "TypedAPIError.MissingHTTPVerb" as const
+    constructor(endpoint: string) {
+        super(
+            undefined,
+            `Request to endpoint ${endpoint} cannot be made because the method is missing.`,
+            "When targetting the ALL API Route handler, the method must be provided in options."
+        )
     }
 }
 
 export class IncorrectHTTPVerb extends TypedAPIError<undefined> {
     name = "TypedAPIError.IncorrectHTTPVerb" as const
-    constructor(verb: string, path: string) {
+    constructor(verb: string, endpoint: string) {
         super(
             undefined,
-            `Request to path ${path} cannot be made because the method (${verb}) is not valid.`,
+            `Request to endpoint ${endpoint} cannot be made because the method (${verb}) is not valid.`,
             "The method must be uppercase and directly precede fetch()."
         )
     }
@@ -82,7 +93,20 @@ export class AcceptHeaderMissing extends TypedAPIError<Request> {
         super(
             request,
             `The API call to ${request.url} was invalid.`,
-            "The request must include an Accept header.",
+            "The request must include an `Accept` header.",
+            "See `error.cause` for the full request."
+        )
+    }
+}
+
+export class UnsupportedClient extends TypedAPIError<Request> {
+    name = "TypedAPI.UnsupportedClient" as const
+    constructor(request: Request) {
+        super(
+            request,
+            `The API request to ${request.url} was made by an unsupported client.`,
+            "The request's `Accept` header must include either `application/json` or `application/escodec`.",
+            `${JSON.stringify(request.headers.get("Accept"))} included neither.`,
             "See `error.cause` for the full request."
         )
     }
@@ -93,8 +117,10 @@ export class UnknownRequestFormat extends TypedAPIError<Request> {
     constructor(request: Request) {
         super(
             request,
-            `The API call to ${request.url} was invalid.`,
-            "The Content-Type header must include either application/json or application/escodec.",
+            `The API request to ${request.url} was invalid.`,
+            "Request format was neither JSON nor es-codec.",
+            "`Content-Type` header must be either `application/json` or `application/escodec`.",
+            `Instead, it was ${JSON.stringify(request.headers.get("Content-Type"))}.`,
             "See `error.cause` for the full request."
         )
     }

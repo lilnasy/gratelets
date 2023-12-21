@@ -11,15 +11,15 @@ export default function (_?: Partial<Options>): AstroIntegration {
         name: "astro-typed-api",
         hooks: {
             "astro:config:setup" ({ updateConfig, config, logger }) {
-                const pagesDir = new URL("pages", config.srcDir)
+                const apiDir = new URL("pages/api", config.srcDir)
                 const declarationFileUrl = new URL(".astro/typed-api.d.ts", config.root)
                 updateConfig({ vite: { plugins: [{
                     name: "astro-typed-api/typegen",
                     enforce: "post",
                     async config() {
-                        const filenames = await globby("**/*.{ts,mts}", { cwd: pagesDir })
+                        const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
                         injectEnvDTS(config, logger, declarationFileUrl)
-                        generateTypes(filenames, pagesDir, declarationFileUrl)
+                        generateTypes(filenames, apiDir, declarationFileUrl)
                     }
                 }] } })
                 updateConfig({ vite: { ssr: { noExternal: ["astro-typed-api"] } } })
@@ -28,9 +28,9 @@ export default function (_?: Partial<Options>): AstroIntegration {
     }
 }
 
-async function generateTypes(filenames: string[], pagesDir: URL, declarationFileUrl: URL) {
+async function generateTypes(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
     const dotAstroPath = path.dirname(url.fileURLToPath(declarationFileUrl))
-    const pagesPath = url.fileURLToPath(pagesDir)
+    const apiPath = url.fileURLToPath(apiDir)
     fs.mkdirSync(path.dirname(url.fileURLToPath(declarationFileUrl)), { recursive: true })
     let declaration = ``
     declaration += `type CreateRouter<Routes> = import("astro-typed-api/types").CreateRouter<Routes>\n`
@@ -39,7 +39,7 @@ async function generateTypes(filenames: string[], pagesDir: URL, declarationFile
     declaration += `    interface Client extends CreateRouter<[\n`
     for (const filename of filenames) {
         const endpoint = filename.replace(/(\/index)?\.m?ts$/, "")
-        const specifier = path.relative(dotAstroPath, path.join(pagesPath, filename)).replaceAll("\\", "/")
+        const specifier = path.relative(dotAstroPath, path.join(apiPath, filename)).replaceAll("\\", "/")
         declaration += `    `
         declaration += `    [${JSON.stringify(endpoint)}, typeof import(${JSON.stringify(specifier)})],\n`
     }

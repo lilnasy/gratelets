@@ -1,54 +1,68 @@
 import type { APIRoute } from "astro"
 import { encode, decode } from "es-codec"
-import { AcceptHeaderMissing, InputNotDeserializable, UnknownRequestFormat, ProcedureFailed, OutputNotSerializable } from "./error.ts"
+import {
+    AcceptHeaderMissing,
+    UnsupportedClient,
+    UnknownRequestFormat,
+    InputNotDeserializable,
+    ProcedureFailed,
+    OutputNotSerializable,
+    TypedAPIError
+} from "./error.ts"
 import { paramsToData } from "./param-codec.ts"
 import type { TypedAPIContext } from "./server.ts"
 
 export function createApiRoute(fetch: (input: unknown, content: TypedAPIContext) => unknown): APIRoute {
     return async function (ctx) {
-        const contentType = ctx.request.headers.get("Content-Type")
-        const accept = ctx.request.headers.get("Accept")
-        if (accept === null) throw new AcceptHeaderMissing(ctx.request)
+        const { request } = ctx
+        const { method, headers, url } = request
+        const contentType = headers.get("Content-Type")
+        const accept = headers.get("Accept")
+        if (accept === null) throw new AcceptHeaderMissing(request)
         if (
-            accept.includes("application/json") === false &&
-            accept.includes("application/escodec") === false
-        ) throw new UnknownRequestFormat(ctx.request)
+            accept.includes("application/escodec") === false &&
+            accept.includes("application/json") === false
+        ) throw new UnsupportedClient(request)
         
         let input: any
-        if (ctx.request.method === "GET") {
-            const { searchParams } = new URL(ctx.request.url)
+        if (method === "GET") {
+            const { searchParams } = new URL(url)
             input = Object.fromEntries(searchParams.entries())
             input = paramsToData(input)
         } else if (contentType === "application/json") {
             try {
-                input = await ctx.request.json()
+                input = await request.json()
             } catch (error) {
-                throw new InputNotDeserializable(error, ctx.request.url)
+                throw new InputNotDeserializable(error, url)
             }
         } else if (contentType === "application/escodec") {
             try {
-                input = decode(await ctx.request.arrayBuffer())
+                input = decode(await request.arrayBuffer())
             } catch (error) {
-                throw new InputNotDeserializable(error, ctx.request.url)
+                throw new InputNotDeserializable(error, url)
             }
-        } else throw new UnknownRequestFormat(ctx.request)
+        } else throw new UnknownRequestFormat(request)
         
-        const headers = new Headers({ "Content-Type": "application/escodec" })
-        const response = { status: 200, statusText: "OK", headers }
+        const response = {
+            status: 200,
+            statusText: "OK",
+            headers: new Headers
+        }
         
         Object.defineProperty(response, "headers", {
-            value: headers,
+            value: response.headers,
             enumerable: true,
             writable: false
         })
         
-        const context: TypedAPIContext = Object.assign(ctx, { response })
+        const context: TypedAPIContext = Object.assign(ctx, { headers, response })
         
         let output: any
         try {
             output = await fetch(input, context)
         } catch (error) {
-            throw new ProcedureFailed(error,ctx.request.url)
+            if (error instanceof TypedAPIError) throw error
+            throw new ProcedureFailed(error, url)
         }
         
         let outputBody
@@ -56,16 +70,16 @@ export function createApiRoute(fetch: (input: unknown, content: TypedAPIContext)
             try {
                 outputBody = encode(output)
             } catch (error) {
-                throw new OutputNotSerializable(error, ctx.request.url)
+                throw new OutputNotSerializable(error, url)
             }
-            headers.set("Content-Type", "application/escodec")
+            response.headers.set("Content-Type", "application/escodec")
         } else if (accept.includes("application/json")) {
             try {
                 outputBody = JSON.stringify(output)
             } catch (error) {
-                throw new OutputNotSerializable(error, ctx.request.url)
+                throw new OutputNotSerializable(error, url)
             }
-            headers.set("Content-Type", "application/json")
+            response.headers.set("Content-Type", "application/json")
         }
         
         return new Response(outputBody, response)

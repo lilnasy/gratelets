@@ -1,15 +1,14 @@
 <script>
-    import { client } from "astro-typed-api/client"
+    import { api } from "astro-typed-api/client"
     const button = document.querySelector("button")!
     const output = document.querySelector("output")!
     button.addEventListener("click", async () => {
-        const params = await client.api._multiple._params.GET.fetch({}, {
+        const params = await api._spread_.GET.fetch({}, {
             params: {
-                multiple: "abc",
-                params: "xyz"
+                spread: "abc/def/ghi",
             }
         })
-        output.textContent = Object.values(params).join(", ")
+        output.textContent = Object.entries(params).join(", ")
     })
 </script>
 <button>Click me</button>

@@ -1,12 +1,12 @@
 <script>
-    import { client } from "astro-typed-api/client"
+    import { api } from "astro-typed-api/client"
     const input = document.querySelector("input")!
     const button = document.querySelector("button")!
     const output = document.querySelector("output")!
     button.addEventListener("click", async () => {
         const { value } = input
         try {
-            const { y } = await client.api.validatedInput.GET.fetch(JSON.parse(value))
+            const { y } = await api.validatedInput.GET.fetch(JSON.parse(value))
             if (typeof y === "number") output.textContent = String(y)
             else output.textContent = "API response was of an unexpected shape."
         }

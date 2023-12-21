@@ -1,5 +1,5 @@
 /**
- * Used for sending data as params in GET requests.
+ * Used for sending data in the url as params in GET requests.
  * Same idea as jquery.param, but intended to be readable and typed.
  */
 
@@ -70,6 +70,7 @@ const typeSuffixPattern = /\.[xbnia]$/
 
 export function paramsToData(params: Record<string, string>): unknown {
     const keys = Object.keys(params)
+    if (keys.length === 0) return undefined
     let data_ = {} as any
     if (keys.includes(".a")) {
         keys.splice(keys.indexOf(".a"), 1)
