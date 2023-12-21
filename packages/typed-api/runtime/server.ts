@@ -1,32 +1,35 @@
-// @ts-nocheck
 import { ZodNotInstalled, InvalidSchema, ValidationFailed } from "./error.ts"
 import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext, AstroGlobal } from "astro"
+import type { infer as ZodInfer, ZodTypeAny } from "zod"
 
-type ZodTypeAny = import("zod").ZodTypeAny
 let zod: typeof import("zod") | undefined
 try { zod = await import("zod") } catch {}
 
 export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
 
-export interface TypedHandler<Input, Output> {
+export interface TypedAPIHandler<Input, Output> {
     fetch(input: Input, context: TypedAPIContext): Promise<Output> | Output
 }
 
-export interface ZodHandler<Schema extends ZodTypeAny, Output> extends TypedHandler<import("zod").infer<Schema>, Output> {
+export interface ZodAPIHandler<Schema extends ZodTypeAny, Output> extends TypedAPIHandler<ZodInfer<Schema>, Output> {
     schema: Schema
 }
 
 // this particular overload has some song and dance to make sure type information does not get lost somewhere, be careful when changing it
-export function defineApiRoute<Schema extends ZodTypeAny, Handler extends ZodHandler<Schema, unknown>>(handler: Handler & ZodHandler<Schema, unknown>): APIRoute & Handler
-export function defineApiRoute<Handler extends TypedHandler<unknown, unknown>>(handler: Handler): APIRoute & Handler
+export function defineApiRoute<Schema extends ZodTypeAny, Handler extends ZodAPIHandler<Schema, unknown>>(handler: Handler & ZodAPIHandler<Schema, unknown>): APIRoute & Handler
+export function defineApiRoute<Handler extends TypedAPIHandler<unknown, unknown>>(handler: Handler): APIRoute & Handler
 export function defineApiRoute<SimpleRoute extends APIRoute>(handler: SimpleRoute): SimpleRoute
-export function defineApiRoute(handler) {
+export function defineApiRoute(handler: any) {
     if ("schema" in handler && "fetch" in handler) {
-        if (zod === undefined) throw new ZodNotInstalled
+        if (zod === undefined) {
+            throw new ZodNotInstalled
+        }
         const { schema, fetch } = handler
-        if (schema instanceof zod.ZodType === false) throw new InvalidSchema
-        function schemaValidatedFetch(input, context: TypedAPIContext) {
+        if (schema instanceof zod.ZodType === false) {
+            throw new InvalidSchema(schema)
+        }
+        function schemaValidatedFetch(input: any, context: TypedAPIContext) {
             try { input = schema.parse(input) }
             catch (error) { throw new ValidationFailed(error, context.request.url) }
             return fetch(input, context)

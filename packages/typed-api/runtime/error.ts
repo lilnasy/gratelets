@@ -52,11 +52,11 @@ export class ZodNotInstalled extends TypedAPIError<undefined> {
     }
 }
 
-export class InvalidSchema extends TypedAPIError<undefined> {
+export class InvalidSchema extends TypedAPIError<unknown> {
     name = "TypedAPIError.InvalidSchema" as const
-    constructor() {
+    constructor(invalidSchema: unknown) {
         super(
-            undefined,
+            invalidSchema,
             "API Route defines a schema, but the schema is not a valid zod schema.",
             "The schema must be an instance of ZodType."
         )

@@ -1,0 +1,16 @@
+<script>
+    import { client } from "astro-typed-api/client"
+    const button = document.querySelector("button")!
+    const output = document.querySelector("output")!
+    button.addEventListener("click", async () => {
+        const params = await client.api._multiple._params.GET.fetch({}, {
+            params: {
+                multiple: "abc",
+                params: "xyz"
+            }
+        })
+        output.textContent = Object.values(params).join(", ")
+    })
+</script>
+<button>Click me</button>
+<output>The result of the action should appear here</output>
