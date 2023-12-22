@@ -41,6 +41,14 @@ async function callServer(segments: string[], method_: string, input: any, optio
         }
         pathname_ += "/" + segment
     }
+    if (import.meta.env.BASE_URL !== "/") {
+        pathname_ = (import.meta.env.BASE_URL + pathname_).split("/").filter(Boolean).join("/")
+    }
+    // apparently trailing slashes are not handled by astro router
+    // /x/ would fail to match pages/x.ts despite trailingSlash being set to "always"
+    // if (import.meta.env._TRAILING_SLASH === "always") {
+    //     if (pathname_.endsWith("/") === false) pathname_ += "/"
+    // }
     const pathname = pathname_
     const method = method_ === "ALL" ? options.method : method_
     if (method === undefined) throw new MissingHTTPVerb(pathname)

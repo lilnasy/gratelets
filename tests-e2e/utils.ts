@@ -1,4 +1,3 @@
-import url from "node:url"
 import type { AstroInlineConfig } from "astro"
 import type { createExports } from "@astrojs/node/server.js"
 //@ts-expect-error
@@ -35,7 +34,7 @@ export function testFactory(relativeRootPath: `./fixtures/${string}`, options?: 
         },
         async exports({ build }, use) {
             process.env.ASTRO_NODE_AUTOSTART = "disabled"
-            exports ??= await import(url.pathToFileURL(build.resolve(`./server/entry.mjs`)).href + "?" + Date.now())
+            exports ??= await import(build.serverEntry)
             await use(exports)
         },
         async adapter({ exports }, use) {

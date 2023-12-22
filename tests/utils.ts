@@ -4,17 +4,20 @@ import { readFileSync, existsSync } from "node:fs"
 import * as Astro from "astro"
 
 export interface BuildFixture {
+    serverEntry: string
     resolve(path: string): string
     readTextFile(path: string): string
     fileExists(path: string): boolean
 }
 
-export async function build(root: `./fixtures/${string}` | URL, options?: Astro.AstroInlineConfig): Promise<BuildFixture> {
-    await command("build", root, options)
+export async function build(root: `./fixtures/${string}` | URL, options: Astro.AstroInlineConfig = {}): Promise<BuildFixture> {
+    const serverEntry = `entry_${Date.now()}.mjs`
+    await command("build", root, Object.assign(options, { build: { serverEntry } }))
     const resolve: BuildFixture["resolve"] = typeof root === "string"
         ? path => join(fileURLToPath(import.meta.url), "..", root, "dist", path)
         : path => join(fileURLToPath(root), "dist", path)
     return {
+        serverEntry: resolve(`./server/${serverEntry}`),
         resolve,
         readTextFile: path => readFileSync(resolve(path), "utf8"),
         fileExists: path => existsSync(resolve(path))
@@ -27,7 +30,7 @@ export interface DevServer {
     fetch(path: string): Promise<string>
 }
 
-export async function dev(root: `./fixtures/${string}` | URL, options?: Astro.AstroInlineConfig): Promise<DevServer> {
+export async function dev(root: `./fixtures/${string}` | URL, options: Astro.AstroInlineConfig = {}): Promise<DevServer> {
     const server = await command("dev", root, options)
     return {
         address: server.address,
