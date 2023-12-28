@@ -9,6 +9,10 @@ This **[Astro integration][astro-integration]** offers a way to create type-safe
 - <strong>[Contributing](#contributing)</strong>
 - <strong>[Changelog](#changelog)</strong>
 
+
+https://github.com/lilnasy/gratelets/assets/69170106/570bcf7b-8331-4a83-8731-a3628d8c80de
+
+
 ## Why astro-typed-api?
 
 Astro's [API routes](https://docs.astro.build/en/core-concepts/endpoints) are a great way to serve dynamic content. However, they are completely detached from your front-end code. The responsibility of serializing and deserializing data is left to the developer, and there is no indication whether a refactor in API design is going to break some UI feature. 
