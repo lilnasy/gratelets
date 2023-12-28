@@ -4,7 +4,7 @@ import {
     IncorrectHTTPVerb,
     ResponseNotOK,
     UnknownResponseFormat
-} from "./error.ts"
+} from "./errors.ts"
 import { dataToParams } from "./param-codec.ts"
 
 export const proxyTarget = { typedApiEndpoint: new Array<string> }

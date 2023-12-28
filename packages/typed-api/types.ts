@@ -46,11 +46,15 @@ type RequireParam<MP, Param extends string> =
 // typed API options should become required
 export type Fetch_<Input, Output, Params extends string, Method extends string> = 
     IsNever<Params> extends true
-        ? Method extends "ALL" ? FetchM<Input, Output> : Fetch<Input, Output>
+        ? Method extends "ALL" ? FetchM<Input, Output> : unknown extends Input ? FetchO<Input, Output> : Fetch<Input, Output>
         : Method extends "ALL" ? FetchMP<Input, Output, Params> : FetchP<Input, Output, Params>
 
 interface Fetch<Input, Output> {
     fetch(input: Input, options?: Options): Promise<Output>
+}
+
+interface FetchO<Input, Output> {
+    fetch(input?: Input, options?: Options): Promise<Output>
 }
 
 interface FetchM<Input, Output> {

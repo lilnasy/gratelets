@@ -20,12 +20,13 @@
     ],
     "exports": {
         ".": "./integration.ts",
-        "./types": "./types.ts",
         "./client": "./runtime/client.ts",
-        "./server": "./runtime/server.ts"
+        "./server": "./runtime/server.ts",
+        "./types": "./types.ts",
+        "./errors": "./errors.ts"
     },
     "scripts": {
-        "test": "pnpm -w test tests/typed-api.test.ts"
+        "test": "pnpm -w test:e2e typed-api.spec.ts"
     },
     "type": "module",
     "peerDependencies": {

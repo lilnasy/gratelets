@@ -1,4 +1,4 @@
-import { ZodNotInstalled, InvalidSchema, ValidationFailed } from "./error.ts"
+import { ZodNotInstalled, InvalidSchema, ValidationFailed } from "./errors.ts"
 import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext, AstroGlobal } from "astro"
 import type { infer as ZodInfer, ZodTypeAny } from "zod"

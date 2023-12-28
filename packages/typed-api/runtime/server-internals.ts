@@ -8,7 +8,7 @@ import {
     ProcedureFailed,
     OutputNotSerializable,
     TypedAPIError
-} from "./error.ts"
+} from "./errors.ts"
 import { paramsToData } from "./param-codec.ts"
 import type { TypedAPIContext } from "./server.ts"
 
