@@ -1,4 +1,5 @@
-import { useState } from "react"
+/** @jsxImportSource preact */
+import { signal } from "@preact/signals"
 import stylex from "@stylexjs/stylex"
 import { tokens } from "../tokens.stylex.ts"
 
@@ -16,14 +17,10 @@ const styles = stylex.create({
     }
 })
 
-export default function Counter({
-    children = [],
-    count: initialCount = 0,
-}) {
-    const [count, setCount] = useState(initialCount)
-    const add = () => setCount(x => x + 1)
-    const subtract = () => setCount(x => x - 1)
-    
+export default function Counter({ children = [], count = signal(0) }) {
+    const add = () => count.value++
+    const subtract = () => count.value--
+
     return (
         <>
             <div id="counter" {...stylex.props(styles.namesAreHard)}>
