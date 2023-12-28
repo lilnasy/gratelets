@@ -7,12 +7,14 @@ import type { AstroIntegration, AstroConfig, AstroIntegrationLogger } from "astr
 export interface Options {}
 
 export default function (_?: Partial<Options>): AstroIntegration {
+    let apiDir: URL
+    let declarationFileUrl: URL
     return {
         name: "astro-typed-api",
         hooks: {
             "astro:config:setup" ({ updateConfig, config, logger }) {
-                const apiDir = new URL("pages/api", config.srcDir)
-                const declarationFileUrl = new URL(".astro/typed-api.d.ts", config.root)
+                apiDir = new URL("pages/api", config.srcDir)
+                declarationFileUrl = new URL(".astro/typed-api.d.ts", config.root)
                 updateConfig({ vite: { plugins: [{
                     name: "astro-typed-api/typegen",
                     enforce: "post",
@@ -23,6 +25,14 @@ export default function (_?: Partial<Options>): AstroIntegration {
                     }
                 }] } })
                 updateConfig({ vite: { ssr: { noExternal: ["astro-typed-api"] } } })
+            },
+            "astro:server:setup" ({ server }) {
+                server.watcher.on("add", async path => {
+                    if (path.includes("pages/api") || path.includes("pages\\api")) {
+                        const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
+                        generateTypes(filenames, apiDir, declarationFileUrl)
+                    }
+                })
             }
         }
     }
