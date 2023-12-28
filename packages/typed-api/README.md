@@ -11,7 +11,8 @@ This **[Astro integration][astro-integration]** offers a way to create type-safe
 
 ## Why astro-typed-api?
 
-Astro's [API routes](https://docs.astro.build/en/core-concepts/endpoints) are a great way to serve dynamic content. However, they are completely detached from your front-end code. The responsibility of serializing and deserializing data is left to the developer, and there is no indication whether a refactor in API design is going to break some UI feature. This integration aims to solve these problems by providing a type-safe `api` object that is aware of the input and return types of your Astro endpoints. Inline with the Astro philosophy, it does this while introducing minimum concepts to learn.
+Astro's [API routes](https://docs.astro.build/en/core-concepts/endpoints) are a great way to serve dynamic content. However, they are completely detached from your front-end code. The responsibility of serializing and deserializing data is left to the developer, and there is no indication whether a refactor in API design is going to break some UI feature. 
+This integration aims to solve these problems by providing a type-safe `api` object that is aware of the input and return types of your API routes. Inline with the Astro philosophy, it does this while introducing minimum concepts to learn.
 
 ## Installation
 
