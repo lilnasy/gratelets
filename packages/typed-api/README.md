@@ -11,6 +11,7 @@ This **[Astro integration][astro-integration]** offers a way to create type-safe
 
 ## Why astro-typed-api?
 
+Astro's [API routes](https://docs.astro.build/en/core-concepts/endpoints) are a great way to serve dynamic content. However, they are completely detached from your front-end code. The responsibility of serializing and deserializing data is left to the developer, and there is no indication whether a refactor in API design is going to break some UI feature. This integration aims to solve these problems by providing a type-safe `api` object that is aware of the input and return types of your Astro endpoints. Inline with the Astro philosophy, it does this while introducing minimum concepts to learn.
 
 ## Installation
 
@@ -38,7 +39,7 @@ Then, apply this integration to your `astro.config.*` file using the `integratio
 
 ## Usage
 
-Typed API routes are created the same way that normal [API routes](https://docs.astro.build/en/core-concepts/endpoints) are created in Astro, but using `defineApiRoute()`.
+Typed API routes are created using the `defineApiRoute()` function, which are then exported the same way that normal [API routes](https://docs.astro.build/en/core-concepts/endpoints) are in Astro.
 
 ```ts
 // src/pages/api/hello.ts
@@ -48,7 +49,7 @@ export const GET = defineApiRoute({
     fetch: (name: string) => `Hello, ${name}!`
 )
 ```
-The `defineApiRoute()` function takes an object with a `fetch` method. The `fetch` method will be called when an HTTP request is routed to the current endpoint, and the return value will be sent back to the client. Once defined, the API route becomes available for browser-side code to use on the `api` object exported from `astro-typed-api/client`:
+The `defineApiRoute()` function takes an object with a `fetch` method. The `fetch` method will be called when an HTTP request is routed to the current endpoint. Parsing the request for structured data and converting the returned value to a response is handled automatically. Once defined, the API route becomes available for browser-side code to use on the `api` object exported from `astro-typed-api/client`:
 ```ts
 ---
 // src/pages/index.astro
@@ -62,7 +63,7 @@ The `defineApiRoute()` function takes an object with a `fetch` method. The `fetc
 ```
 When the `fetch` method is called on the browser, the arguments passed to it are serialized as query parameters and a `GET` HTTP request is made to the Astro server. The result is deserialized from the response and returned by the call.
 
-Note that only endpoints within the `src/pages/api` directory are exposed on the `api` object. Additionally, the endpoints must all be typescript files. For example, `src/pages/admin/x.ts` and `src/pages/api/x.js` will **not** be made available to `astro-typed-api/client`.
+Note that only endpoints within the `src/pages/api` directory are exposed on the `api` object. Additionally, the endpoints must all be typescript files. For example, `src/pages/x.ts` and `src/pages/api/x.js` will **not** be made available to `astro-typed-api/client`.
 
 ### Type-safety
 
