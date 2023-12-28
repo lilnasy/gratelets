@@ -8,18 +8,9 @@ describe("dev", () => {
     beforeAll(async () => { server = await dev("./fixtures/stylex") })
     afterAll(async () => { await server.stop() })
     
-    for (const framework of ["react", "solid"]) {
+    for (const framework of ["preact", "react", "svelte", "solid"]) {
         test("with " + framework, async () => {
-            const html = await server.fetch("/" + framework)
-            const $ = cheerio.load(html)
-            const stylesheet = $("style").html()!
-            const counterElement = $("#counter")
-            for (const className of counterElement.attr("class")!.split(" ")) {
-                expect(stylesheet).toContain("." + className)
-            }
-            expect(stylesheet).toContain("place-items")
-            expect(stylesheet).toContain("grid-template-columns")
-            expect(stylesheet).toContain("margin-top")
+            commonExpectations(await server.fetch("/" + framework))
         })
     }
 })
@@ -29,18 +20,22 @@ describe("build", () => {
     
     beforeAll(async () => { fixture = await build("./fixtures/stylex") })
     
-    for (const framework of ["react", "solid"]) {
+    for (const framework of ["preact", "react", "svelte", "solid"]) {
         test("with " + framework, async () => {
-            const html = fixture.readTextFile("/" + framework + "/index.html")
-            const $ = cheerio.load(html)
-            const stylesheet = $("style").html()!
-            const counterElement = $("#counter")
-            for (const className of counterElement.attr("class")!.split(" ")) {
-                expect(stylesheet).toContain("." + className)
-            }
-            expect(stylesheet).toContain("place-items")
-            expect(stylesheet).toContain("grid-template-columns")
-            expect(stylesheet).toContain("margin-top")
+            commonExpectations(fixture.readTextFile("/" + framework + "/index.html"))
         })
     }
 })
+
+function commonExpectations(html: string) {
+    const $ = cheerio.load(html)
+    let stylesheet = ""
+    $("style").each((_, elem) => { stylesheet += $(elem).text() })
+    const counterElement = $("#counter")
+    for (const className of counterElement.attr("class")!.split(" ")) {
+        expect(stylesheet).toContain("." + className)
+    }
+    expect(stylesheet).toContain("place-items")
+    expect(stylesheet).toContain("grid-template-columns")
+    expect(stylesheet).toContain("margin-top")
+}

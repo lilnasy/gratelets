@@ -2,15 +2,20 @@
     "name": "@test/emotion",
     "private": true,
     "dependencies": {
+        "@astrojs/preact": "3",
         "@astrojs/react": "3",
         "@astrojs/solid-js": "3",
+        "@astrojs/svelte": "5",
+        "@stylexjs/stylex": "0.3",
+        "@preact/signals": "1",
         "@types/react": "18",
         "@types/react-dom": "18",
         "astro": "4",
         "astro-stylex": "workspace:*",
-        "@stylexjs/stylex": "0.3",
+        "preact": "10",
         "react": "18",
         "react-dom": "18",
-        "solid-js": "1"
+        "solid-js": "1",
+        "svelte": "4"
     }
 }
