@@ -6,7 +6,7 @@ import type { infer as ZodInfer, ZodTypeAny } from "zod"
 let zod: typeof import("zod") | undefined
 try { zod = await import("zod") } catch {}
 
-export interface TypedAPIContext extends APIContext, Pick<Request, "headers">, Pick<AstroGlobal, "response"> {}
+export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
 
 export interface TypedAPIHandler<Input, Output> {
     fetch(input: Input, context: TypedAPIContext): Promise<Output> | Output

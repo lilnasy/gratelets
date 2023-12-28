@@ -55,7 +55,7 @@ export function createApiRoute(fetch: (input: unknown, content: TypedAPIContext)
             writable: false
         })
         
-        const context: TypedAPIContext = Object.assign(ctx, { headers, response })
+        const context: TypedAPIContext = Object.assign(ctx, { response })
         
         let output: any
         try {
