@@ -5,6 +5,7 @@
 
 /**
  * Flattens a nested object into a record of key-value string pairs.
+ * 
  * For example, this input...
  * ```js
  * {
@@ -126,6 +127,16 @@ function escapeTypeSuffix(str: string, index: number, array: string[]) {
     return str
 }
 
+/**
+ * There is a mishandled corner case where 
+ * ```ts
+ * { _a: { _x: 1 } }
+ * ```
+ * will be converted into
+ * ```
+ * { _a: { x: 1 } }
+ * ```
+ */
 function unescapeTypeSuffix(str: string, index: number, array: string[]) {
     if (index !== array.length - 1) return str
     if (str.match(/^_[xbnia]$/)) return str.slice(1)
