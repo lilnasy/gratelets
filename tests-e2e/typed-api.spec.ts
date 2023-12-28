@@ -17,6 +17,8 @@ for (const [description, config] of Object.entries(setups)) {
 
     test.describe(`${description} - dev`, () => {
         test("an action can be called", ({ dev, page }) => basics(page, resolve))
+        test("the method can be POST", ({ dev, page }) => post(page, resolve))
+        test("the ALL handler can be fetched", ({ dev, page }) => all(page, resolve))
         test("the action ran on the server", ({ dev, page }) => envVars(page, resolve))
         test("path params can be used", ({ dev, page }) => params(page, resolve))
         test("multiple params can be used", ({ dev, page }) => multiParams(page, resolve))
@@ -28,6 +30,8 @@ for (const [description, config] of Object.entries(setups)) {
     
     test.describe(`${description} - build`, () => {
         test("an action can be called", ({ adapter, page }) => basics(page, resolve))
+        test("the method can be POST", ({ adapter, page }) => post(page, resolve))
+        test("the ALL handler can be fetched", ({ adapter, page }) => all(page, resolve))
         test("the action ran on the server", ({ adapter, page }) => envVars(page, resolve))
         test("path params can be used", ({ adapter, page }) => params(page, resolve))
         test("multiple params can be used", ({ adapter, page }) => multiParams(page, resolve))
@@ -62,6 +66,20 @@ async function basics(page: Page, resolve: (url: string) => string) {
     await page.fill("input", "hello")
     await page.click("button")
     await expect(page.locator("output")).toHaveText("olleh")
+}
+
+async function post(page: Page, resolve: (url: string) => string) {
+    await page.goto(resolve("http://localhost:4321/post"))
+    await page.fill("input", "hello")
+    await page.click("button")
+    await expect(page.locator("output")).toHaveText("from POST handler: olleh")
+}
+
+async function all(page: Page, resolve: (url: string) => string) {
+    await page.goto(resolve("http://localhost:4321/all"))
+    await page.fill("input", "hello")
+    await page.click("button")
+    await expect(page.locator("output")).toHaveText("from ALL handler: SUBSCRIBEolleh")
 }
 
 async function envVars(page: Page, resolve: (url: string) => string) {
