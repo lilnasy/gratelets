@@ -1,6 +1,7 @@
 /** @jsxImportSource solid-js */
 import { createSignal } from "solid-js"
-import stylex from '@stylexjs/stylex'
+import stylex from "@stylexjs/stylex"
+import { tokens } from "../tokens.stylex.ts"
 
 const styles = stylex.create({
     namesAreHard: {
@@ -9,6 +10,7 @@ const styles = stylex.create({
         gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
         marginTop: "2em",
         placeItems: "center",
+        backgroundColor: tokens.background,
     },
     namesAreHard2ElectricBoogaloo: {
         textAlign: "center"
