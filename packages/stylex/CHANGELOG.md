@@ -1,5 +1,11 @@
 # astro-stylex
 
+## 0.1.3
+
+### Patch Changes
+
+- [#45](https://github.com/lilnasy/gratelets/pull/45) [`875776b`](https://github.com/lilnasy/gratelets/commit/875776b320289778885e386fd6ab444835271ac7) Thanks [@lilnasy](https://github.com/lilnasy)! - Fixes an issue where stylex.defineVars could not be referenced in a component.
+
 ## 0.1.2
 
 ### Patch Changes
