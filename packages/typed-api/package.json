@@ -1,0 +1,42 @@
+{
+    "name": "astro-typed-api",
+    "version": "0.0.0",
+    "description": "",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+        "withastro",
+        "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/typed-api",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/typed-api"
+    },
+    "files": [
+        "integration.ts",
+        "runtime"
+    ],
+    "exports": {
+        ".": "./integration.ts",
+        "./client": "./runtime/client.ts",
+        "./server": "./runtime/server.ts",
+        "./types": "./types.ts",
+        "./errors": "./errors.ts"
+    },
+    "scripts": {
+        "test": "pnpm -w test:e2e typed-api.spec.ts"
+    },
+    "type": "module",
+    "peerDependencies": {
+        "zod": "3"
+    },
+    "dependencies": {
+        "es-codec": "0.5",
+        "globby": "14"
+    },
+    "devDependencies": {
+        "astro": "4"
+    }
+}

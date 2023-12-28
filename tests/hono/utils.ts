@@ -28,7 +28,7 @@ export function testFactory(fixturePath: `./fixtures/hono/${string}`, options?: 
         },
         async exports({ fixture }, use) {
             process.env.ASTRO_HONO_AUTOSTART = "disabled"
-            exports ??= await import(fixture.resolve("server/entry.mjs?" + Date.now())) as Exports
+            exports ??= await import(fixture.serverEntry) as Exports
             await use(exports)
         },
         async hono({ exports }, use) {

@@ -33,8 +33,7 @@ describe("with server output", () => {
                 }
             } ]
         })
-        const entrypoint = "./fixtures/prerender-patterns/dist/server/entry.mjs?1"
-        const exports = await import(entrypoint)
+        const exports = await import(fixture.serverEntry)
         manifest = exports.manifest
     })
     
@@ -177,8 +176,7 @@ describe("hybrid output", () => {
                 }
             } ]
         })
-        const entrypoint = "./fixtures/prerender-patterns/dist/server/entry.mjs?2"
-        const exports = await import(entrypoint)
+        const exports = await import(fixture.serverEntry)
         manifest = exports.manifest
     })
     

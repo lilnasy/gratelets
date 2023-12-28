@@ -4,15 +4,20 @@ import { readFileSync, existsSync } from "node:fs"
 import * as Astro from "astro"
 
 export interface BuildFixture {
+    serverEntry: string
     resolve(path: string): string
     readTextFile(path: string): string
     fileExists(path: string): boolean
 }
 
-export async function build(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig): Promise<BuildFixture> {
-    await command("build", relativeRootPath, options)
-    const resolve: BuildFixture["resolve"] = path => join(fileURLToPath(import.meta.url), "..", relativeRootPath, "dist", path)
+export async function build(root: `./fixtures/${string}` | URL, options: Astro.AstroInlineConfig = {}): Promise<BuildFixture> {
+    const serverEntry = `entry_${Date.now()}.mjs`
+    await command("build", root, Object.assign(options, { build: { serverEntry } }))
+    const resolve: BuildFixture["resolve"] = typeof root === "string"
+        ? path => join(fileURLToPath(import.meta.url), "..", root, "dist", path)
+        : path => join(fileURLToPath(root), "dist", path)
     return {
+        serverEntry: resolve(`./server/${serverEntry}`),
         resolve,
         readTextFile: path => readFileSync(resolve(path), "utf8"),
         fileExists: path => existsSync(resolve(path))
@@ -25,8 +30,8 @@ export interface DevServer {
     fetch(path: string): Promise<string>
 }
 
-export async function dev(relativeRootPath: `./fixtures/${string}`, options?: Astro.AstroInlineConfig): Promise<DevServer> {
-    const server = await command("dev", relativeRootPath, options)
+export async function dev(root: `./fixtures/${string}` | URL, options: Astro.AstroInlineConfig = {}): Promise<DevServer> {
+    const server = await command("dev", root, options)
     return {
         address: server.address,
         stop: server.stop,
@@ -36,10 +41,10 @@ export async function dev(relativeRootPath: `./fixtures/${string}`, options?: As
 
 async function command<Command extends "dev" | "build">(
     command: Command,
-    relativeRootPath: string,
+    root_: string | URL,
     options?: Astro.AstroInlineConfig
 ) {
-    const root = fileURLToPath(new URL(relativeRootPath, import.meta.url))
+    const root = fileURLToPath(new URL(root_, import.meta.url))
     return await Astro[command]({
         root,
         logLevel: "silent",

@@ -1,0 +1,15 @@
+<script>
+    import { api } from "astro-typed-api/client"
+    const button = document.querySelector("button")!
+    const output = document.querySelector("output")!
+    button.addEventListener("click", async () => {
+        const params = await api._spread_.GET.fetch({}, {
+            params: {
+                spread: "abc/def/ghi",
+            }
+        })
+        output.textContent = Object.entries(params).join(", ")
+    })
+</script>
+<button>Click me</button>
+<output>The result of the action should appear here</output>

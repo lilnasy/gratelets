@@ -59,3 +59,28 @@ jobs:
       matrix:
         NODE_VERSION: [18, 20, 21]
       fail-fast: false
+  Chrome:
+    name: E2E Tests
+    needs: prelim
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+      
+      - name: Setup Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "pnpm"
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Install Chromium
+        run: pnpm install:chromium
+      
+      - name: Test
+        run: pnpm run test:e2e --reporter github

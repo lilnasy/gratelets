@@ -1,0 +1,8 @@
+{
+    "name": "tests-e2e",
+    "type": "module",
+    "devDependencies": {
+        "@astrojs/node": "7",
+        "playwright": "1"
+    }
+}

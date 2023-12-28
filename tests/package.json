@@ -1,0 +1,15 @@
+{
+    "name": "tests",
+    "scripts": {
+        "test": "vitest --run --api.port 51204 --poolOptions.threads.singleThread --bail 1"
+    },
+    "devDependencies": {
+        "@hono/node-server": "1",
+        "astro": "4",
+        "@astrojs/node": "7",
+        "cheerio": "1.0.0-rc.12",
+        "hono": "3",
+        "typescript": "5.3",
+        "vitest": "1.0.4"
+    }
+}
