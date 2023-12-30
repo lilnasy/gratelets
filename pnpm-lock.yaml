@@ -94,7 +94,7 @@ importers:
         specifier: '5'
         version: 5.0.7(@types/node@20.10.4)
       zod-to-json-schema:
-        specifier: ^3.22.3
+        specifier: '3'
         version: 3.22.3(zod@3.22.4)
 
   packages/prerender-patterns:
