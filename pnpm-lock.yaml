@@ -85,6 +85,18 @@ importers:
         specifier: '4'
         version: 4.0.3(@types/node@20.10.4)(typescript@5.3.3)
 
+  packages/json-schema:
+    dependencies:
+      astro:
+        specifier: '4'
+        version: 4.0.3(@types/node@20.10.4)(typescript@5.3.3)
+      vite:
+        specifier: '5'
+        version: 5.0.7(@types/node@20.10.4)
+      zod-to-json-schema:
+        specifier: ^3.22.3
+        version: 3.22.3(zod@3.22.4)
+
   packages/prerender-patterns:
     devDependencies:
       '@types/node':
@@ -6806,6 +6818,14 @@ packages:
   /yocto-queue@1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
+
+  /zod-to-json-schema@3.22.3(zod@3.22.4):
+    resolution: {integrity: sha512-9isG8SqRe07p+Aio2ruBZmLm2Q6Sq4EqmXOiNpDxp+7f0LV6Q/LX65fs5Nn+FV/CzfF3NLBoksXbS2jNYIfpKw==}
+    peerDependencies:
+      zod: ^3.22.4
+    dependencies:
+      zod: 3.22.4
+    dev: false
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}

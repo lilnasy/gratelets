@@ -1,0 +1,12 @@
+{
+    "name": "astro-json-schema",
+    "version": "0.0.0",
+    "exports": {
+        ".": "./integration.ts"
+    },
+    "dependencies": {
+        "astro": "4",
+        "vite": "5",
+        "zod-to-json-schema": "3"
+    }
+}
