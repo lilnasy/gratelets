@@ -16,6 +16,7 @@
     },
     "files": [
         "integration.ts",
+        "types.ts",
         "runtime"
     ],
     "exports": {
