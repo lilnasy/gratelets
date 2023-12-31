@@ -1,5 +1,11 @@
 # astro-typed-api
 
+## 0.1.1
+
+### Patch Changes
+
+- [#49](https://github.com/lilnasy/gratelets/pull/49) [`e2c2288`](https://github.com/lilnasy/gratelets/commit/e2c22884aea08d3448bd682f87f7bafcfef1e09d) Thanks [@lilnasy](https://github.com/lilnasy)! - Fixes an issue where a necessary was not included in the NPM package.
+
 ## 0.1.0
 
 ### Minor Changes
