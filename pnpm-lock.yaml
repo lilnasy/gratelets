@@ -21,6 +21,40 @@ importers:
         specifier: '5.4'
         version: 5.4.4
 
+  examples/passkeys:
+    dependencies:
+      '@astrojs/node':
+        specifier: '7'
+        version: 7.0.4(astro@4.5.17)
+      '@astrojs/react':
+        specifier: '3'
+        version: 3.2.0(@types/react-dom@18.2.24)(@types/react@18.2.75)(react-dom@18.2.0)(react@18.2.0)(vite@5.2.8)
+      '@types/react':
+        specifier: '18'
+        version: 18.2.75
+      '@types/react-dom':
+        specifier: '18'
+        version: 18.2.24
+      astro:
+        specifier: '4'
+        version: 4.5.17(@types/node@20.12.6)(typescript@5.4.4)
+      astro-typed-api:
+        specifier: ^0.1.1
+        version: 0.1.2(zod@3.22.4)
+      canvas-confetti:
+        specifier: '1'
+        version: 1.9.2
+      react:
+        specifier: '18'
+        version: 18.2.0
+      react-dom:
+        specifier: '18'
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      typescript:
+        specifier: '5'
+        version: 5.4.4
+
   packages/adds-to-head:
     devDependencies:
       '@types/node':
@@ -2085,6 +2119,16 @@ packages:
     hasBin: true
     dev: false
 
+  /astro-typed-api@0.1.2(zod@3.22.4):
+    resolution: {integrity: sha512-UHuWi6O1WpxqrwBhEaOCvBYDnrXYDJa4dMm0siVzRuYPHNpmKCeTtaJTQZ2nw9mYFP4i7ZcWxFV2r8xb1qWo/g==}
+    peerDependencies:
+      zod: '3'
+    dependencies:
+      es-codec: 0.5.0
+      globby: 14.0.1
+      zod: 3.22.4
+    dev: false
+
   /astro@4.5.17(@types/node@20.12.6)(typescript@5.4.4):
     resolution: {integrity: sha512-fr5onZt7MOe+6v08Ub1AZL9eUVo4f0y0nvL55AFMpVG2bMM1/omcwAH1uU2mkvwMLLtcd4RDtYz4mtJzd54Nfw==}
     engines: {node: '>=18.14.1', npm: '>=6.14.0'}
@@ -2377,6 +2421,10 @@ packages:
   /caniuse-lite@1.0.30001607:
     resolution: {integrity: sha512-WcvhVRjXLKFB/kmOFVwELtMxyhq3iM/MvmXcyCe2PNf166c39mptscOc/45TTS96n2gpNV2z7+NakArTWZCQ3w==}
 
+  /canvas-confetti@1.9.2:
+    resolution: {integrity: sha512-6Xi7aHHzKwxZsem4mCKoqP6YwUG3HamaHHAlz1hTNQPCqXhARFpSXnkC9TWlahHY5CG6hSL5XexNjxK8irVErg==}
+    dev: false
+
   /ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
 
@@ -2557,7 +2605,6 @@ packages:
 
   /color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-    requiresBuild: true
 
   /color-string@1.9.1:
     resolution: {integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==}
