@@ -1,0 +1,26 @@
+{
+    "name": "passkeys",
+    "type": "module",
+    "private": true,
+    "scripts": {
+      "dev": "astro dev",
+      "start": "astro dev",
+      "build": "astro build",
+      "preview": "astro preview",
+      "astro": "astro"
+    },
+    "dependencies": {
+      "@astrojs/node": "7",
+      "@astrojs/react": "3",
+      "@types/react": "18",
+      "@types/react-dom": "18",
+      "astro": "4",
+      "astro-typed-api": "^0.1.1",
+      "canvas-confetti": "1",
+      "react": "18",
+      "react-dom": "18"
+    },
+    "devDependencies": {
+      "typescript": "5"
+    }
+  }

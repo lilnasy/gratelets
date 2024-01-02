@@ -1,0 +1,24 @@
+---
+import Layout from "components/layout.astro"
+
+const { user } = Astro.locals
+if (user === undefined) return Astro.redirect("/auth")
+---
+<script>
+    // @ts-ignore
+    import confetti from "canvas-confetti"
+    confetti({
+        particleCount: 100,
+        startVelocity: 30,
+        spread: 360,
+        origin: {
+            x: Math.random(),
+            y: Math.random() - 0.2
+        }
+    });
+</script>
+<Layout>
+    <h3>Welcome, {user.displayName}!</h3>
+    <p>You registered this account on {user.data.registered.toLocaleTimeString()}</p>
+    <p>You logged in a total of {user.data.loginCount} times, most recently at {user.data.lastLogin.toLocaleTimeString()}</p>
+</Layout>

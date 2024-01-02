@@ -1,0 +1,83 @@
+---
+import Layout from "components/layout.astro"
+import InputBox from "components/input-box.tsx"
+---
+<style is:global>
+
+    /* Form */
+
+    main#input-box-container form {
+        display: grid;
+        place-items: center;
+        grid-template-areas: "label" "input";
+    }
+
+    main#input-box-container label,
+    main#input-box-container input,
+    main#input-box-container button {
+        all: unset;
+    }
+
+
+    /* Label */
+
+    main#input-box-container label {
+        font-family: Georgia, serif;
+        grid-area: label;
+        width: 20rem;
+        height: 2rem;
+        text-align: center;
+    }
+    
+
+    /* Text Input */
+
+    main#input-box-container input {
+        grid-area: input;
+        width: 20rem;
+        height: 3rem;
+        font-family: Georgia, serif;
+        font-size: 2rem;
+        text-align: center;
+        outline: solid;
+        border-radius: 1.5rem;
+    }
+
+
+    /* Button */
+
+    main#input-box-container button {
+        cursor: pointer;
+        grid-area: 2 / 1;
+        place-self: end;
+        width: 3rem;
+        height: 3rem;
+        font-family: Georgia, serif;
+        font-size: 2rem;
+        text-align: center;
+        background-color: oklch(0.8 0.2 20);
+        color: white;
+        clip-path: circle(50%);
+        transition: 0.5s cubic-bezier(1, 0.3, 0, 0.7);
+        transition-property: scale;
+    }
+
+    main#input-box-container button[disabled] {
+        scale: 0;
+    }
+
+
+    /* Output */
+
+    main#input-box-container output {
+        width: 20rem;
+        height: 2rem;
+        text-align: center;
+    }
+
+</style>
+<Layout title="Passkeys Demo">
+    <main id="input-box-container">
+        <InputBox client:load />
+    </main>
+</Layout>
