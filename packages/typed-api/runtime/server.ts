@@ -3,9 +3,6 @@ import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext, AstroGlobal } from "astro"
 import type { infer as ZodInfer, ZodTypeAny } from "zod"
 
-let zod: typeof import("zod") | undefined
-try { zod = await import("zod") } catch {}
-
 export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
 
 export interface TypedAPIHandler<Input, Output> {
@@ -22,14 +19,17 @@ export function defineApiRoute<Handler extends TypedAPIHandler<unknown, unknown>
 export function defineApiRoute<SimpleRoute extends APIRoute>(handler: SimpleRoute): SimpleRoute
 export function defineApiRoute(handler: any) {
     if ("schema" in handler && "fetch" in handler) {
-        if (zod === undefined) {
-            throw new ZodNotInstalled
-        }
-        const { schema, fetch } = handler
-        if (schema instanceof zod.ZodType === false) {
-            throw new InvalidSchema(schema)
-        }
-        function schemaValidatedFetch(input: any, context: TypedAPIContext) {
+        async function schemaValidatedFetch(input: any, context: TypedAPIContext) {
+            let zod: typeof import("zod") | undefined
+            try {
+                zod = await import("zod")
+            } catch {
+                throw new ZodNotInstalled
+            }
+            const { schema, fetch } = handler
+            if (schema instanceof zod.ZodType === false) {
+                throw new InvalidSchema(schema)
+            }
             try { input = schema.parse(input) }
             catch (error) { throw new ValidationFailed(error, context.request.url) }
             return fetch(input, context)
