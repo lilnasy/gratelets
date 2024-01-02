@@ -1,5 +1,11 @@
 # astro-stylex
 
+## 0.2.0
+
+### Minor Changes
+
+- [#55](https://github.com/lilnasy/gratelets/pull/55) [`6b23b19`](https://github.com/lilnasy/gratelets/commit/6b23b19a7418fb19a0c6d06935debf64fff1126d) Thanks [@enmanuelr](https://github.com/enmanuelr)! - Upgrading stylex dependency to 0.4.1
+
 ## 0.1.3
 
 ### Patch Changes
