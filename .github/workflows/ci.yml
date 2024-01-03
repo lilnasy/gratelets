@@ -38,27 +38,19 @@ jobs:
         NODE_VERSION: [20, 21]
       fail-fast: false
   Windows:
-    name: "Windows - Node ${{ matrix.NODE_VERSION }}"
+    name: "Windows - Node 20"
     needs: prelim
     uses: ./.github/workflows/test.yml
     with:
-      node: ${{ matrix.NODE_VERSION }}
+      node: 20
       os: windows-latest
-    strategy:
-      matrix:
-        NODE_VERSION: [18, 20, 21]
-      fail-fast: false
   macOS:
-    name: "macOS - Node ${{ matrix.NODE_VERSION }}"
+    name: "macOS - Node 20"
     needs: prelim
     uses: ./.github/workflows/test.yml
     with:
-      node: ${{ matrix.NODE_VERSION }}
+      node: 20
       os: macos-latest
-    strategy:
-      matrix:
-        NODE_VERSION: [18, 20, 21]
-      fail-fast: false
   Chrome:
     name: E2E Tests
     needs: prelim
