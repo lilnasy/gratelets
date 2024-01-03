@@ -1,5 +1,11 @@
 # astro-typed-api
 
+## 0.1.2
+
+### Patch Changes
+
+- [#53](https://github.com/lilnasy/gratelets/pull/53) [`f5b4b95`](https://github.com/lilnasy/gratelets/commit/f5b4b954765ac6e45a1c192350d491a8a0f402ac) Thanks [@lilnasy](https://github.com/lilnasy)! - Improves compatibility with environments that do not support top-level await.
+
 ## 0.1.1
 
 ### Patch Changes
