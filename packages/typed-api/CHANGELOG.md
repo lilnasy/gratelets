@@ -1,5 +1,13 @@
 # astro-typed-api
 
+## 0.2.0
+
+### Minor Changes
+
+- [#59](https://github.com/lilnasy/gratelets/pull/59) [`9cd7f72`](https://github.com/lilnasy/gratelets/commit/9cd7f72c53d0ebd2b921ab1026e7c553f0d67316) Thanks [@lilnasy](https://github.com/lilnasy)! - **Breaking change**: The minimum required astro version is now 4.1.
+
+  Fixes an issue where having trailingSlash configured prevented API calls from being routed correctly.
+
 ## 0.1.2
 
 ### Patch Changes
