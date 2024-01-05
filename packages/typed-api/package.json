@@ -31,6 +31,7 @@
     },
     "type": "module",
     "peerDependencies": {
+        "astro": "^4.1.0",
         "zod": "3"
     },
     "dependencies": {
