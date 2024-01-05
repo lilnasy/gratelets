@@ -24,7 +24,17 @@ export default function (_?: Partial<Options>): AstroIntegration {
                         generateTypes(filenames, apiDir, declarationFileUrl)
                     }
                 }] } })
-                updateConfig({ vite: { ssr: { noExternal: ["astro-typed-api"] } } })
+                updateConfig({
+                    vite: {
+                        define: {
+                            "import.meta.env._TRAILING_SLASH": JSON.stringify(config.trailingSlash)
+                        },
+                        ssr: {
+                            // this package is published as uncompiled typescript, which we need vite to process
+                            noExternal: ["astro-typed-api"]
+                        }
+                    }
+                })
             },
             "astro:server:setup" ({ server }) {
                 server.watcher.on("add", async path => {
