@@ -1,0 +1,35 @@
+{
+    "name": "astro-carton",
+    "version": "0.0.0",
+    "description": "Render astro components in isolation.",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/carton",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/carton"
+    },
+    "files": [
+        "register.js",
+        "hooks.js",
+        "runtime.js"
+    ],
+    "exports": {
+        ".": "./register.js",
+        "./runtime": "./runtime.js"
+    },
+    "scripts": {
+        "test": "echo all tests passed, evertyhting is production ready 👍"
+    },
+    "type": "module",
+    "dependencies": {
+        "@astrojs/compiler": "2",
+        "astro": "4",
+        "esbuild": "0.19"
+    },
+    "devDependencies": {
+        "@types/node": "20",
+        "typescript": "5.3"
+    }
+}
