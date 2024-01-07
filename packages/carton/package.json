@@ -23,9 +23,11 @@
         "test": "echo all tests passed, evertyhting is production ready 👍"
     },
     "type": "module",
+    "peerDependencies": {
+        "astro": "4"
+    },
     "dependencies": {
         "@astrojs/compiler": "2",
-        "astro": "4",
         "esbuild": "0.19"
     },
     "devDependencies": {

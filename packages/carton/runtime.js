@@ -1,11 +1,10 @@
-// @ts-check
-import { renderPage }            from "./node_modules/astro/dist/core/render/core.js"
-import { AstroCookies }          from "./node_modules/astro/dist/core/cookies/cookies.js"
-import { Logger }                from "./node_modules/astro/dist/core/logger/core.js"
-import { consoleLogDestination } from "./node_modules/astro/dist/core/logger/console.js"
-import { RouteCache }            from "./node_modules/astro/dist/core/render/route-cache.js"
-import { createEnvironment }     from "./node_modules/astro/dist/core/render/index.js"
-import { createRenderContext }   from "./node_modules/astro/dist/core/render/index.js"
+import { renderPage }            from "../astro/dist/core/render/core.js"
+import { AstroCookies }          from "../astro/dist/core/cookies/cookies.js"
+import { Logger }                from "../astro/dist/core/logger/core.js"
+import { consoleLogDestination } from "../astro/dist/core/logger/console.js"
+import { RouteCache }            from "../astro/dist/core/render/route-cache.js"
+import { createEnvironment }     from "../astro/dist/core/render/index.js"
+import { createRenderContext }   from "../astro/dist/core/render/index.js"
 
 /**
  * @typedef {{
