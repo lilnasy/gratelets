@@ -1,6 +1,7 @@
 A collection of purpose-built, small, third-party integrations for Astro.
 
 - **astro-adds-to-head** - fix a corner case in content collections rendering. [README](https://github.com/lilnasy/gratelets/tree/main/packages/adds-to-head) | [NPM](https://www.npmjs.com/package/astro-adds-to-head)
+- **astro-carton** - render components in isolation. [README](https://github.com/lilnasy/gratelets/tree/main/packages/carton) | [NPM](https://www.npmjs.com/package/astro-carton)
 - **astro-dynamic-import** - let your CMS decide which components to include. [README](https://github.com/lilnasy/gratelets/tree/main/packages/dynamic-import) | [NPM](https://www.npmjs.com/package/astro-dynamic-import)
 - **astro-emotion** - CSS-in-Zero-JS using [Emotion](https://emotion.sh/). [README](https://github.com/lilnasy/gratelets/tree/main/packages/emotion) | [NPM](https://www.npmjs.com/package/astro-emotion)
 - **astro-global** - use the Astro global directly inside framework components and MDX pages. [README](https://github.com/lilnasy/gratelets/tree/main/packages/global) | [NPM](https://www.npmjs.com/package/astro-global)
