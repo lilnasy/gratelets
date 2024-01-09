@@ -16,7 +16,12 @@ type Route<Endpoint extends string, EndpointModule> =
     EndpointToObject<Endpoint, ModuleProxy<EndpointModule, never>>
 
 type ModuleProxy<EndpointModule, Params extends string> = {
-    [Method in keyof EndpointModule]: MethodProxy<EndpointModule[Method], Params, Method extends string ? Method : never>
+    [Method in keyof EndpointModule]:
+        Method extends string
+            ? Method extends Uppercase<Method>
+                ? MethodProxy<EndpointModule[Method], Params, Method extends string ? Method : never>
+            : TypedAPITypeError<"The method of an API Route must be exported as uppercase.">
+        : TypedAPITypeError<"The method of an API Route must be exported as uppercase.">
 }
 
 type MethodProxy<MethodExport, Params extends string, Method extends string> =
