@@ -2,4 +2,4 @@
 "astro-carton": minor
 ---
 
-support carton in every environment
+Adds compatibility with all package managers.
