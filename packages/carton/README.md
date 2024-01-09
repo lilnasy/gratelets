@@ -6,8 +6,6 @@ This library allows you to render astro components as a string in any project.
 npm install astro-carton
 ```
 
-Note that only npm is supported.
-
 ## Usage
 
 ```js
