@@ -1,5 +1,11 @@
 # astro-typed-api
 
+## 0.2.1
+
+### Patch Changes
+
+- [#65](https://github.com/lilnasy/gratelets/pull/65) [`6a64dd4`](https://github.com/lilnasy/gratelets/commit/6a64dd4dbb2f6b07d9eb2ff52e63e8955301f9d2) Thanks [@lilnasy](https://github.com/lilnasy)! - Adds a helpful typescript error for when an export is not uppercase.
+
 ## 0.2.0
 
 ### Minor Changes
