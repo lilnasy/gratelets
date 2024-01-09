@@ -1,5 +1,11 @@
 # astro-carton
 
+## 0.1.0
+
+### Minor Changes
+
+- [#63](https://github.com/lilnasy/gratelets/pull/63) [`80faab4`](https://github.com/lilnasy/gratelets/commit/80faab4a4c30acc84a560f25066c72a5e9dabcff) Thanks [@rishi-raj-jain](https://github.com/rishi-raj-jain)! - Adds compatibility with all package managers.
+
 ## 0.0.1
 
 ### Patch Changes
