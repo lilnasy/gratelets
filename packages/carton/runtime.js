@@ -1,3 +1,14 @@
+//@ts-check
+import {
+    AstroCookies,
+    Logger,
+    RouteCache,
+    createEnvironment,
+    createRenderContext,
+    renderPage,
+    consoleLogDestination,
+} from "./utils.js"
+
 /**
  * @typedef {{
 *     props?: Record<string, any>
@@ -6,30 +17,24 @@
 */
 
 export class AstroCarton {
+    #logger = new Logger({ dest: consoleLogDestination, level: "info" })
+    #routeCache = new RouteCache(this.#logger)
+    #env = createEnvironment({
+        clientDirectives: new Map,
+        compressHTML: true,
+        logger: this.#logger,
+        mode: "production",
+        renderers: [],
+        async resolve(path) { return path },
+        routeCache: this.#routeCache,
+        ssr: true,
+        streaming: true
+    })
+
     async renderToString(
        /** @type {any} */ Component,
        /** @type {RenderOptions} */ options,
     ) {
-        const { Logger } = await import("astro/dist/core/logger/core.js")
-        const logger = new Logger({ dest: consoleLogDestination, level: "info" })
-        const { RouteCache } = await import("astro/dist/core/render/route-cache.js")
-        const routeCache = new RouteCache(logger)
-        const { consoleLogDestination } = await import("astro/dist/core/logger/console.js")
-        const { createEnvironment }  = await import("astro/dist/core/render/index.js")
-        const env = createEnvironment({
-            clientDirectives: new Map,
-            compressHTML: true,
-            logger,
-            mode: "production",
-            renderers: [],
-            async resolve(path) { return path },
-            routeCache,
-            ssr: true,
-            streaming: true
-        })
-        const { renderPage } = await import("astro/dist/core/render/core.js")
-        const { AstroCookies } = await import("astro/dist/core/cookies/cookies.js")
-        const { createRenderContext } = await import("astro/dist/core/render/index.js")
         const request = new Request("https://astro.carton/")
         const cookies = new AstroCookies(request)
         /** @type {any} */
@@ -37,13 +42,13 @@ export class AstroCarton {
         const mod = { default: Component }
         const renderContext = await createRenderContext({
             route,
-            env,
+            env: this.#env,
             mod,
             request,
         })
         const response = await renderPage({
             cookies,
-            env,
+            env: this.#env,
             mod,
             renderContext,
         })
