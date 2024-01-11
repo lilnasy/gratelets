@@ -1,6 +1,6 @@
 {
     "name": "astro-server-only-modules",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "description": "Make sure you never leak security-sensitive code to the browser.",
     "author": "Arsh",
     "license": "Public Domain",
