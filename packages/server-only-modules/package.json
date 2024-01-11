@@ -1,0 +1,31 @@
+{
+    "name": "astro-server-only-modules",
+    "version": "0.0.0",
+    "description": "Make sure you never leak security-sensitive code to the browser.",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+        "withastro",
+        "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/server-only-modules",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/server-only-modules"
+    },
+    "files": [
+        "integration.ts"
+    ],
+    "exports": {
+        ".": "./integration.ts"
+    },
+    "scripts": {
+        "test": "pnpm -w test server-only-modules.test.ts"
+    },
+    "type": "module",
+    "devDependencies": {
+        "@types/node": "20",
+        "astro": "4"
+    }
+}

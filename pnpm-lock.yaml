@@ -123,6 +123,15 @@ importers:
         specifier: '20'
         version: 20.10.6
 
+  packages/server-only-modules:
+    devDependencies:
+      '@types/node':
+        specifier: '20'
+        version: 20.10.6
+      astro:
+        specifier: '4'
+        version: 4.1.0(@types/node@20.10.6)(typescript@5.3.3)
+
   packages/stylex:
     dependencies:
       '@babel/core':
@@ -421,6 +430,15 @@ importers:
       astro-scope:
         specifier: workspace:*
         version: link:../../../packages/scope
+
+  tests/fixtures/server-only-modules:
+    dependencies:
+      astro:
+        specifier: '4'
+        version: 4.1.0(@types/node@20.10.6)(typescript@5.3.3)
+      astro-server-only-modules:
+        specifier: workspace:*
+        version: link:../../../packages/server-only-modules
 
   tests/fixtures/stylex:
     dependencies:
