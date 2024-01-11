@@ -1,4 +1,4 @@
-# astro-server-only-modules 🗣️
+# astro-server-only-modules 🔐
 
 This **[Astro integration][astro-integration]** allows you to make sure you never leak security-sensitive code to the browser.
 
