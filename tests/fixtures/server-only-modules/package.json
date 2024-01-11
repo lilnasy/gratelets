@@ -1,0 +1,8 @@
+{
+    "name": "@test/server-only-modules",
+    "private": true,
+    "dependencies": {
+        "astro": "4",
+        "astro-server-only-modules": "workspace:*"
+    }
+}
