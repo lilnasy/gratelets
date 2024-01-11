@@ -1,6 +1,6 @@
 # astro-server-only-modules 🗣️
 
-This **[Astro integration][astro-integration]** lets you explicitly mark modules whose code should never be sent to the browser.
+This **[Astro integration][astro-integration]** allows you to make sure you never leak security-sensitive code to the browser.
 
 - <strong>[Why astro-server-only-modules?](#why-astro-server-only-modules)</strong>
 - <strong>[Installation](#installation)</strong>
@@ -11,6 +11,9 @@ This **[Astro integration][astro-integration]** lets you explicitly mark modules
 
 ## Why astro-server-only-modules?
 
+In a large codebase, it can be difficult to keep track of how code is being shared and where. This becomes a security risk when you have critical information that should only be available to the server. There are parts of your infrastructure that the browser (and therefore, a malicious user) does not need to be privy to.
+
+This integration allows you to delineate the context of your code to only include it in the server app. If one of the modules ending with `.server.ts` extension accidentally gets imported by client-side, directly or indirectly, the build will fail.
 
 ## Installation
 
@@ -24,10 +27,9 @@ npm install astro-server-only-modules
 
 Then, apply this integration to your `astro.config.*` file using the `integrations` property:
 
-```diff lang="js" "mdx()"
+```diff lang="js" "serverOnlyModules()"
   // astro.config.mjs
   import { defineConfig } from 'astro/config';
-  import mdx from '@astrojs/mdx';
 + import serverOnlyModules from 'astro-server-only-modules';
 
   export default defineConfig({
@@ -39,7 +41,7 @@ Then, apply this integration to your `astro.config.*` file using the `integratio
 
 ## Usage
 
-Once the integration is installed and added to the configuration file, rename modules that should only be used within the server to end with `.server.ts`.
+Once the integration is installed and added to the configuration file, rename modules that should only be used within the server to end with `.server.ts`. If one of these modules accidentally gets imported by client-side, directly or indirectly, the build will fail.
 
 ## Troubleshooting
 
