@@ -1,5 +1,5 @@
 import fs from "node:fs"
-import { cachedCompilation } from "./node_modules/astro/dist/core/compile/cache.js"
+import { compile } from "./node_modules/astro/dist/core/compile/index.js"
 import { parseAstroRequest } from "./node_modules/astro/dist/vite-plugin-astro/query.js"
 import type { AstroIntegration } from "astro"
 
@@ -33,7 +33,7 @@ export default function (_: Partial<Options> = {}): AstroIntegration {
 
                                 const filename = id.slice("astro:scope:".length, -".doesnotendwithastrodontprocessthispls".length)
                                 
-                                const result = await cachedCompilation({
+                                const result = await compile({
                                     astroConfig: config,
                                     viteConfig: {} as any,
                                     filename,
