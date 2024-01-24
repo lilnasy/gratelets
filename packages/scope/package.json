@@ -1,6 +1,6 @@
 {
     "name": "astro-scope",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Get the hash used by the Astro compiler to scope css rules.",
     "author": "Arsh",
     "license": "Public Domain",
