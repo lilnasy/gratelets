@@ -13,7 +13,8 @@
     "files": [
         "register.js",
         "hooks.js",
-        "runtime.js"
+        "runtime.js",
+        "utils.js"
     ],
     "exports": {
         ".": "./register.js",
