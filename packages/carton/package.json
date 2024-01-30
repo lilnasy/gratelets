@@ -1,6 +1,6 @@
 {
     "name": "astro-carton",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Render astro components in isolation.",
     "author": "Arsh",
     "license": "Public Domain",
