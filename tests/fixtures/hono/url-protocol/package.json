@@ -1,8 +1,0 @@
-{
-  "name": "@test/url-protocol",
-  "private": true,
-  "dependencies": {
-    "astro": "4",
-    "astro-hono": "workspace:*"
-  }
-}
