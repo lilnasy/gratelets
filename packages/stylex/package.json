@@ -28,7 +28,7 @@
     },
     "type": "module",
     "peerDependencies": {
-        "@stylexjs/stylex": "0.4.1"
+        "@stylexjs/stylex": "0.5.1"
     },
     "dependencies": {
         "@babel/core": "7",
