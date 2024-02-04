@@ -39,6 +39,8 @@ Next, apply this integration to your `astro.config.*` file using the `integratio
 
 Once the integration is installed and added to the configuration file, you can import and use stylex as a normal library.
 
+### React
+
 ```ts
 // src/components/react.jsx
 import stylex from '@stylexjs/stylex';
@@ -65,6 +67,35 @@ export function Component(props) {
   );
 }
 ```
+
+### Svelte
+
+The code within a `<script>` tag of a svelte component is run once for each use of the component. It is, therefore compiled into a function. Stylex requires the `stylex.create()` call to happen at the top-level of a module. This means that style definitions can not be written inside a normal `<script>` tag. For cases like this, Svelte allows you to write top-level code in a `<script context="module">` tag. All your style definitions must be written inside one these tags, or imported from a separate module.
+
+```svelte
+<script context="module">
+  import stylex from "@stylexjs/stylex"
+  const colorStyles = stylex.create({
+        red: {
+            backgroundColor: 'red',
+            borderColor: 'darkred',
+        },
+        green: {
+            backgroundColor: 'lightgreen',
+            borderColor: 'darkgreen',
+        },
+    });
+</script>
+<button {...stylex.attrs(colorStyles.red)} />
+<button {...stylex.attrs(colorStyles.green)} />
+```
+
+### `stylex.attrs()` vs `stylex.props()`
+
+The `stylex.props()` function returns the generated classes in the `className` prop. This works only for React and frameworks compatible with it. To improve usability with other frameworks, `@stylexjs/stylex` introduced `stylex.attrs()`. This function is identical to `stylex.props()`, except it returns the generated classes in the `class` prop.
+
+Svelte only accepts `class` prop, so you would want to use `stylex.attrs()`. Meanwhile, React only accepts `className` prop - you would want to use `stylex.props()`, instead. Preact, and Solid accept both `class` and `className` props, and you are free to use either functions.
+
 
 ## Troubleshooting
 
