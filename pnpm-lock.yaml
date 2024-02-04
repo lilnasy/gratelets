@@ -181,7 +181,7 @@ importers:
         specifier: '7'
         version: 7.0.4(astro@4.3.2)
       playwright:
-        specifier: '1'
+        specifier: 1.40.1
         version: 1.40.1
 
   tests-e2e/fixtures/typed-api:

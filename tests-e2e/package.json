@@ -3,6 +3,6 @@
     "type": "module",
     "devDependencies": {
         "@astrojs/node": "7",
-        "playwright": "1"
+        "playwright": "1.40.1"
     }
 }
