@@ -1,8 +1,0 @@
-{
-  "name": "@test/hono-prerender-404-500",
-  "private": true,
-  "dependencies": {
-    "astro": "4",
-    "astro-hono": "workspace:*"
-  }
-}
