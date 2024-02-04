@@ -70,7 +70,7 @@ export function Component(props) {
 
 ### Svelte
 
-The code within a `<script>` tag of a svelte component is run once for each use of the component. It is, therefore compiled into a function. Stylex requires the `stylex.create()` call to happen at the top-level of a module. Svelte allows you to write top-level code in a `<script context="module">` tag. All your style definitions must be made inside the module context, or imported from a separate module.
+The code within a `<script>` tag of a svelte component is run once for each use of the component. It is, therefore compiled into a function. Stylex requires the `stylex.create()` call to happen at the top-level of a module. This means that style definitions can not be written inside a normal `<script>` tag. For cases like this, Svelte allows you to write top-level code in a `<script context="module">` tag. All your style definitions must be written inside one these tags, or imported from a separate module.
 
 ```svelte
 <script context="module">
