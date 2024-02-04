@@ -50,7 +50,7 @@ jobs:
     uses: ./.github/workflows/test.yml
     with:
       node: 20
-      os: macos-latest
+      os: macos-14
   Chrome:
     name: E2E Tests
     needs: prelim
