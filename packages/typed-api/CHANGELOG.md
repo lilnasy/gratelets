@@ -1,5 +1,11 @@
 # astro-typed-api
 
+## 0.2.2
+
+### Patch Changes
+
+- [#81](https://github.com/lilnasy/gratelets/pull/81) [`07166b4`](https://github.com/lilnasy/gratelets/commit/07166b4b972c64d40586d4d5d84996c7577435b5) Thanks [@lilnasy](https://github.com/lilnasy)! - Prevents error overlay from appearing in dev mode for user errors. Astro's error overlay appears whenever a server side error occurs. For server-side rendering html, it's important to pay attention to them. However, for APIs, an error is just another response - it is unintended for it to take over the browser.
+
 ## 0.2.1
 
 ### Patch Changes
