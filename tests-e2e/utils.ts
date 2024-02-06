@@ -21,6 +21,7 @@ export function testFactory(relativeRootPath: `./fixtures/${string}`, options?: 
     let adapterServer: TestExtension["adapter"]
     let previewServer: PreviewServer
     const root = new URL(relativeRootPath, import.meta.url)
+    // HACK: vite fails to resolve libraries unless cwd matches project root
     process.chdir(url.fileURLToPath(root))
     const test = base.extend<TestExtension>({
         async page({ page }, use) {

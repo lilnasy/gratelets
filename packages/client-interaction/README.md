@@ -1,6 +1,6 @@
 # astro-client-interaction 👆
 
-This **[Astro integration][astro-integration]** ...
+This **[Astro integration][astro-integration]** lets you load and hydrate framework components on first interaction by introducing the `client:interaction` directive.
 
 - <strong>[Why astro-client-interaction?](#why-astro-client-interaction)</strong>
 - <strong>[Installation](#installation)</strong>
@@ -10,6 +10,8 @@ This **[Astro integration][astro-integration]** ...
 - <strong>[Changelog](#changelog)</strong>
 
 ## Why astro-client-interaction?
+
+This integration is useful when you have several components that may never be interacted with, and are non-essential to your visitors' experience. Delaying their loading and hydration can help improve the performance of your site by reducing the amount of bandwidth usage and main-thread work that needs to be done on the initial page load.
 
 ## Installation
 
@@ -36,6 +38,15 @@ Then, apply this integration to your `astro.config.*` file using the `integratio
 ```
 
 ## Usage
+
+Once the integration is installed and added to the configuration file, you can add the `client:interaction` directive to any component that should only hydrate after the visitor presses a key, clicks or touches any part of the page.
+
+```astro
+---
+import Component from "../components/Counter.jsx"
+---
+<Component client:interaction />
+```
 
 ## Troubleshooting
 
