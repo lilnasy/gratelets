@@ -1,6 +1,6 @@
 {
     "name": "astro-client-interaction",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "description": "Load and hydrate framework components on first interaction by adding a `client:interaction` directive.",
     "author": "Arsh",
     "license": "Public Domain",
