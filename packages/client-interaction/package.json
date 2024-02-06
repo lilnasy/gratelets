@@ -1,0 +1,35 @@
+{
+    "name": "astro-client-interaction",
+    "version": "0.0.0",
+    "description": "",
+    "author": "Arsh",
+    "license": "Public Domain",
+    "keywords": [
+        "withastro",
+        "astro-component"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/client-interaction",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/lilnasy/gratelets",
+        "directory": "packages/client-interaction"
+    },
+    "files": [
+        "integration.ts",
+        "runtime"
+    ],
+    "exports": {
+        ".": "./integration.ts",
+        "./runtime/*": "./runtime/*"
+    },
+    "scripts": {
+        "test": "pnpm -w test tests/client-interaction.test.ts"
+    },
+    "type": "module",
+    "peerDependencies": {
+        "astro": "4"
+    },
+    "devDependencies": {
+        "@types/node": "20"
+    }
+}
