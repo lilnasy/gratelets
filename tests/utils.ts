@@ -39,7 +39,13 @@ export async function dev(root: `./fixtures/${string}` | URL, options: Astro.Ast
     }
 }
 
-async function command<Command extends "dev" | "build">(
+export type PreviewServer = Astro.PreviewServer
+
+export async function preview(root: `./fixtures/${string}` | URL, options: Astro.AstroInlineConfig = {}) {
+    return await command("preview", root, options)
+}
+
+async function command<Command extends "dev" | "build" | "preview">(
     command: Command,
     root_: string | URL,
     options?: Astro.AstroInlineConfig
@@ -60,7 +66,10 @@ async function command<Command extends "dev" | "build">(
             },
             ...options?.vite
         }
-    }) as Command extends "dev" ? ReturnType<typeof Astro.dev> : void
+    }) as
+        Command extends "dev" ? ReturnType<typeof Astro.dev> :
+        Command extends "preview" ?  ReturnType<typeof Astro.preview> :
+        void
 }
 
 export const testAdapter: Astro.AstroIntegration = {

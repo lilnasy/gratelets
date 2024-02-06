@@ -23,7 +23,7 @@
         "./runtime/*": "./runtime/*"
     },
     "scripts": {
-        "test": "pnpm -w test tests/client-interaction.test.ts"
+        "test": "pnpm -w test:e2e client-interaction.spec.ts"
     },
     "type": "module",
     "peerDependencies": {
