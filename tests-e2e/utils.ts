@@ -1,3 +1,4 @@
+import url from "node:url"
 import type { AstroInlineConfig } from "astro"
 import type { createExports } from "@astrojs/node/server.js"
 //@ts-expect-error
@@ -20,6 +21,7 @@ export function testFactory(relativeRootPath: `./fixtures/${string}`, options?: 
     let adapterServer: TestExtension["adapter"]
     let previewServer: PreviewServer
     const root = new URL(relativeRootPath, import.meta.url)
+    process.chdir(url.fileURLToPath(root))
     const test = base.extend<TestExtension>({
         async page({ page }, use) {
             // doing this here avoids needing to create playwright.config.ts
