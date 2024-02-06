@@ -1,4 +1,10 @@
-import type { AstroIntegration } from "astro"
+import { type AstroIntegration } from "astro"
+
+declare module "astro" {
+    interface AstroClientDirectives {
+        "client:interaction"?: boolean
+    }
+}
 
 interface Options {}
 
