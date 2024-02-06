@@ -1,15 +1,17 @@
+import url from "node:url"
 import type { AstroInlineConfig } from "astro"
 import type { createExports } from "@astrojs/node/server.js"
 //@ts-expect-error
 import globals from "./node_modules/playwright/lib/common/globals.js"
 import { test as base } from "playwright/test"
-import { build, type BuildFixture, dev, type DevServer } from "../tests/utils.ts"
+import { build, type BuildFixture, dev, type DevServer, preview, type PreviewServer } from "../tests/utils.ts"
 
 interface TestExtension {
     build: BuildFixture
     exports: ReturnType<typeof createExports>
     adapter: ReturnType<TestExtension["exports"]["startServer"]>
     dev: DevServer
+    preview: PreviewServer
 }
 
 export function testFactory(relativeRootPath: `./fixtures/${string}`, options?: AstroInlineConfig) {
@@ -17,7 +19,10 @@ export function testFactory(relativeRootPath: `./fixtures/${string}`, options?: 
     let buildFixture: BuildFixture
     let exports: TestExtension["exports"]
     let adapterServer: TestExtension["adapter"]
+    let previewServer: PreviewServer
     const root = new URL(relativeRootPath, import.meta.url)
+    // HACK: vite fails to resolve libraries unless cwd matches project root
+    process.chdir(url.fileURLToPath(root))
     const test = base.extend<TestExtension>({
         async page({ page }, use) {
             // doing this here avoids needing to create playwright.config.ts
@@ -40,6 +45,10 @@ export function testFactory(relativeRootPath: `./fixtures/${string}`, options?: 
         async adapter({ exports }, use) {
             adapterServer ??= exports.startServer()
             await use(adapterServer)
+        },
+        async preview({ build }, use) {
+            previewServer ??= await preview(root, options)
+            await use(previewServer)
         }
     })
     return test

@@ -49,6 +49,16 @@ importers:
         specifier: '5.3'
         version: 5.3.3
 
+  packages/client-interaction:
+    dependencies:
+      astro:
+        specifier: '4'
+        version: 4.3.2(@types/node@20.11.16)(typescript@5.3.3)
+    devDependencies:
+      '@types/node':
+        specifier: '20'
+        version: 20.11.16
+
   packages/dynamic-import:
     dependencies:
       astro:
@@ -183,6 +193,24 @@ importers:
       playwright:
         specifier: 1.40.1
         version: 1.40.1
+
+  tests-e2e/fixtures/client-interaction:
+    dependencies:
+      '@astrojs/mdx':
+        specifier: '2'
+        version: 2.1.1(astro@4.3.2)
+      '@astrojs/preact':
+        specifier: '3'
+        version: 3.1.0(@babel/core@7.23.9)(preact@10.19.3)(vite@5.0.12)
+      astro:
+        specifier: '4'
+        version: 4.3.2(@types/node@20.11.16)(typescript@5.3.3)
+      astro-client-interaction:
+        specifier: workspace:*
+        version: link:../../../packages/client-interaction
+      preact:
+        specifier: '10'
+        version: 10.19.3
 
   tests-e2e/fixtures/typed-api:
     dependencies:
@@ -5087,7 +5115,7 @@ packages:
     dependencies:
       '@types/hast': 3.0.4
       '@types/mdast': 4.0.3
-      mdast-util-to-hast: 13.0.2
+      mdast-util-to-hast: 13.1.0
       unified: 11.0.4
       vfile: 6.0.1
 
