@@ -9,8 +9,20 @@ const firstInteraction = new Promise<void>(resolve => {
     }
 })
 
-export default (async load => {
+export default (async (load, opts) => {
     await firstInteraction
-    const hydrate = await load()
-    await hydrate()
+    const hy = async () => {
+        const hydrate = await load()
+        await hydrate()
+    }
+    const arrOpts = Array.isArray(opts.value) ? opts.value : [opts.value]
+    if (arrOpts.includes('idle')) {
+        if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(hy)
+            return
+        }
+        setTimeout(hy, 100)
+        return
+    }
+    hy()
 }) satisfies import('astro').ClientDirective
