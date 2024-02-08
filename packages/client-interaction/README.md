@@ -48,7 +48,7 @@ import Component from "../components/Counter.jsx"
 <Component client:interaction />
 ```
 
-Interactions may happen while the page is loading. This means that components with the `client:interaction` directive sometimes get loaded before the ones with the `client:idle` directive. This behavior becomes problematic if you use directives to designate "priorities" to components. To make sure that `client:interaction` components are always treated as lower priority than `client:idle`, you can set the value of `client:interaction` to "idle".
+Interactions may happen while the page is loading. This means that components with the `client:interaction` directive sometimes get loaded before the ones with the `client:idle` directive. This behavior becomes problematic if you use directives to designate "priorities" to components. To make sure that `client:interaction` components are always treated as lower priority than `client:idle`, you can set the value of `client:interaction` to `"idle"`.
 
 ```astro
 ---
@@ -57,7 +57,7 @@ import Component from "../components/Counter.jsx"
 <Component client:interaction="idle" />
 ```
 
-When the "idle" value is set, an interaction will be schedule the loading of the component for when the browser is idle, instead of loading it immediately on interaction.
+When the "idle" value is set, an interaction will schedule the loading of the component for when the browser is idle, instead of loading it immediately on interaction.
 
 ## Troubleshooting
 
