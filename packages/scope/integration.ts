@@ -41,7 +41,6 @@ export default function (_: Partial<Options> = {}): AstroIntegration {
                                     preferences: {} as any
                                 })
                                 
-                                // @ts-expect-error what?!
                                 return `export default ${JSON.stringify(result.scope)}`
                             }
                         }, {
