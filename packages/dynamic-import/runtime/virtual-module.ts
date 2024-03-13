@@ -14,7 +14,8 @@ import { srcDirName, lookupMap as _lookupMap } from "astro-dynamic-import:intern
 import type { SSRResult } from "astro"
 
 const lookupMap: Record<string, Promise<AstroComponentFactory>> = {}
-const processed: Array<string> = [];
+let pathname: String = "";
+let processed: Array<string> = [];
 
 export default async function(srcRelativeSpecifier: string) {
     const absoluteSpecifier = path.posix.join("/", srcDirName, srcRelativeSpecifier)
@@ -39,6 +40,10 @@ async function lazyImportToComponent(absoluteSpecifier: string, importable: any)
     const componentModule = await getMod()
     return createComponent({
         factory(result: SSRResult, props: Record<string, unknown>, slots: Record<string, unknown>) {
+            if (pathname !== result.pathname) {
+                processed = [];
+                pathname = result.pathname;
+            }
             const component = componentModule.default
             let styles = "";
             let links = "";
