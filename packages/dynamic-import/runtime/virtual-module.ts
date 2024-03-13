@@ -14,6 +14,7 @@ import { srcDirName, lookupMap as _lookupMap } from "astro-dynamic-import:intern
 import type { SSRResult } from "astro"
 
 const lookupMap: Record<string, Promise<AstroComponentFactory>> = {}
+const processed: Array<string> = [];
 
 export default async function(srcRelativeSpecifier: string) {
     const absoluteSpecifier = path.posix.join("/", srcDirName, srcRelativeSpecifier)
@@ -39,9 +40,16 @@ async function lazyImportToComponent(absoluteSpecifier: string, importable: any)
     return createComponent({
         factory(result: SSRResult, props: Record<string, unknown>, slots: Record<string, unknown>) {
             const component = componentModule.default
-            const styles = collectedStyles.map((style: any) => renderUniqueStylesheet(result, { type: 'inline', content: style })).join('')
-            const links = collectedLinks.map((link: any) => renderUniqueStylesheet(result, { type: 'external', src: prependForwardSlash(link) })).join('')
-            const scripts = collectedScripts.map((script: any) => renderScriptElement(script)).join('')
+            let styles = "";
+            let links = "";
+            let scripts = "";
+
+            if (!processed.includes(component.name)) {
+                styles = collectedStyles.map((style: any) => renderUniqueStylesheet(result, { type: 'inline', content: style })).join('')
+                links = collectedLinks.map((link: any) => renderUniqueStylesheet(result, { type: 'external', src: prependForwardSlash(link) })).join('')
+                scripts = collectedScripts.map((script: any) => renderScriptElement(script)).join('')
+            }
+            processed.push(component.name)
             return createHeadAndContent(unescapeHTML(styles + links + scripts) as any,
                 renderTemplate`${renderComponent(
                     result,
