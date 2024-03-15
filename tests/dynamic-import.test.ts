@@ -10,6 +10,7 @@ describe("build", () => {
     let B: string
     let C: string
     let D: string
+    let multipleInstances: string
     
     beforeAll(async () => {
         fixture = await build("./fixtures/dynamic-import")
@@ -17,6 +18,8 @@ describe("build", () => {
         B = fixture.readTextFile("B/index.html")
         C = fixture.readTextFile("C/index.html")
         D = fixture.readTextFile("D/index.html")
+        D = fixture.readTextFile("D/index.html")
+        multipleInstances = fixture.readTextFile("multiple-instances/index.html")
     })
     
     test("Page A includes styles and scripts from component A", async () => {
@@ -65,6 +68,17 @@ describe("build", () => {
     test("Props can be sent to the component", () => {
         expect(D).to.include("<div>0</div><div>1</div><div>2</div><div>3</div><div>4</div>")
     })
+
+    test("Multiple uses of the same component add scripts and styles only once", () => {
+        const components = [...multipleInstances.matchAll(/Contents of A/g)]
+        expect(components).to.have.lengthOf(3)
+        
+        const stylesheets = [...multipleInstances.matchAll(/background-color:#afeeee/g)]
+        expect(stylesheets).to.have.lengthOf(1)
+        
+        const scripts = [...multipleInstances.matchAll(new RegExp(buildScriptRegex, "g"))]
+        expect(scripts).to.have.lengthOf(1)
+    })
 })
 
 describe("dev", () => {
@@ -94,8 +108,8 @@ describe("dev", () => {
     })
     
     test("Assets don't leak into unrelated pages", async () => {
-        expect(A).to.not.include("background-color:#fff8dc")
-        expect(B).to.not.include("background-color:#afeeee")
+        expect(A).to.not.include("background-color:cornsilk")
+        expect(B).to.not.include("background-color:paleturquoise")
         const matches = devScriptRegex.exec(A)
         expect(matches).to.have.lengthOf(1)
         const [ scriptA ] = matches!
@@ -123,5 +137,17 @@ describe("dev", () => {
         expect(D).to.include("2</div>")
         expect(D).to.include("3</div>")
         expect(D).to.include("4</div>")
+    })
+
+    test("Multiple uses of the same component add scripts and styles only once", async () => {
+        const multipleInstances = await server.fetch("/multiple-instances")
+        const components = [...multipleInstances.matchAll(/Contents of A/g)]
+        expect(components).to.have.lengthOf(3)
+        
+        const stylesheets = [...multipleInstances.matchAll(/background-color:paleturquoise/g)]
+        expect(stylesheets).to.have.lengthOf(1)
+        
+        const scripts = [...multipleInstances.matchAll(new RegExp(devScriptRegex, "g"))]
+        expect(scripts).to.have.lengthOf(1)
     })
 })
