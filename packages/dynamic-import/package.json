@@ -1,6 +1,6 @@
 {
     "name": "astro-dynamic-import",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description": "Let your CMS decide which components to import.",
     "author": "Arsh",
     "license": "Public Domain",

@@ -1,5 +1,11 @@
 # astro-dynamic-import
 
+## 1.1.0
+
+### Minor Changes
+
+- [#88](https://github.com/lilnasy/gratelets/pull/88) [`3ec89c4`](https://github.com/lilnasy/gratelets/commit/3ec89c45d43736ed5b7ce13c66ae0d6ce5e26ef5) Thanks [@stevenwoodson](https://github.com/stevenwoodson)! - Dynamic imports are now even more optimized. Multiple uses of the same dynamically imported component will result in only one addition of the necessary scripts and styles.
+
 ## 1.0.2
 
 ### Patch Changes
