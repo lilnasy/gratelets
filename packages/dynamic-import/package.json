@@ -27,7 +27,7 @@
         }
     },
     "scripts": {
-        "test": "pnpm -w test tests/dynamic-import.test.ts"
+        "test": "pnpm -w test dynamic-import.test.ts"
     },
     "type": "module",
     "peerDependencies": {

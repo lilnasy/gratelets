@@ -14,6 +14,14 @@ import { srcDirName, lookupMap as _lookupMap } from "astro-dynamic-import:intern
 import type { SSRResult } from "astro"
 
 const lookupMap: Record<string, Promise<AstroComponentFactory>> = {}
+/**
+ * Everytime we propagate scripts and styles of a component onto a page,
+ * we add the component to the set of components that have already been added against the page's SSRResult.
+ * 
+ * We use WeakMap and WeakSet to avoid holding references to the results and components,
+ * allowing them to be removed from memory once used.
+ */
+const addedToPageMap = new WeakMap<SSRResult, WeakSet<AstroComponentFactory>>()
 
 export default async function(srcRelativeSpecifier: string) {
     const absoluteSpecifier = path.posix.join("/", srcDirName, srcRelativeSpecifier)
@@ -39,18 +47,27 @@ async function lazyImportToComponent(absoluteSpecifier: string, importable: any)
     return createComponent({
         factory(result: SSRResult, props: Record<string, unknown>, slots: Record<string, unknown>) {
             const component = componentModule.default
+            
+            const renderTemplateResult = renderTemplate`${renderComponent(
+                result,
+                `dynamically-imported:${component.name}`,
+                component,
+                props,
+                slots
+            )}`
+
+            // if the component has already been added to the page, we render just the content, skipping duplicate head elements
+            if (addedToPageMap.get(result)?.has(component)) return createHeadAndContent("", renderTemplateResult)
+
+            // retrieve the set, and if it hasnt been created yet, create it, add it to the map, and then immediately retrieve it
+            const setOfAddedComponents = addedToPageMap.get(result) ?? addedToPageMap.set(result, new WeakSet).get(result)!
+            setOfAddedComponents.add(component)
+
             const styles = collectedStyles.map((style: any) => renderUniqueStylesheet(result, { type: 'inline', content: style })).join('')
             const links = collectedLinks.map((link: any) => renderUniqueStylesheet(result, { type: 'external', src: prependForwardSlash(link) })).join('')
             const scripts = collectedScripts.map((script: any) => renderScriptElement(script)).join('')
-            return createHeadAndContent(unescapeHTML(styles + links + scripts) as any,
-                renderTemplate`${renderComponent(
-                    result,
-                    `dynamically-imported:${component.name}`,
-                    component,
-                    props,
-                    slots
-                )}`
-            )
+            
+            return createHeadAndContent(unescapeHTML(styles + links + scripts) as any, renderTemplateResult)
         },
         moduleId: `dynamically-imported:${absoluteSpecifier}`,
         propagation: "self"
