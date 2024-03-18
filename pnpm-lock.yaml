@@ -30,25 +30,6 @@ importers:
         specifier: '4'
         version: 4.4.0(@types/node@20.11.19)(typescript@5.3.3)
 
-  packages/carton:
-    dependencies:
-      '@astrojs/compiler':
-        specifier: '2'
-        version: 2.5.3
-      astro:
-        specifier: '4'
-        version: 4.4.0(@types/node@20.11.19)(typescript@5.3.3)
-      esbuild:
-        specifier: '0.19'
-        version: 0.19.12
-    devDependencies:
-      '@types/node':
-        specifier: '20'
-        version: 20.11.19
-      typescript:
-        specifier: '5.3'
-        version: 5.3.3
-
   packages/client-interaction:
     dependencies:
       astro:
