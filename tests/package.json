@@ -7,7 +7,7 @@
         "@astrojs/node": "7",
         "astro": "4",
         "cheerio": "1.0.0-rc.12",
-        "typescript": "5.3",
+        "typescript": "5.4",
         "vitest": "1"
     }
 }
