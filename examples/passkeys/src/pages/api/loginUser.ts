@@ -39,7 +39,7 @@ export const POST = defineApiRoute({
         const expires = new Date(Date.now() + 1000 * 60 * 60)
         const token = await Token.create(loginRequest.username, expires)
     
-        cookies.set("Token", token, { expires })
+        cookies.set("Token", token, { expires, path: "/" })
     
         return { success: loginRequest.username } as const
     }

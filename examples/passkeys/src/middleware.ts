@@ -2,6 +2,14 @@ import type { APIContext, MiddlewareNext } from "astro"
 import * as Token from "db/tokens.ts"
 import * as User from "db/users.ts"
 
+declare global {
+    module App {
+        interface Locals {
+            user: User.Details
+        }
+    }
+}
+
 export async function onRequest(ctx: APIContext, next: MiddlewareNext) {
     const token = ctx.cookies.get("Token")
     if (token) {

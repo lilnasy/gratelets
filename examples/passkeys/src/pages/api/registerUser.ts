@@ -46,7 +46,7 @@ export const POST = defineApiRoute({
         // the user will remain logged in for 1 hour
         const expires = new Date(Date.now() + 1000 * 60 * 60)
         const token = await Token.create(user.username, expires)
-        cookies.set("Token", token, { expires })
+        cookies.set("Token", token, { expires, path: "/" })
         
         return { success: user.username } as const
     }
