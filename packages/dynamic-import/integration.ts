@@ -12,7 +12,11 @@ export default function (_?: Options): AstroIntegration {
         hooks: {
             "astro:config:setup" ({ config, updateConfig, logger }) {
                 const srcDirName = path.relative(url.fileURLToPath(config.root), url.fileURLToPath(config.srcDir)).replaceAll("\\", "/")
-                updateConfig({ vite: { plugins: [{
+                updateConfig({ vite: { 
+                  optimizeDeps: {
+                    exclude: ["astro-dynamic-import:internal"],
+                  },
+                  plugins: [{
                     name: "astro-dynamic-import/vite",
                     resolveId(source) {
                         if (source === "astro:import") { return this.resolve("astro-dynamic-import/runtime/virtual-module.ts") }
