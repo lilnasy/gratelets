@@ -1,5 +1,11 @@
 # astro-dynamic-import
 
+## 1.1.1
+
+### Patch Changes
+
+- [#97](https://github.com/lilnasy/gratelets/pull/97) [`53c3047`](https://github.com/lilnasy/gratelets/commit/53c30470b08a356395f36f697863b5ae40635605) Thanks [@evertonadame](https://github.com/evertonadame)! - Fixes an issue where an internally used module (`"astro-dynamic-import:internal"`) would sometimes fail to be resolved by vite.
+
 ## 1.1.0
 
 ### Minor Changes
