@@ -68,6 +68,21 @@ export default {
         const ctx = storage.getStore()
         if (ctx === undefined) throw new NoRequestError("currentLocale")
         return ctx.currentLocale
+    },
+    get rewrite() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("rewrite")
+        return ctx.rewrite
+    },
+    get getActionResult() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("getActionResult")
+        return ctx.getActionResult
+    },
+    get callAction() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("callAction")
+        return ctx.callAction
     }
 } satisfies AstroGlobal
 

@@ -4,18 +4,18 @@
     "type": "module",
     "scripts": {
         "check": "tsc",
-        "test": "pnpm --filter tests exec vitest --run --api.port 51204 --poolOptions.threads.singleThread --bail 1",
+        "test": "pnpm --filter tests exec vitest --run --api.port 51204 --pool=threads --poolOptions.threads.singleThread --bail 1",
         "install:chromium": "pnpm --filter tests-e2e exec playwright install chromium",
         "test:e2e": "pnpm --filter tests-e2e exec node --no-warnings --experimental-loader playwright/lib/transform/esmLoader node_modules/playwright/cli.js test --workers=1 --timeout 5000 -x"
     },
     "workspaces": [
         "packages/*"
     ],
-    "packageManager": "pnpm@8.6.12",
+    "packageManager": "pnpm@9.12.2",
     "devDependencies": {
         "astro": "4",
         "@changesets/changelog-github": "0.5",
         "@changesets/cli": "2",
-        "typescript": "5.4"
+        "typescript": "5.6"
     }
 }

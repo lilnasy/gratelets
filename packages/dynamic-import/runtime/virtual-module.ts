@@ -7,7 +7,8 @@ import {
     renderUniqueStylesheet,
     renderScriptElement,
     unescapeHTML,
-    type AstroComponentFactory
+    type AstroComponentFactory,
+    type ComponentSlots
 } from "astro/runtime/server/index.js"
 //@ts-expect-error
 import { srcDirName, lookupMap as _lookupMap } from "astro-dynamic-import:internal"
@@ -45,7 +46,7 @@ async function lazyImportToComponent(absoluteSpecifier: string, importable: any)
     const { collectedStyles, collectedLinks, collectedScripts, getMod } = entry.default
     const componentModule = await getMod()
     return createComponent({
-        factory(result: SSRResult, props: Record<string, unknown>, slots: Record<string, unknown>) {
+        factory(result: SSRResult, props: Record<string, unknown>, slots: ComponentSlots) {
             const component = componentModule.default
             
             const renderTemplateResult = renderTemplate`${renderComponent(

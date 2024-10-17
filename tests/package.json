@@ -1,13 +1,13 @@
 {
     "name": "tests",
     "scripts": {
-        "test": "vitest --run --api.port 51204 --poolOptions.threads.singleThread --bail 1"
+        "test": "vitest --run --api.port 51204 --pool=threads --poolOptions.threads.singleThread --bail 1"
     },
     "devDependencies": {
-        "@astrojs/node": "7",
+        "@astrojs/node": "8",
         "astro": "4",
         "cheerio": "1.0.0-rc.12",
-        "typescript": "5.4",
-        "vitest": "1"
+        "typescript": "5.6",
+        "vitest": "2"
     }
 }

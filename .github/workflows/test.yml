@@ -6,7 +6,7 @@ on:
       node:
         description: Node.js version
         type: string
-        default: "18"
+        default: "20"
       os:
         description: Operating system
         type: string
@@ -20,19 +20,21 @@ on:
       node:
         description: "Node.js version"
         type: string
-        default: "18"
+        default: "20"
       os:
         description: "Operating system"
         default: ubuntu-latest
         type: choice
         options: 
           - ubuntu-latest
+          - ubuntu-24.04
           - ubuntu-22.04
           - ubuntu-20.04
           - macos-latest
+          - macos-15
+          - macos-14
           - macos-13
           - macos-12
-          - macos-11
           - windows-latest
           - windows-2022
           - windows-2019
@@ -48,13 +50,13 @@ jobs:
       NODE_VERSION: ${{ inputs.node }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup PNPM
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
       
       - name: Setup Node ${{ inputs.node }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node }}
           cache: "pnpm"
