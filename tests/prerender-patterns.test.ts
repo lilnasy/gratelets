@@ -57,11 +57,9 @@ describe("with server output", () => {
             fixture.fileExists("client/page-default/index.html")
         ).to.equal(true)
         
-        // ssr chunk exports noop
-        const { page } = await manifest.pageMap!.get("src/pages/page-default.astro")!()
-        const module = await page()
-        expect(module).to.deep.include({ name: "noop" })
-        expect(module.toString()).to.equal("() => {}")
+        // check that ssr chunk exports an empty module
+        const compiledPage = await manifest.pageMap!.get("src/pages/page-default.astro")!()
+        expect(Object.keys(compiledPage)).toStrictEqual([])
     })
     
     test("page: prerender -> rendered on demand", async () => {
@@ -73,7 +71,6 @@ describe("with server output", () => {
         // ssr chunk is functional
         const { page } = await manifest.pageMap!.get("src/pages/page-set-to-prerender.astro")!()
         const { default: factory } = await page()
-        expect(factory).not.to.deep.include({ name: "noop" })
         expect(factory).to.deep.include({ isAstroComponentFactory: true })
     })
     
@@ -83,11 +80,9 @@ describe("with server output", () => {
             fixture.fileExists("client/page-set-to-render-on-demand/index.html")
         ).to.equal(true)
         
-        // ssr chunk exports noop
-        const { page } = await manifest.pageMap!.get("src/pages/page-set-to-render-on-demand.astro")!()
-        const module = await page()
-        expect(module).to.deep.include({ name: "noop" })
-        expect(module.toString()).to.equal("() => {}")
+        // check that ssr chunk exports an empty module
+        const compiledPage = await manifest.pageMap!.get("src/pages/page-set-to-render-on-demand.astro")!()
+        expect(Object.keys(compiledPage)).toStrictEqual([])
     })
     
     test("endpoint: unspecified -> prerendered", async () => {
@@ -96,12 +91,9 @@ describe("with server output", () => {
             fixture.fileExists("client/endpoint-default")
         ).to.equal(true)
         
-        // ssr chunk exports noop
-        const { page } = await manifest.pageMap!.get("src/pages/endpoint-default.ts")!()
-        // @ts-ignore
-        const module = await page()
-        expect(module).to.deep.include({ name: "noop" })
-        expect(module.toString()).to.equal("() => {}")
+        // check that ssr chunk exports an empty module
+        const compiledPage = await manifest.pageMap!.get("src/pages/endpoint-default.ts")!()
+        expect(Object.keys(compiledPage)).toStrictEqual([])
     })
     
     test("endpoint: prerendered -> rendered on demand", async () => {
@@ -114,7 +106,6 @@ describe("with server output", () => {
         const { page } = await manifest.pageMap!.get("src/pages/endpoint-set-to-prerender.ts")!()
         // @ts-ignore
         const { GET } = await page()
-        expect(GET).not.to.deep.include({ name: "noop" })
         const response = GET({ request: { url: "" } })
         expect(response).to.be.an.instanceof(Response)
     })
@@ -125,11 +116,9 @@ describe("with server output", () => {
             fixture.fileExists("client/endpoint-set-to-render-on-demand")
         ).to.equal(true)
         
-        // ssr chunk exports noop
-        const { page } = await manifest.pageMap!.get("src/pages/endpoint-set-to-render-on-demand.ts")!()
-        const module = await page()
-        expect(module).to.deep.include({ name: "noop" })
-        expect(module.toString()).to.equal("() => {}")
+        // check that ssr chunk exports an empty module
+        const compiledPage = await manifest.pageMap!.get("src/pages/endpoint-set-to-render-on-demand.ts")!()
+        expect(Object.keys(compiledPage)).toStrictEqual([])
     })
 
     test("injected page: render on demand -> prerendered", async () => {
@@ -138,11 +127,9 @@ describe("with server output", () => {
             fixture.fileExists("client/added-by-integration/index.html")
         ).to.equal(true)
 
-        // ssr chunk exports noop
-        const { page } = await manifest.pageMap!.get("src/not-pages/added-by-integration.astro")!()
-        const module = await page()
-        expect(module).to.deep.include({ name: "noop" })
-        expect(module.toString()).to.equal("() => {}")
+        // check that ssr chunk exports an empty module
+        const compiledPage = await manifest.pageMap!.get("src/not-pages/added-by-integration.astro")!()
+        expect(Object.keys(compiledPage)).toStrictEqual([])
     })
 })
 
@@ -203,7 +190,6 @@ describe("hybrid output", () => {
         // ssr chunk is functional
         const { page } = await manifest.pageMap!.get("src/pages/page-default.astro")!()
         const { default: factory } = await page()
-        expect(factory).not.to.deep.include({ name: "noop" })
         expect(factory).to.deep.include({ isAstroComponentFactory: true })
     })
     
@@ -216,7 +202,6 @@ describe("hybrid output", () => {
         // ssr chunk is functional
         const { page } = await manifest.pageMap!.get("src/pages/page-set-to-prerender.astro")!()
         const { default: factory } = await page()
-        expect(factory).not.to.deep.include({ name: "noop" })
         expect(factory).to.deep.include({ isAstroComponentFactory: true })
     })
     
@@ -226,11 +211,9 @@ describe("hybrid output", () => {
             fixture.fileExists("client/page-set-to-render-on-demand/index.html")
         ).to.equal(true)
         
-        // ssr chunk exports noop
-        const { page } = await manifest.pageMap!.get("src/pages/page-set-to-render-on-demand.astro")!()
-        const module = await page()
-        expect(module).to.deep.include({ name: "noop" })
-        expect(module.toString()).to.equal("() => {}")
+        // check that ssr chunk exports an empty module
+        const compiledPage = await manifest.pageMap!.get("src/pages/page-set-to-render-on-demand.astro")!()
+        expect(Object.keys(compiledPage)).toStrictEqual([])
     })
     
     test("endpoint: unspecified -> rendered on demand", async () => {
@@ -243,7 +226,6 @@ describe("hybrid output", () => {
         const { page } = await manifest.pageMap!.get("src/pages/endpoint-default.ts")!()
         // @ts-ignore
         const { GET } = await page()
-        expect(GET).not.to.deep.include({ name: "noop" })
         const response = GET({ request: { url: "" } })
         expect(response).to.be.an.instanceof(Response)
     })
@@ -258,7 +240,6 @@ describe("hybrid output", () => {
         const { page } = await manifest.pageMap!.get("src/pages/endpoint-set-to-prerender.ts")!()
         // @ts-ignore
         const { GET } = await page()
-        expect(GET).not.to.deep.include({ name: "noop" })
         const response = GET({ request: { url: "" } })
         expect(response).to.be.an.instanceof(Response)
     })
@@ -269,12 +250,9 @@ describe("hybrid output", () => {
             fixture.fileExists("client/endpoint-set-to-render-on-demand")
         ).to.equal(true)
         
-        // ssr chunk exports noop
-        const { page } = await manifest.pageMap!.get("src/pages/endpoint-set-to-render-on-demand.ts")!()
-        // @ts-ignore
-        const module = await page()
-        expect(module).to.deep.include({ name: "noop" })
-        expect(module.toString()).to.equal("() => {}")
+        // check that ssr chunk exports an empty module
+        const compiledPage = await manifest.pageMap!.get("src/pages/endpoint-set-to-render-on-demand.ts")!()
+        expect(Object.keys(compiledPage)).toStrictEqual([])
     })
 
     test("injected page: prerendered -> render on demand", async () => {
@@ -286,7 +264,6 @@ describe("hybrid output", () => {
         // ssr chunk is functional
         const { page } = await manifest.pageMap!.get("src/not-pages/added-by-integration.astro")!()
         const { default: factory } = await page()
-        expect(factory).not.to.deep.include({ name: "noop" })
         expect(factory).to.deep.include({ isAstroComponentFactory: true })
     })
 })
