@@ -1,5 +1,11 @@
 # astro-global
 
+## 1.3.0
+
+### Minor Changes
+
+- [#102](https://github.com/lilnasy/gratelets/pull/102) [`0f7f2df`](https://github.com/lilnasy/gratelets/commit/0f7f2dfa23e6f7f97370c09699c77ebb7468ac52) Thanks [@lilnasy](https://github.com/lilnasy)! - The package has been updated to allow access to more properties: `Astro.rewrite()`, `Astro.getActionResult()`, and `Astro.callAction()`.
+
 ## 1.2.1
 
 ### Patch Changes
