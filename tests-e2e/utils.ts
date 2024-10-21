@@ -47,7 +47,7 @@ export function testFactory(relativeRootPath: `./fixtures/${string}`, options?: 
             await use(adapterServer)
         },
         async preview({ build }, use) {
-            previewServer ??= await preview(root, options)
+            previewServer ??= await preview(root, { ...options, outDir: build.outDir })
             await use(previewServer)
         }
     })

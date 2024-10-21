@@ -4,6 +4,7 @@ import { readFileSync, existsSync } from "node:fs"
 import * as Astro from "astro"
 
 export interface BuildFixture {
+    outDir: string
     serverEntry: string
     resolve(path: string): string
     readTextFile(path: string): string
@@ -13,11 +14,13 @@ export interface BuildFixture {
 export async function build(root: `./fixtures/${string}` | URL, options: Astro.AstroInlineConfig = {}): Promise<BuildFixture> {
     const dist = `dist_${Date.now()}`
     await command("build", root, Object.assign(options, { outDir: dist }))
+    // workaround for withastro/astro#12248
     const bugworkaround = options.output === "hybrid" || options.output === "server" ? "dist" : "."
     const resolve: BuildFixture["resolve"] = typeof root === "string"
         ? path => join(fileURLToPath(import.meta.url), "..", root, dist, bugworkaround, path)
         : path => join(fileURLToPath(root), dist, bugworkaround, path)
     return {
+        outDir: resolve("."),
         serverEntry: resolve(`./server/entry.mjs`),
         resolve,
         readTextFile: path => readFileSync(resolve(path), "utf8"),
