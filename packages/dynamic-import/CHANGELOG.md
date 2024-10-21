@@ -1,5 +1,11 @@
 # astro-dynamic-import
 
+## 1.1.2
+
+### Patch Changes
+
+- [#102](https://github.com/lilnasy/gratelets/pull/102) [`0f7f2df`](https://github.com/lilnasy/gratelets/commit/0f7f2dfa23e6f7f97370c09699c77ebb7468ac52) Thanks [@lilnasy](https://github.com/lilnasy)! - The package has been updated to fix an internal type checking error. This release does not include any changes to runtime behavior.
+
 ## 1.1.1
 
 ### Patch Changes
