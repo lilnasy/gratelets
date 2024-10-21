@@ -4,11 +4,13 @@ import { expect } from "playwright/test"
 import type { AstroInlineConfig as Config } from "astro"
 
 const setups: Record<string, Config> = {
-    "default config": {},
+    // output: "server" is duplicated here, even though it is also present in astro.config.ts so that
+    // the bug workaround for withastro/astro#12248 can be applied by build()
+    "default config": { output: "server" },
     // "with trailingSlash set to never": { trailingSlash: "never" },
     // "with trailingSlash set to always": { trailingSlash: "always" },
     // "with a base path configured": { base: "/some-base" },
-    "with tralingSlash and a base path configured": { base: "/some-base", trailingSlash: "always" }
+    "with tralingSlash and a base path configured": { output: "server", base: "/some-base", trailingSlash: "always" }
 }
 
 for (const [description, config] of Object.entries(setups)) {

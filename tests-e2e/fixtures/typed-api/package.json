@@ -2,7 +2,7 @@
     "name": "@test/typed-api-basics",
     "private": true,
     "dependencies": {
-        "@astrojs/node": "7",
+        "@astrojs/node": "8",
         "astro": "4",
         "astro-typed-api": "workspace:*",
         "zod": "3"
