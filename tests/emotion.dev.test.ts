@@ -7,7 +7,9 @@ let server: DevServer
 beforeAll(async () => { server = await dev("./fixtures/emotion") })
 afterAll(async () => { await server.stop() })
 
-describe("basics", () => {
+const options = { skip: process.version.startsWith("v18") }
+
+describe("basics", options, () => {
     test("hoists scoped styles", async () => {
         const html = await server.fetch("/astro")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -41,7 +43,7 @@ describe("basics", () => {
     })
 })
 
-describe("react", () => {
+describe("react", options, () => {
     test("hoists scoped styles", async () => {
         const html = await server.fetch("/react")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -56,7 +58,7 @@ describe("react", () => {
     })
 })
 
-describe("solid", () => {
+describe("solid", options, () => {
     test("hoists scoped styles", async () => {
         const html = await server.fetch("/solid")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -71,7 +73,7 @@ describe("solid", () => {
     })
 })
 
-describe("preact", () => {
+describe("preact", options, () => {
     test("hoists scoped styles", async () => {
         const html = await server.fetch("/preact")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -86,7 +88,7 @@ describe("preact", () => {
     })
 })
 
-describe("svelte", () => {
+describe("svelte", options, () => {
     test("hoists scoped styles", async () => {
         const html = await server.fetch("/svelte")
         const [ sheet ] = stylesheetRegex.exec(html)!

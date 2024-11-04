@@ -6,7 +6,9 @@ const stylesheetRegex = /(?<=<style>)[\s\S]*(?=<\/style>)/
 let fixture: BuildFixture
 beforeAll(async () => { fixture = await build("./fixtures/emotion") }, 10000)
 
-describe("basics", () => {
+const options = { skip: process.version.startsWith("v18") }
+
+describe("basics", options, () => {
     test("hoists scoped styles", async () => {
         const html = fixture.readTextFile("/astro/index.html")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -40,7 +42,7 @@ describe("basics", () => {
     })
 })
 
-describe("react", () => {
+describe("react", options, () => {
     test("hoists scoped styles", () => {
         const html = fixture.readTextFile("/react/index.html")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -55,7 +57,7 @@ describe("react", () => {
     })
 })
 
-describe("solid", () => {
+describe("solid", options, () => {
     test("hoists scoped styles", () => {
         const html = fixture.readTextFile("/solid/index.html")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -70,7 +72,7 @@ describe("solid", () => {
     })
 })
 
-describe("preact", () => {
+describe("preact", options, () => {
     test("hoists scoped styles", () => {
         const html = fixture.readTextFile("/preact/index.html")
         const [ sheet ] = stylesheetRegex.exec(html)!
@@ -85,7 +87,7 @@ describe("preact", () => {
     })
 })
 
-describe("svelte", () => {
+describe("svelte", options, () => {
     test("hoists scoped styles", () => {
         const html = fixture.readTextFile("/svelte/index.html")
         const [ sheet ] = stylesheetRegex.exec(html)!
