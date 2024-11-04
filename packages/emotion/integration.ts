@@ -3,12 +3,12 @@ import url from "node:url"
 import path from "node:path"
 import crypto from "node:crypto"
 import { simple as walk } from "acorn-walk"
-import createEmotion from "@emotion/css/create-instance"
+import createEmotion, { type Options as EmotionOptions } from "@emotion/css/create-instance"
 import MagicString from "magic-string"
 import { visitors, type State } from "./ast-scanner.ts"
 import type { AstroConfig, AstroIntegration, AstroIntegrationLogger } from "astro"
 
-interface Options {}
+interface Options extends EmotionOptions {}
 
 export default function (options: Partial<Options> = {}): AstroIntegration {
     return {
@@ -16,8 +16,8 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
         hooks: {
             "astro:config:setup": ({ updateConfig, config, logger }) => {
                 const stylesheets = new Map<string, string>
-                const { css, cache, flush, injectGlobal } = createEmotion({ key: "e" })
-                let moduleGraph
+                const { css, cache, flush, injectGlobal } = createEmotion({ key: "e", ...options })
+                let moduleGraph: import("vite").ModuleGraph
                 updateConfig({ vite: { plugins: [{
                     name: "astro-emotion/vite",
                     configureServer(server) {
