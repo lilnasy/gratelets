@@ -21,7 +21,7 @@
         ".": "./integration.ts"
     },
     "scripts": {
-        "test": "pnpm -w test tests/prerender-patterns.test.ts"
+        "test": "pnpm -w test prerender-patterns.test.ts"
     },
     "type": "module",
     "devDependencies": {
