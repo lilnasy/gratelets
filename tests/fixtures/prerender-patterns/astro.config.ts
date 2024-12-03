@@ -4,7 +4,7 @@ import { testAdapter } from "../../utils.ts"
 
 // https://astro.build/config
 export default defineConfig({
-    output: "hybrid",
+    output: "static",
 	adapter: testAdapter,
     /* uncomment to test manually */
 	// integrations: [
