@@ -36,7 +36,7 @@
     },
     "devDependencies": {
         "@types/node": "20",
-        "astro": "4",
+        "astro": "5",
         "vite": "5"
     }
 }
