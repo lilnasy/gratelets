@@ -2,18 +2,23 @@ import fs from "node:fs"
 import { compile } from "./node_modules/astro/dist/core/compile/index.js"
 import { parseAstroRequest } from "./node_modules/astro/dist/vite-plugin-astro/query.js"
 import type { AstroIntegration } from "astro"
+import type { ResolvedConfig } from "vite"
 
 interface Options {}
 
 export default function (_: Partial<Options> = {}): AstroIntegration {
+    let viteConfig: ResolvedConfig
     return {
         name: "astro-scope",
         hooks: {
-            "astro:config:setup": ({ updateConfig, config, logger }) => {
+            "astro:config:setup" ({ updateConfig, config, logger }) {
                 updateConfig({
                     vite: {
                         plugins: [{
                             name: "astro-scope",
+                            configResolved(resolvedConfig) {
+                                viteConfig = resolvedConfig
+                            },
                             resolveId(source, importer) {
                                 if (source !== "astro:scope") return
 
@@ -35,7 +40,7 @@ export default function (_: Partial<Options> = {}): AstroIntegration {
                                 
                                 const result = await compile({
                                     astroConfig: config,
-                                    viteConfig: {} as any,
+                                    viteConfig: viteConfig,
                                     filename,
                                     source: fs.readFileSync(filename, "utf-8"),
                                     preferences: {} as any

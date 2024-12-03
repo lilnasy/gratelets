@@ -32,6 +32,7 @@
         "astro": "^4.2.2 || 5"
     },
     "devDependencies": {
+        "vite": "6",
         "astro": "5",
         "@types/node": "20"
     }
