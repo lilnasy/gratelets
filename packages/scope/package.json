@@ -25,7 +25,7 @@
         }
     },
     "scripts": {
-        "test": "pnpm -w test tests/scope.test.ts"
+        "test": "pnpm -w test scope.test.ts"
     },
     "type": "module",
     "peerDependencies": {
