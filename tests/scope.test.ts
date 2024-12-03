@@ -12,7 +12,6 @@ describe("astro-scope", () => {
 
     test("Page A", async () => {
         const page = fixture.readTextFile("page-a/index.html")
-        console.log( page )
         const { script, attribute, textContent } = page.match(resultRegex)!.groups!
         expect(script).to.equal(attribute)
         expect(attribute).to.equal(textContent)
