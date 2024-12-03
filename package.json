@@ -16,6 +16,6 @@
         "astro": "5",
         "@changesets/changelog-github": "0.5",
         "@changesets/cli": "2",
-        "typescript": "5.7"
+        "typescript": "5.6"
     }
 }
