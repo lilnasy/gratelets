@@ -69,8 +69,8 @@ importers:
         specifier: '5'
         version: 5.0.1(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
       vite:
-        specifier: '5'
-        version: 5.4.10(@types/node@20.17.6)
+        specifier: '6'
+        version: 6.0.2(@types/node@20.17.6)
 
   packages/global:
     devDependencies:
