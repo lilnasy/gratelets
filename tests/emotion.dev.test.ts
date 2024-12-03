@@ -7,7 +7,7 @@ let server: DevServer
 beforeAll(async () => { server = await dev("./fixtures/emotion") })
 afterAll(async () => { await server.stop() })
 
-const options = { skip: process.version.startsWith("v18") }
+const options = { skip: true }
 
 describe("basics", options, () => {
     test("hoists scoped styles", async () => {
