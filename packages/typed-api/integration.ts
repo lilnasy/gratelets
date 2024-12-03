@@ -2,7 +2,7 @@ import fs from "node:fs"
 import url from "node:url"
 import path from "node:path"
 import { globby } from "globby"
-import type { AstroIntegration, AstroConfig, AstroIntegrationLogger } from "astro"
+import type { AstroIntegration, AstroIntegrationLogger } from "astro"
 
 export interface Options {}
 
@@ -14,13 +14,14 @@ export default function (_?: Partial<Options>): AstroIntegration {
         hooks: {
             "astro:config:setup" ({ updateConfig, config, logger }) {
                 apiDir = new URL("pages/api", config.srcDir)
-                declarationFileUrl = new URL(".astro/typed-api.d.ts", config.root)
+                const dotAstroDir = new URL('.astro/', config.root)
+                declarationFileUrl = new URL("./typed-api.d.ts", dotAstroDir)
                 updateConfig({ vite: { plugins: [{
                     name: "astro-typed-api/typegen",
                     enforce: "post",
                     async config() {
                         const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
-                        injectEnvDTS(config, logger, declarationFileUrl)
+                        injectTypesDTs(dotAstroDir, logger, declarationFileUrl)
                         generateTypes(filenames, apiDir, declarationFileUrl)
                     }
                 }] } })
@@ -68,21 +69,21 @@ async function generateTypes(filenames: string[], apiDir: URL, declarationFileUr
     fs.writeFileSync(declarationFileUrl, declaration)
 }
 
-function injectEnvDTS(config: AstroConfig, logger: AstroIntegrationLogger, specifier: URL | string) {
-    const envDTsPath = url.fileURLToPath(new URL("env.d.ts", config.srcDir))
+function injectTypesDTs(dotAstroDir: URL, logger: AstroIntegrationLogger, specifier: URL | string) {
+    const typesDTsPath = url.fileURLToPath(new URL("./types.d.ts", dotAstroDir))
     
     if (specifier instanceof URL) {
         specifier = url.fileURLToPath(specifier)
-        specifier = path.relative(url.fileURLToPath(config.srcDir), specifier)
+        specifier = path.relative(url.fileURLToPath(dotAstroDir), specifier)
         specifier = specifier.replaceAll("\\", "/")
     }
     
-    let envDTsContents = fs.readFileSync(envDTsPath, "utf8")
+    let typesDTsContents = fs.readFileSync(typesDTsPath, "utf8")
     
-    if (envDTsContents.includes(`/// <reference types='${specifier}' />`)) { return }
-    if (envDTsContents.includes(`/// <reference types="${specifier}" />`)) { return }
+    if (typesDTsContents.includes(`/// <reference types='${specifier}' />`)) { return }
+    if (typesDTsContents.includes(`/// <reference types="${specifier}" />`)) { return }
     
-    const newEnvDTsContents = envDTsContents.replace(
+    const newTypesDTsContents = typesDTsContents.replace(
         `/// <reference types='astro/client' />`,
         `/// <reference types='astro/client' />\n/// <reference types='${specifier}' />\n`
     ).replace(
@@ -91,8 +92,8 @@ function injectEnvDTS(config: AstroConfig, logger: AstroIntegrationLogger, speci
     )
     
     // the odd case where the user changed the reference to astro/client
-    if (newEnvDTsContents === envDTsContents) { return }
+    if (newTypesDTsContents === typesDTsContents) { return }
     
-    fs.writeFileSync(envDTsPath, newEnvDTsContents)
-    logger.info("Updated env.d.ts types")
+    fs.writeFileSync(typesDTsPath, newTypesDTsContents)
+    logger.info("Updated types.d.ts types")
 }
