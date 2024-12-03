@@ -22,7 +22,7 @@ describe("build", () => {
         multipleInstances = fixture.readTextFile("multiple-instances/index.html")
     })
     
-    test.only("Page A includes styles and scripts from component A", async () => {
+    test("Page A includes styles and scripts from component A", async () => {
         expect(A).to.include("Contents of A")
         expect(A).to.include("background-color:#afeeee")
         const match = A.match(buildScriptRegex)

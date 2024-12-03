@@ -8,6 +8,7 @@ describe("build", () => {
     let fixture: BuildFixture
     
     beforeAll(async () => {
+        process.env.NODE_ENV = 'production'
         fixture = await build("./fixtures/adds-to-head")
     })
     
