@@ -2,7 +2,6 @@ import { describe, beforeAll, afterAll, test, expect } from "vitest"
 import { build, dev, type BuildFixture } from "./utils.ts"
 
 const styleRegex = /<style>p\[data-astro-cid-.{8}]{background-color:salmon}\n?<\/style>/
-const scriptRegex = /<script src="(?<src>[/_.?&=a-zA-Z0-9]*)" type="module"><\/script>/
 const devScriptRegex = /<script type="module" src="(?<src>[/_.?&=a-zA-Z0-9]*)"><\/script>/
 
 describe("build", () => {
@@ -15,10 +14,7 @@ describe("build", () => {
     test("rendered page includes propagated styles and scripts", async () => {
         const html = fixture.readTextFile("index.html")
         expect(html).to.match(styleRegex)
-        // @ts-ignore
-        const { groups: { src } } = scriptRegex.exec(html)
-        const js = fixture.readTextFile(`.${src}`)
-        expect(js).to.include(`console.log("hi");`)
+        expect(html).to.include(`<script type="module">console.log("hi");</script>`)
     })
 })
 

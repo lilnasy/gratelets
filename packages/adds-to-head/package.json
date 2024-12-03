@@ -21,7 +21,7 @@
         ".": "./integration.ts"
     },
     "scripts": {
-        "test": "pnpm -w test tests/adds-to-head.test.ts"
+        "test": "pnpm -w test adds-to-head.test.ts"
     },
     "type": "module",
     "devDependencies": {
