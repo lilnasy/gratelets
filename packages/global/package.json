@@ -27,7 +27,7 @@
         }
     },
     "scripts": {
-        "test": "pnpm -w test tests/global.test.ts"
+        "test": "pnpm -w test global.test.ts"
     },
     "type": "module",
     "peerDependencies": {
