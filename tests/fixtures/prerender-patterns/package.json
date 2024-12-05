@@ -2,7 +2,7 @@
     "name": "@test/prerender-patterns",
     "private": true,
     "dependencies": {
-        "astro": "4",
+        "astro": "5",
         "astro-prerender-patterns": "workspace:*"
     }
 }

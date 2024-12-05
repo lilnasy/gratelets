@@ -1,19 +1,26 @@
 import fs from "node:fs"
 import { compile } from "./node_modules/astro/dist/core/compile/index.js"
 import { parseAstroRequest } from "./node_modules/astro/dist/vite-plugin-astro/query.js"
-import type { AstroIntegration } from "astro"
+import type { AstroConfig, AstroIntegration } from "astro"
+import type { ResolvedConfig } from "vite"
+import "./types.d.ts"
 
 interface Options {}
 
 export default function (_: Partial<Options> = {}): AstroIntegration {
+    let viteConfig: ResolvedConfig
+    let astroConfig: AstroConfig
     return {
         name: "astro-scope",
         hooks: {
-            "astro:config:setup": ({ updateConfig, config, logger }) => {
+            "astro:config:setup"({ updateConfig, logger }) {
                 updateConfig({
                     vite: {
                         plugins: [{
                             name: "astro-scope",
+                            configResolved(resolvedConfig) {
+                                viteConfig = resolvedConfig
+                            },
                             resolveId(source, importer) {
                                 if (source !== "astro:scope") return
 
@@ -34,8 +41,8 @@ export default function (_: Partial<Options> = {}): AstroIntegration {
                                 const filename = id.slice("astro:scope:".length, -".doesnotendwithastrodontprocessthispls".length)
                                 
                                 const result = await compile({
-                                    astroConfig: config,
-                                    viteConfig: {} as any,
+                                    astroConfig,
+                                    viteConfig,
                                     filename,
                                     source: fs.readFileSync(filename, "utf-8"),
                                     preferences: {} as any
@@ -43,32 +50,12 @@ export default function (_: Partial<Options> = {}): AstroIntegration {
                                 
                                 return `export default ${JSON.stringify(result.scope)}`
                             }
-                        }, {
-                            name: "astro-global-inject-env-ts",
-                            enforce: "post",
-                            config() {
-                                const envTsPath = new URL("env.d.ts", config.srcDir)
-                                
-                                let typesEnvContents: string
-                                try { typesEnvContents = fs.readFileSync(envTsPath, "utf-8") }
-                                catch { return }
-
-                                if (typesEnvContents.includes('/// <reference types="astro-scope/client" />')) return
-                                
-                                const newTypesEnvContents = typesEnvContents.replace(
-                                    '/// <reference types="astro/client" />',
-                                    '/// <reference types="astro/client" />\n/// <reference types="astro-scope/client" />'
-                                )
-                                
-                                if (newTypesEnvContents === typesEnvContents) return
-
-                                fs.writeFileSync(envTsPath, newTypesEnvContents)
-
-                                logger.info("Updated env.d.ts types")
-                            }
                         }]
                     }
                 })
+            },
+            "astro:config:done"({ config }) {
+                astroConfig = config
             }
         }
     }

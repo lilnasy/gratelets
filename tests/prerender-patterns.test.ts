@@ -133,14 +133,14 @@ describe("with server output", () => {
     })
 })
 
-describe("hybrid output", () => {
+describe("static output", () => {
     let manifest: SSRManifest
     let fixture: BuildFixture
     const currentDecisions: Record<string, "prerender" | "render on demand"> = {}
     
     beforeAll(async () => {
         fixture = await build("./fixtures/prerender-patterns", {
-            output: "hybrid",
+            output: "static",
             adapter: testAdapter,
             integrations: [ prerenderPatterns((path, currentDecision) => {
                 currentDecisions[path] = currentDecision

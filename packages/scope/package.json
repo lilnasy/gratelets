@@ -16,22 +16,21 @@
     },
     "files": [
         "integration.ts",
-        "client.d.ts"
+        "types.d.ts"
     ],
     "exports": {
-        ".": "./integration.ts",
-        "./client": {
-            "types": "./client.d.ts"
-        }
+        ".": "./integration.ts"
     },
     "scripts": {
-        "test": "pnpm -w test tests/scope.test.ts"
+        "test": "pnpm -w test scope.test.ts"
     },
     "type": "module",
     "peerDependencies": {
-        "astro": "^4.2.2"
+        "astro": "^4.2.2 || 5"
     },
     "devDependencies": {
+        "vite": "6",
+        "astro": "5",
         "@types/node": "20"
     }
 }

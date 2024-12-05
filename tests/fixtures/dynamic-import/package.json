@@ -2,7 +2,7 @@
     "name": "@test/dynamic-import",
     "private": true,
     "dependencies": {
-        "astro": "4",
+        "astro": "5",
         "astro-dynamic-import": "workspace:*"
     }
 }

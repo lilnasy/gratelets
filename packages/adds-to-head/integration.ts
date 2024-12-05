@@ -1,4 +1,4 @@
-import type { AstroIntegration, AstroConfig } from "astro"
+import type { AstroIntegration } from "astro"
 import url from "node:url"
 
 interface Options {}

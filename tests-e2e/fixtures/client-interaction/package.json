@@ -2,9 +2,9 @@
     "name": "@test/global",
     "private": true,
     "dependencies": {
-        "@astrojs/mdx": "2",
-        "@astrojs/preact": "3",
-        "astro": "4",
+        "@astrojs/mdx": "4",
+        "@astrojs/preact": "4",
+        "astro": "5",
         "astro-client-interaction": "workspace:*",
         "preact": "10"
     }

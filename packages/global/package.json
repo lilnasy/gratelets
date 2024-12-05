@@ -17,23 +17,21 @@
     "files": [
         "integration.ts",
         "runtime",
-        "client.d.ts"
+        "types.d.ts"
     ],
     "exports": {
         ".": "./integration.ts",
-        "./runtime/*": "./runtime/*",
-        "./client": {
-            "types": "./client.d.ts"
-        }
+        "./runtime/*": "./runtime/*"
     },
     "scripts": {
-        "test": "pnpm -w test tests/global.test.ts"
+        "test": "pnpm -w test global.test.ts"
     },
     "type": "module",
     "peerDependencies": {
-        "astro": "^3.5.2 || 4"
+        "astro": "^3.5.2 || 4 || 5"
     },
     "devDependencies": {
+        "astro": "5",
         "@types/node": "20",
         "astro-global": "workspace:*"
     }

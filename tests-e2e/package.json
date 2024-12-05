@@ -2,7 +2,7 @@
     "name": "tests-e2e",
     "type": "module",
     "devDependencies": {
-        "@astrojs/node": "8",
+        "@astrojs/node": "9",
         "playwright": "1.40.1"
     }
 }

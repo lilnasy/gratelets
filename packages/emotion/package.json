@@ -17,16 +17,13 @@
     "files": [
         "integration.ts",
         "ast-scanner.ts",
-        "client.d.ts"
+        "types.d.ts"
     ],
     "exports": {
-        ".": "./integration.ts",
-        "./client": {
-            "types": "./client.d.ts"
-        }
+        ".": "./integration.ts"
     },
     "scripts": {
-        "test": "pnpm -w test tests/emotion.dev.test.ts tests/emotion.build.test.ts"
+        "test": "pnpm -w test emotion.dev.test.ts emotion.build.test.ts"
     },
     "type": "module",
     "dependencies": {
@@ -36,7 +33,7 @@
     },
     "devDependencies": {
         "@types/node": "20",
-        "astro": "4",
-        "vite": "5"
+        "astro": "5",
+        "vite": "6"
     }
 }

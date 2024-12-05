@@ -21,11 +21,11 @@
         ".": "./integration.ts"
     },
     "scripts": {
-        "test": "pnpm -w test tests/adds-to-head.test.ts"
+        "test": "pnpm -w test adds-to-head.test.ts"
     },
     "type": "module",
     "devDependencies": {
         "@types/node": "20",
-        "astro": "4"
+        "astro": "5"
     }
 }

@@ -2,7 +2,7 @@
     "name": "@test/scope",
     "private": true,
     "dependencies": {
-        "astro": "4",
+        "astro": "5",
         "astro-scope": "workspace:*"
     }
 }

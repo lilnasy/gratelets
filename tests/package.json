@@ -4,8 +4,8 @@
         "test": "vitest --run --api.port 51204 --pool=threads --poolOptions.threads.singleThread --bail 1"
     },
     "devDependencies": {
-        "@astrojs/node": "8",
-        "astro": "4",
+        "@astrojs/node": "9",
+        "astro": "5",
         "cheerio": "1.0.0-rc.12",
         "typescript": "5.6",
         "vitest": "2"
