@@ -8,7 +8,6 @@ describe("build", () => {
     let fixture: BuildFixture
     
     beforeAll(async () => {
-        process.env.NODE_ENV = 'production'
         fixture = await build("./fixtures/adds-to-head")
     })
     
@@ -23,6 +22,7 @@ describe("dev", () => {
     let devServer : Awaited<ReturnType<typeof dev>>
     
     beforeAll(async () => {
+        process.env.NODE_ENV = "development"
         devServer = await dev("./fixtures/adds-to-head")
     })
     
