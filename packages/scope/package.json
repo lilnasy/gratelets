@@ -16,13 +16,10 @@
     },
     "files": [
         "integration.ts",
-        "client.d.ts"
+        "types.d.ts"
     ],
     "exports": {
-        ".": "./integration.ts",
-        "./client": {
-            "types": "./client.d.ts"
-        }
+        ".": "./integration.ts"
     },
     "scripts": {
         "test": "pnpm -w test scope.test.ts"

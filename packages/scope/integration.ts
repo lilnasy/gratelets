@@ -3,6 +3,7 @@ import { compile } from "./node_modules/astro/dist/core/compile/index.js"
 import { parseAstroRequest } from "./node_modules/astro/dist/vite-plugin-astro/query.js"
 import type { AstroConfig, AstroIntegration } from "astro"
 import type { ResolvedConfig } from "vite"
+import "./types.d.ts"
 
 interface Options {}
 
