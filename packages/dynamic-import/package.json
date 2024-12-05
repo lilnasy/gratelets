@@ -17,14 +17,11 @@
     "files": [
         "integration.ts",
         "runtime",
-        "client.d.ts"
+        "types.d.ts"
     ],
     "exports": {
         ".": "./integration.ts",
-        "./runtime/*": "./runtime/*",
-        "./client": {
-            "types": "./client.d.ts"
-        }
+        "./runtime/*": "./runtime/*"
     },
     "scripts": {
         "test": "pnpm -w test dynamic-import.test.ts"
