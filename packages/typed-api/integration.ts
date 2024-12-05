@@ -2,27 +2,29 @@ import fs from "node:fs"
 import url from "node:url"
 import path from "node:path"
 import { globby } from "globby"
-import type { AstroIntegration, AstroIntegrationLogger } from "astro"
+import type { AstroIntegration } from "astro"
 
 export interface Options {}
 
 export default function (_?: Partial<Options>): AstroIntegration {
     let apiDir: URL
+    let root: URL
+    let dotAstroDir: URL
     let declarationFileUrl: URL
     return {
         name: "astro-typed-api",
         hooks: {
-            "astro:config:setup" ({ updateConfig, config, logger }) {
-                apiDir = new URL("pages/api", config.srcDir)
-                const dotAstroDir = new URL('.astro/', config.root)
-                declarationFileUrl = new URL("./typed-api.d.ts", dotAstroDir)
+            "astro:config:setup" ({ updateConfig, config }) {
                 updateConfig({ vite: { plugins: [{
                     name: "astro-typed-api/typegen",
                     enforce: "post",
-                    async config() {
+                    // the .astro directory is generated during astro sync command
+                    // sync loads vite plugins but runs no astro hooks, config is
+                    // the only hook available to generate types at the same time
+                    // as sync
+                    async configResolved() {
                         const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
-                        injectTypesDTs(dotAstroDir, logger, declarationFileUrl)
-                        generateTypes(filenames, apiDir, declarationFileUrl)
+                        generateAndWriteDeclaration(filenames, apiDir, declarationFileUrl)
                     }
                 }] } })
                 updateConfig({
@@ -37,11 +39,32 @@ export default function (_?: Partial<Options>): AstroIntegration {
                     }
                 })
             },
+            async "astro:config:done"({ config, injectTypes }) {
+                apiDir = new URL("pages/api", config.srcDir)
+                root = config.root
+                dotAstroDir = new URL('.astro/', root)
+
+                const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
+
+                // The path to the generated declaration file will be returned
+                // however we need the path to generate the relative specifiers.
+                // As a "solution", we inject the types twice, first time to get
+                // the file url, and second time to actually provide the content.
+                // Astro will overwrite the file with the second entry.
+                declarationFileUrl = injectTypes({
+                    filename: "types.d.ts",
+                    content: ""
+                })
+                injectTypes({
+                    filename: "types.d.ts",
+                    content: generateDeclaration(filenames, apiDir, declarationFileUrl)
+                })
+            },
             "astro:server:setup" ({ server }) {
                 server.watcher.on("add", async path => {
                     if (path.includes("pages/api") || path.includes("pages\\api")) {
                         const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
-                        generateTypes(filenames, apiDir, declarationFileUrl)
+                        generateAndWriteDeclaration(filenames, apiDir, declarationFileUrl)
                     }
                 })
             }
@@ -49,51 +72,28 @@ export default function (_?: Partial<Options>): AstroIntegration {
     }
 }
 
-async function generateTypes(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
-    const dotAstroPath = path.dirname(url.fileURLToPath(declarationFileUrl))
+async function generateAndWriteDeclaration(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
+    fs.mkdirSync(new URL(".", declarationFileUrl), { recursive: true })
+    fs.writeFileSync(declarationFileUrl, generateDeclaration(filenames, apiDir, declarationFileUrl))
+}
+
+function generateDeclaration(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
     const apiPath = url.fileURLToPath(apiDir)
-    fs.mkdirSync(path.dirname(url.fileURLToPath(declarationFileUrl)), { recursive: true })
     let declaration = ``
-    declaration += `type CreateRouter<Routes> = import("astro-typed-api/types").CreateRouter<Routes>\n`
+    declaration += `type CreateRouter<Routes extends [string, unknown][]> = import("astro-typed-api/types").CreateRouter<Routes>\n`
     declaration += `\n`
     declaration += `declare namespace TypedAPI {\n`
     declaration += `    interface Client extends CreateRouter<[\n`
     for (const filename of filenames) {
         const endpoint = filename.replace(/(\/index)?\.m?ts$/, "")
-        const specifier = path.relative(dotAstroPath, path.join(apiPath, filename)).replaceAll("\\", "/")
+        const specifier = path.relative(
+            path.dirname(url.fileURLToPath(declarationFileUrl)),
+            path.join(apiPath, filename)
+        ).replaceAll("\\", "/")
         declaration += `    `
         declaration += `    [${JSON.stringify(endpoint)}, typeof import(${JSON.stringify(specifier)})],\n`
     }
     declaration += `    ]> {}\n`
     declaration += `}\n`
-    fs.writeFileSync(declarationFileUrl, declaration)
-}
-
-function injectTypesDTs(dotAstroDir: URL, logger: AstroIntegrationLogger, specifier: URL | string) {
-    const typesDTsPath = url.fileURLToPath(new URL("./types.d.ts", dotAstroDir))
-    
-    if (specifier instanceof URL) {
-        specifier = url.fileURLToPath(specifier)
-        specifier = path.relative(url.fileURLToPath(dotAstroDir), specifier)
-        specifier = specifier.replaceAll("\\", "/")
-    }
-    
-    let typesDTsContents = fs.readFileSync(typesDTsPath, "utf8")
-    
-    if (typesDTsContents.includes(`/// <reference types='${specifier}' />`)) { return }
-    if (typesDTsContents.includes(`/// <reference types="${specifier}" />`)) { return }
-    
-    const newTypesDTsContents = typesDTsContents.replace(
-        `/// <reference types='astro/client' />`,
-        `/// <reference types='astro/client' />\n/// <reference types='${specifier}' />\n`
-    ).replace(
-        `/// <reference types="astro/client" />`,
-        `/// <reference types="astro/client" />\n/// <reference types="${specifier}" />\n`
-    )
-    
-    // the odd case where the user changed the reference to astro/client
-    if (newTypesDTsContents === typesDTsContents) { return }
-    
-    fs.writeFileSync(typesDTsPath, newTypesDTsContents)
-    logger.info("Updated types.d.ts types")
+    return declaration
 }
