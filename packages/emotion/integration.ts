@@ -60,6 +60,15 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
                         return stylesheets.get(id)
                     }
                 }, {
+                    name: "astro-emotion/vite/server",
+                    enforce: "post",
+                    transform(_, id) {
+                        if (this.environment.config.consumer === "server") {
+                            const css = stylesheets.get(id)
+                            if (css) return `export default ${JSON.stringify(css)}`
+                        }
+                    }
+                }, {
                     name: "astro-emotion/vite/types",
                     enforce: "post",
                     config() {
