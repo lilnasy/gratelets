@@ -1,12 +1,10 @@
-import fs from "node:fs"
-import url from "node:url"
-import path from "node:path"
 import crypto from "node:crypto"
 import { simple as walk } from "acorn-walk"
 import createEmotion, { type Options as EmotionOptions } from "@emotion/css/create-instance"
 import MagicString from "magic-string"
 import { visitors, type State } from "./ast-scanner.ts"
-import type { AstroConfig, AstroIntegration, AstroIntegrationLogger } from "astro"
+import type { AstroIntegration } from "astro"
+import "./types.d.ts"
 
 interface Options extends EmotionOptions {}
 
@@ -14,7 +12,7 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
     return {
         name: "astro-emotion",
         hooks: {
-            "astro:config:setup": ({ updateConfig, config, logger }) => {
+            "astro:config:setup"({ updateConfig }) {
                 const stylesheets = new Map<string, string>
                 const { css, cache, flush, injectGlobal } = createEmotion({ key: "e", ...options })
                 let moduleGraph: import("vite").ModuleGraph
@@ -68,43 +66,8 @@ export default function (options: Partial<Options> = {}): AstroIntegration {
                             if (css) return `export default ${JSON.stringify(css)}`
                         }
                     }
-                }, {
-                    name: "astro-emotion/vite/types",
-                    enforce: "post",
-                    config() {
-                        injectEnvDTS(config, logger, "astro-emotion/client")
-                    }
                 }] } })
             }
         }
     }
-}
-
-function injectEnvDTS(config: AstroConfig, logger: AstroIntegrationLogger, specifier: URL | string) {
-    const envDTsPath = url.fileURLToPath(new URL("env.d.ts", config.srcDir))
-    
-    if (specifier instanceof URL) {
-        specifier = url.fileURLToPath(specifier)
-        specifier = path.relative(url.fileURLToPath(config.srcDir), specifier)
-        specifier = specifier.replaceAll("\\", "/")
-    }
-    
-    let envDTsContents = fs.readFileSync(envDTsPath, "utf-8")
-    
-    if (envDTsContents.includes(`/// <reference types='${specifier}' />`)) { return }
-    if (envDTsContents.includes(`/// <reference types="${specifier}" />`)) { return }
-    
-    const newEnvDTsContents = envDTsContents.replace(
-        `/// <reference types='astro/client' />`,
-        `/// <reference types='astro/client' />\n/// <reference types='${specifier}' />\n`
-    ).replace(
-        `/// <reference types="astro/client" />`,
-        `/// <reference types="astro/client" />\n/// <reference types="${specifier}" />\n`
-    )
-    
-    // the odd case where the user changed the reference to astro/client
-    if (newEnvDTsContents === envDTsContents) { return }
-    
-    fs.writeFileSync(envDTsPath, newEnvDTsContents)
-    logger.info("Updated env.d.ts types")
 }

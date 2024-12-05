@@ -17,13 +17,10 @@
     "files": [
         "integration.ts",
         "ast-scanner.ts",
-        "client.d.ts"
+        "types.d.ts"
     ],
     "exports": {
-        ".": "./integration.ts",
-        "./client": {
-            "types": "./client.d.ts"
-        }
+        ".": "./integration.ts"
     },
     "scripts": {
         "test": "pnpm -w test emotion.dev.test.ts emotion.build.test.ts"
