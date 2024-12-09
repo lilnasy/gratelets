@@ -1,5 +1,11 @@
 # astro-client-interaction
 
+## 1.2.0
+
+### Minor Changes
+
+- [#106](https://github.com/lilnasy/gratelets/pull/106) [`55d85cc`](https://github.com/lilnasy/gratelets/commit/55d85cc9ad4272636e282cc9ba151c702d2beddf) Thanks [@lilnasy](https://github.com/lilnasy)! - Updates the package fields to allow installation alongside Astro 5. This is a clerical change, and the behavior of the integration itself is unchanged.
+
 ## 1.1.0
 
 ### Minor Changes

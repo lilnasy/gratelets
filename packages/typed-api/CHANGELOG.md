@@ -1,5 +1,11 @@
 # astro-typed-api
 
+## 0.3.0
+
+### Minor Changes
+
+- [#106](https://github.com/lilnasy/gratelets/pull/106) [`55d85cc`](https://github.com/lilnasy/gratelets/commit/55d85cc9ad4272636e282cc9ba151c702d2beddf) Thanks [@lilnasy](https://github.com/lilnasy)! - Updates the package to support changes in how Astro 5 handles generated types. Changes to `env.d.ts` are no longer performed, and the generated types are written to `<root>/.astro/astro-typed-api/types.d.ts`.
+
 ## 0.2.2
 
 ### Patch Changes

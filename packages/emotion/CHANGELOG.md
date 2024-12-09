@@ -1,5 +1,17 @@
 # astro-emotion
 
+## 3.0.0
+
+### Major Changes
+
+- [#106](https://github.com/lilnasy/gratelets/pull/106) [`55d85cc`](https://github.com/lilnasy/gratelets/commit/55d85cc9ad4272636e282cc9ba151c702d2beddf) Thanks [@lilnasy](https://github.com/lilnasy)! - Updates the package to support changes in how Astro 5 handles generated types. Changes to `env.d.ts` are no longer performed, and the types are automatically added to your project when you import the integration to the Astro configuration file.
+
+  References to `astro-dynamic-import/client` for types can now safely be removed from your project.
+
+### Minor Changes
+
+- [#106](https://github.com/lilnasy/gratelets/pull/106) [`55d85cc`](https://github.com/lilnasy/gratelets/commit/55d85cc9ad4272636e282cc9ba151c702d2beddf) Thanks [@lilnasy](https://github.com/lilnasy)! - Optimizes the extraction of styles by using a cache. Parsing of the source code of the modules importing `astro-emotiion`, and replacement of styles with generated class names is now skipped if the exact source code was previously processed. This prevents unnecessary work caused by the fact that most files are processed twice, once for SSR and once for the client.
+
 ## 2.0.0
 
 ### Major Changes

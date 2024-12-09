@@ -1,6 +1,6 @@
 {
     "name": "astro-global",
-    "version": "1.3.0",
+    "version": "2.0.0",
     "description": "Access the Astro global from MDX, React, and other framework components.",
     "author": "Arsh",
     "license": "Public Domain",
