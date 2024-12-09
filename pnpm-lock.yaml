@@ -33,7 +33,7 @@ importers:
   packages/client-interaction:
     dependencies:
       astro:
-        specifier: '5'
+        specifier: 4 || 5
         version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
     devDependencies:
       '@types/node':
@@ -43,7 +43,7 @@ importers:
   packages/dynamic-import:
     dependencies:
       astro:
-        specifier: '5'
+        specifier: 4 || 5
         version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
     devDependencies:
       '@types/node':
