@@ -78,7 +78,6 @@ function createVitePlugins(options: Partial<Options>): [ Plugin, Plugin ] {
             return transformResult
         },
         resolveId(source) {
-            if (source.includes("css")) console.log(source)
             if (stylesheets.has(source)) return source
             // HACK: prevent warnings from vite when it scans a file before letting it be transformed
             if (source === "astro:emotion") return source
