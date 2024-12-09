@@ -27,7 +27,7 @@
     },
     "type": "module",
     "peerDependencies": {
-        "astro": "5"
+        "astro": "4 || 5"
     },
     "devDependencies": {
         "@types/node": "20"
