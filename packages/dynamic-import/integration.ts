@@ -3,6 +3,7 @@ import path from "node:path"
 import fs from "node:fs"
 import type { AstroConfig, AstroIntegration, AstroIntegrationLogger } from "astro"
 import { PROPAGATED_ASSET_FLAG } from "./node_modules/astro/dist/content/consts.js"
+import "./types.d.ts"
 
 interface Options {}
 

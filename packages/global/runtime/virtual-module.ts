@@ -83,7 +83,22 @@ export default {
         const ctx = storage.getStore()
         if (ctx === undefined) throw new NoRequestError("callAction")
         return ctx.callAction
-    }
+    },
+    get routePattern() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("routePattern")
+        return ctx.routePattern
+    },
+    get originPathname() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("originPathname")
+        return ctx.originPathname
+    },
+    get isPrerendered() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("isPrerendered")
+        return ctx.isPrerendered
+    },
 } satisfies AstroGlobal
 
 export class NoRequestError extends Error {

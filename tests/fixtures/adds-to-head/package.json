@@ -2,8 +2,8 @@
     "name": "@test/adds-to-head",
     "private": true,
     "dependencies": {
-        "astro": "4",
+        "astro": "5",
         "astro-adds-to-head": "workspace:*",
-        "@astrojs/mdx": "2"
+        "@astrojs/mdx": "4"
     }
 }

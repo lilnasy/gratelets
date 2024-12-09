@@ -3,8 +3,6 @@ import { getEntryBySlug } from "astro:content"
 import IndirectRenderer from "../components/IndirectRenderer.astro"
 
 const entry = await getEntryBySlug("blog", "promo/launch-week-component")
-entry.Component;
-entry.addsToHead = true;
 ---
 <html>
 	<head>
