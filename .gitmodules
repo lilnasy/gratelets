@@ -1,0 +1,5 @@
+[submodule "packages/node-ws/withastro/adapters"]
+	path = packages/node-ws/withastro/adapters
+	url = https://github.com/withastro/adapters
+	branch = main
+	shallow = true

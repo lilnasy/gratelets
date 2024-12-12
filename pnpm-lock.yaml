@@ -84,6 +84,8 @@ importers:
         specifier: workspace:*
         version: 'link:'
 
+  packages/node-ws: {}
+
   packages/prerender-patterns:
     devDependencies:
       '@types/node':

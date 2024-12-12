@@ -1,0 +1,182 @@
+From 6e01e94f7c1a7f2bdc722db0f7c03c010cb92190 Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Thu, 12 Dec 2024 19:02:51 +0530
+Subject: [PATCH 3/4] update dependencies
+
+---
+ packages/node/package.json |  5 ++++-
+ pnpm-lock.yaml             | 44 ++++++++++++++++++++++++++++++--------
+ 2 files changed, 39 insertions(+), 10 deletions(-)
+
+diff --git a/packages/node/package.json b/packages/node/package.json
+index 313805d..24d1de4 100644
+--- a/packages/node/package.json
++++ b/packages/node/package.json
+@@ -26,8 +26,11 @@
+     "test": "astro-scripts test \"test/**/*.test.js\""
+   },
+   "dependencies": {
++    "bufferutil": "^4.0.8",
+     "send": "^1.1.0",
+-    "server-destroy": "^1.0.1"
++    "server-destroy": "^1.0.1",
++    "ws": "^8.18.0",
++    "@types/ws": "^8.5.12"
+   },
+   "peerDependencies": {
+     "astro": "^5.0.0"
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 754c2ac..e67d30b 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -85,7 +85,7 @@ importers:
+         version: 0.30.14
+       miniflare:
+         specifier: ^3.20241106.1
+-        version: 3.20241106.1
++        version: 3.20241106.1(bufferutil@4.0.8)
+       tiny-glob:
+         specifier: ^0.2.9
+         version: 0.2.9
+@@ -94,7 +94,7 @@ importers:
+         version: 6.0.2(@types/node@22.10.1)(yaml@2.6.1)
+       wrangler:
+         specifier: ^3.91.0
+-        version: 3.91.0(@cloudflare/workers-types@4.20241127.0)
++        version: 3.91.0(@cloudflare/workers-types@4.20241127.0)(bufferutil@4.0.8)
+     devDependencies:
+       '@astrojs/test-utils':
+         specifier: workspace:*
+@@ -132,7 +132,7 @@ importers:
+     devDependencies:
+       wrangler:
+         specifier: ^3.84.0
+-        version: 3.91.0(@cloudflare/workers-types@4.20241127.0)
++        version: 3.91.0(@cloudflare/workers-types@4.20241127.0)(bufferutil@4.0.8)
+ 
+   packages/cloudflare/test/fixtures/astro-env:
+     dependencies:
+@@ -145,7 +145,7 @@ importers:
+     devDependencies:
+       wrangler:
+         specifier: ^3.84.0
+-        version: 3.91.0(@cloudflare/workers-types@4.20241127.0)
++        version: 3.91.0(@cloudflare/workers-types@4.20241127.0)(bufferutil@4.0.8)
+ 
+   packages/cloudflare/test/fixtures/compile-image-service:
+     dependencies:
+@@ -324,12 +324,21 @@ importers:
+ 
+   packages/node:
+     dependencies:
++      '@types/ws':
++        specifier: ^8.5.12
++        version: 8.5.13
++      bufferutil:
++        specifier: ^4.0.8
++        version: 4.0.8
+       send:
+         specifier: ^1.1.0
+         version: 1.1.0
+       server-destroy:
+         specifier: ^1.0.1
+         version: 1.0.1
++      ws:
++        specifier: ^8.18.0
++        version: 8.18.0(bufferutil@4.0.8)
+     devDependencies:
+       '@astrojs/test-utils':
+         specifier: workspace:*
+@@ -1887,6 +1896,9 @@ packages:
+   '@types/unist@3.0.3':
+     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
+ 
++  '@types/ws@8.5.13':
++    resolution: {integrity: sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==}
++
+   '@typescript-eslint/eslint-plugin@8.16.0':
+     resolution: {integrity: sha512-5YTHKV8MYlyMI6BaEG7crQ9BhSc8RxzshOReKwZwRWN0+XvvTOm+L/UYLCYxFpfwYuAAqhxiq4yae0CMFwbL7Q==}
+     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+@@ -2183,6 +2195,10 @@ packages:
+     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
+     hasBin: true
+ 
++  bufferutil@4.0.8:
++    resolution: {integrity: sha512-4T53u4PdgsXqKaIctwF8ifXlRTTmEPJ8iEPWFdGZvcf7sbwYo6FKFEX9eNNAnzFZ7EzJAQ3CJeOtCRA4rDp7Pw==}
++    engines: {node: '>=6.14.2'}
++
+   bytes@3.1.2:
+     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
+     engines: {node: '>= 0.8'}
+@@ -5628,6 +5644,10 @@ snapshots:
+ 
+   '@types/unist@3.0.3': {}
+ 
++  '@types/ws@8.5.13':
++    dependencies:
++      '@types/node': 22.10.1
++
+   '@typescript-eslint/eslint-plugin@8.16.0(@typescript-eslint/parser@8.16.0(eslint@9.15.0)(typescript@5.7.2))(eslint@9.15.0)(typescript@5.7.2)':
+     dependencies:
+       '@eslint-community/regexpp': 4.12.1
+@@ -6045,6 +6065,10 @@ snapshots:
+       node-releases: 2.0.18
+       update-browserslist-db: 1.1.1(browserslist@4.24.2)
+ 
++  bufferutil@4.0.8:
++    dependencies:
++      node-gyp-build: 4.8.4
++
+   bytes@3.1.2: {}
+ 
+   call-bind@1.0.7:
+@@ -7402,7 +7426,7 @@ snapshots:
+ 
+   mimic-fn@4.0.0: {}
+ 
+-  miniflare@3.20241106.1:
++  miniflare@3.20241106.1(bufferutil@4.0.8):
+     dependencies:
+       '@cspotcode/source-map-support': 0.8.1
+       acorn: 8.14.0
+@@ -7413,7 +7437,7 @@ snapshots:
+       stoppable: 1.1.0
+       undici: 5.28.4
+       workerd: 1.20241106.1
+-      ws: 8.18.0
++      ws: 8.18.0(bufferutil@4.0.8)
+       youch: 3.3.4
+       zod: 3.23.8
+     transitivePeerDependencies:
+@@ -8582,7 +8606,7 @@ snapshots:
+       '@cloudflare/workerd-linux-arm64': 1.20241106.1
+       '@cloudflare/workerd-windows-64': 1.20241106.1
+ 
+-  wrangler@3.91.0(@cloudflare/workers-types@4.20241127.0):
++  wrangler@3.91.0(@cloudflare/workers-types@4.20241127.0)(bufferutil@4.0.8):
+     dependencies:
+       '@cloudflare/kv-asset-handler': 0.3.4
+       '@cloudflare/workers-shared': 0.9.0
+@@ -8593,7 +8617,7 @@ snapshots:
+       date-fns: 4.1.0
+       esbuild: 0.17.19
+       itty-time: 1.0.6
+-      miniflare: 3.20241106.1
++      miniflare: 3.20241106.1(bufferutil@4.0.8)
+       nanoid: 3.3.8
+       path-to-regexp: 6.3.0
+       resolve: 1.22.8
+@@ -8625,7 +8649,9 @@ snapshots:
+ 
+   wrappy@1.0.2: {}
+ 
+-  ws@8.18.0: {}
++  ws@8.18.0(bufferutil@4.0.8):
++    optionalDependencies:
++      bufferutil: 4.0.8
+ 
+   xxhash-wasm@1.1.0: {}
+ 
+-- 
+2.47.0.windows.2
+
