@@ -21,6 +21,7 @@
         "create_patches": "cd withastro/adapters && git format-patch origin/main -o ../..",
         "load_patches": "git submodule update --init && cd withastro/adapters && git am ../../*.patch",
         "delete_all_changes_and_unload_patches": "cd withastro/adapters && git reset --hard origin/main",
-        "delete_all_changes_and_reload_patches": "cd withastro/adapters && git reset --hard origin/main && git am ../../*.patch"
+        "delete_all_changes_and_reload_patches": "cd withastro/adapters && git reset --hard origin/main && git am ../../*.patch",
+        "test": "pnpm -w test node-ws.test.ts"
     }
 }
