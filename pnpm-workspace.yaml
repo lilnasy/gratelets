@@ -2,6 +2,6 @@
     "packages": [
         "**",
         # exclude the git submodule, it is managed manually
-        "!packages/node-ws/withastro/adapters/**"
+        "!packages/node-websocket/withastro/adapters/**"
     ]
 }
