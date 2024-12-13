@@ -1,15 +1,15 @@
-From 991561e2a4bc37171d6e40fff26b45790ff22e2b Mon Sep 17 00:00:00 2001
+From 05ee5a71dfc6e602721debb108c94beafd90197f Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:09 +0530
 Subject: [PATCH 1/4] add implementation
 
 ---
  packages/node/src/websocket/attach.ts         |  17 ++
- packages/node/src/websocket/dev-middleware.ts | 176 +++++++++++++++++
+ packages/node/src/websocket/dev-middleware.ts | 181 +++++++++++++++++
  packages/node/src/websocket/response.ts       |  48 +++++
  .../node/src/websocket/serve-websocket.ts     |  45 +++++
  packages/node/src/websocket/websocket.ts      | 183 ++++++++++++++++++
- 5 files changed, 469 insertions(+)
+ 5 files changed, 474 insertions(+)
  create mode 100644 packages/node/src/websocket/attach.ts
  create mode 100644 packages/node/src/websocket/dev-middleware.ts
  create mode 100644 packages/node/src/websocket/response.ts
@@ -41,10 +41,10 @@ index 0000000..3bcbc81
 +}
 diff --git a/packages/node/src/websocket/dev-middleware.ts b/packages/node/src/websocket/dev-middleware.ts
 new file mode 100644
-index 0000000..b9a7ce4
+index 0000000..0948f24
 --- /dev/null
 +++ b/packages/node/src/websocket/dev-middleware.ts
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,181 @@
 +import { AsyncLocalStorage } from "node:async_hooks"
 +import type { APIContext, AstroIntegration, MiddlewareNext } from "astro"
 +import * as ws from "ws"
@@ -139,10 +139,15 @@ index 0000000..b9a7ce4
 + * of an `upgradeRequestStorage`, which are created below in
 + * `hookIntoViteDevServer()`, and only runs if it is.
 + */
-+export const onRequest = async function websocketDevMiddleware(_: APIContext, next: MiddlewareNext) {
++export const onRequest = async function websocketDevMiddleware(context: APIContext, next: MiddlewareNext) {
 +    const upgradeRequest = upgradeRequestStorage.getStore()
 +
-+    if (upgradeRequest === undefined)return next()
++    if (upgradeRequest === undefined) {
++        context.locals.upgradeWebSocket = () => {
++            throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
++        }
++        return next()
++    }
 +
 +    let response: Response | undefined
 +    let error: unknown

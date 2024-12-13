@@ -1,14 +1,14 @@
-From 103a7e875b9af8bc7f1ad1fbb0ea48ec29bea6b0 Mon Sep 17 00:00:00 2001
+From d904ce5d878a0156ba4ff27af85aea3a0881c102 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:43 +0530
 Subject: [PATCH 2/4] use implementation
 
 ---
  packages/node/src/index.ts      | 48 ++++++++++++++++++++++++++++-----
- packages/node/src/serve-app.ts  | 11 ++++++--
+ packages/node/src/serve-app.ts  | 13 +++++++--
  packages/node/src/standalone.ts |  2 ++
  packages/node/src/types.ts      |  2 +-
- 4 files changed, 54 insertions(+), 9 deletions(-)
+ 4 files changed, 56 insertions(+), 9 deletions(-)
 
 diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
 index e91ed17..937c404 100644
@@ -98,7 +98,7 @@ index e91ed17..937c404 100644
  	};
  }
 diff --git a/packages/node/src/serve-app.ts b/packages/node/src/serve-app.ts
-index 2934a01..98659c2 100644
+index 2934a01..635ded2 100644
 --- a/packages/node/src/serve-app.ts
 +++ b/packages/node/src/serve-app.ts
 @@ -20,7 +20,7 @@ export function createAppHandler(app: NodeApp): RequestHandler {
@@ -110,7 +110,7 @@ index 2934a01..98659c2 100644
  		let request: Request;
  		try {
  			request = NodeApp.createRequest(req);
-@@ -31,7 +31,14 @@ export function createAppHandler(app: NodeApp): RequestHandler {
+@@ -31,7 +31,16 @@ export function createAppHandler(app: NodeApp): RequestHandler {
  			res.end('Internal Server Error');
  			return;
  		}
@@ -122,7 +122,9 @@ index 2934a01..98659c2 100644
 +		 * The fact that a request is being handled by this function, a listener for the
 +		 * `request` event, means that the request was not an upgrade request.
 +		 */
-+		locals.upgradeWebSocket = () => { throw new Error("Can't switch protocols on a non-upgrade request.") }
++		locals.upgradeWebSocket = () => {
++			throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
++		}
  		const routeData = app.match(request);
  		if (routeData) {
  			const response = await als.run(request.url, () =>
