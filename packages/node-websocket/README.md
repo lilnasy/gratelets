@@ -82,6 +82,13 @@ The `response` field provides a `Response` object that you can return to accept 
 
 Note that this integration does not require any special client-side WebSocket library, you can use the native `WebSocket` API in the browser.
 
+To simplify the detection of whether a request can be upgraded to a WebSocket connection, the adapter also adds `locals.isUpgradeRequest` to the context. This value is `true` if the request can be upgraded to a WebSocket connection, and `false` otherwise.
+
+```diff lang="ts"
+- if (ctx.request.headers.get("upgrade") === "websocket") { ... }
++ if (ctx.locals.isUpgradeRequest) { ... }
+```
+
 ## Troubleshooting
 
 ### Error: "The request must be an upgrade request to upgrade the connection to a WebSocket."
