@@ -1,4 +1,4 @@
-# astro-node-websocket 🌐
+# astro-node-websocket 🔌
 
 This **[Astro integration][astro-integration]** provides an SSR adapter for Astro that allows you to introduce realtime features using WebSocket within your SSR Astro project.
 
