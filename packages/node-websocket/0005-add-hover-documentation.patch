@@ -1,4 +1,4 @@
-From 3121d529108d349cd26ad3a94fd8f1b9c0be5e35 Mon Sep 17 00:00:00 2001
+From e8b21f06feea12a656550945122b75e931cc0c04 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 13 Dec 2024 10:16:00 +0530
 Subject: [PATCH 5/5] add hover documentation
@@ -8,7 +8,7 @@ Subject: [PATCH 5/5] add hover documentation
  1 file changed, 31 insertions(+), 2 deletions(-)
 
 diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
-index 1a6c04a..90dec3f 100644
+index 1a6c04a..0b1575b 100644
 --- a/packages/node/src/index.ts
 +++ b/packages/node/src/index.ts
 @@ -1,11 +1,40 @@
@@ -22,12 +22,12 @@ index 1a6c04a..90dec3f 100644
 -	upgradeWebSocket(): { socket: WebSocket, response: Response };
 +    /**
 +     * Upgrade an incoming HTTP request to a bidirectional WebSocket
-+	 * connection.
++     * connection.
 +     *
 +     * Returns a pair of {@linkcode WebSocket} and {@linkcode Response}
 +     * instances. The request must be responded to with the provided
 +     * response for the provided WebSocket to open and start receiving
-+	 * messages from the browser.
++     * messages from the browser.
 +     *
 +     * ```ts
 +     * export const GET: APIRoute = ctx => {
@@ -45,10 +45,10 @@ index 1a6c04a..90dec3f 100644
 +     * ```
 +     *
 +     * Calling this function on its own does not connect the WebSocket.
-+	 * It only returns a pair of objects that will establish the connection
-+	 * once the generated response has been returned from the API Route.
-+	 * 
-+	 * Throws if the request is not an upgrade request.
++     * It only returns a pair of objects that will establish the connection
++     * once the generated response has been returned from the API Route.
++     *
++     * Throws if the request is not an upgrade request.
 +     */
 +    upgradeWebSocket(): { socket: WebSocket, response: Response };
  }
