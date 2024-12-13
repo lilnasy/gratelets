@@ -2,9 +2,11 @@
     "name": "astro-node-websocket",
     "type": "module",
     "description": "Use WebSockets in your Astro SSR Apps",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "license": "MIT",
-    "files": ["withastro/adapters/packages/node/src"],
+    "files": [
+        "withastro/adapters/packages/node/src"
+    ],
     "exports": {
         ".": "./withastro/adapters/packages/node/src/index.ts",
         "./websocket": "./withastro/adapters/packages/node/src/runtime/websocket.ts"
