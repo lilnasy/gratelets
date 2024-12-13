@@ -1,0 +1,100 @@
+From 14d68216c159222477f17b920982239ee77a23b5 Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Fri, 13 Dec 2024 22:43:16 +0530
+Subject: [PATCH 5/5] isUpgradeRequest local
+
+---
+ packages/node/src/index.ts                     |  7 ++++++-
+ packages/node/src/serve-app.ts                 |  9 ++++++---
+ packages/node/src/websocket/dev-middleware.ts  | 10 +++++++---
+ packages/node/src/websocket/serve-websocket.ts |  1 +
+ 4 files changed, 20 insertions(+), 7 deletions(-)
+
+diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
+index 0b1575b..2f0963b 100644
+--- a/packages/node/src/index.ts
++++ b/packages/node/src/index.ts
+@@ -4,6 +4,11 @@ import type { Options, UserOptions } from './types.js';
+ import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.js"
+ 
+ export interface Locals {
++	/**
++	 * Whether the current request wants the connection to be upgraded
++	 * to a WebSocket.
++	 */
++    isUpgradeRequest: boolean
+     /**
+      * Upgrade an incoming HTTP request to a bidirectional WebSocket
+      * connection.
+@@ -15,7 +20,7 @@ export interface Locals {
+      *
+      * ```ts
+      * export const GET: APIRoute = ctx => {
+-     *     if (ctx.request.headers.get("upgrade") === "websocket") {
++     *     if (ctx.locals.isUpgradeRequest) {
+      *         const { response, socket } = ctx.locals.upgradeWebSocket()
+      *         socket.onmessage = event => {
+      *             if (event.data === "ping") {
+diff --git a/packages/node/src/serve-app.ts b/packages/node/src/serve-app.ts
+index 635ded2..0b9b338 100644
+--- a/packages/node/src/serve-app.ts
++++ b/packages/node/src/serve-app.ts
+@@ -38,9 +38,12 @@ export function createAppHandler(app: NodeApp): RequestHandler {
+ 		 * The fact that a request is being handled by this function, a listener for the
+ 		 * `request` event, means that the request was not an upgrade request.
+ 		 */
+-		locals.upgradeWebSocket = () => {
+-			throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
+-		}
++		Object.assign(locals, {
++			isUpgradeRequest: false,
++			upgradeWebSocket() {
++				throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
++			}
++		})
+ 		const routeData = app.match(request);
+ 		if (routeData) {
+ 			const response = await als.run(request.url, () =>
+diff --git a/packages/node/src/websocket/dev-middleware.ts b/packages/node/src/websocket/dev-middleware.ts
+index d790941..21061c5 100644
+--- a/packages/node/src/websocket/dev-middleware.ts
++++ b/packages/node/src/websocket/dev-middleware.ts
+@@ -96,9 +96,12 @@ export const onRequest = async function websocketDevMiddleware(context: APIConte
+     const upgradeRequest = upgradeRequestStorage.getStore()
+ 
+     if (upgradeRequest === undefined) {
+-        context.locals.upgradeWebSocket = () => {
+-            throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
+-        }
++        Object.assign(context.locals, {
++            isUpgradeRequest: false,
++            upgradeWebSocket() {
++                throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
++            }
++        })
+         return next()
+     }
+ 
+@@ -144,6 +147,7 @@ export const onRequest = async function websocketDevMiddleware(context: APIConte
+ }
+ 
+ const devLocals = {
++    isUpgradeRequest: true,
+     upgradeWebSocket() {
+         const response = newUpgradeResponse()
+         const socket = newWebSocket()
+diff --git a/packages/node/src/websocket/serve-websocket.ts b/packages/node/src/websocket/serve-websocket.ts
+index ea9ed9b..9421c64 100644
+--- a/packages/node/src/websocket/serve-websocket.ts
++++ b/packages/node/src/websocket/serve-websocket.ts
+@@ -26,6 +26,7 @@ export function createWebsocketHandler(app: NodeApp): UpgradeHandler {
+         const response = await app.render(NodeApp.createRequest(req), {
+             addCookieHeader: true,
+             locals: {
++                isUpgradeRequest: true,
+                 upgradeWebSocket() {
+                     const socket = new WebSocket
+                     const response = new UpgradeResponse
+-- 
+2.47.0.windows.2
+

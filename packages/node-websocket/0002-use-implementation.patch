@@ -1,28 +1,57 @@
-From f0cc061f6ad5c3d8fb6c4e2b4c2b97b9291a0e71 Mon Sep 17 00:00:00 2001
+From 27ab63829d48fc396a78a399f475e60fe20a115b Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:43 +0530
 Subject: [PATCH 2/5] use implementation
 
 ---
- packages/node/src/index.ts      | 48 ++++++++++++++++++++++++++++-----
- packages/node/src/serve-app.ts  | 13 +++++++--
- packages/node/src/standalone.ts |  2 ++
+ packages/node/src/index.ts      | 77 ++++++++++++++++++++++++++++++---
+ packages/node/src/serve-app.ts  | 13 +++++-
+ packages/node/src/standalone.ts |  2 +
  packages/node/src/types.ts      |  2 +-
- 4 files changed, 56 insertions(+), 9 deletions(-)
+ 4 files changed, 85 insertions(+), 9 deletions(-)
 
 diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
-index e91ed17..1a6c04a 100644
+index e91ed17..0b1575b 100644
 --- a/packages/node/src/index.ts
 +++ b/packages/node/src/index.ts
-@@ -1,12 +1,26 @@
+@@ -1,12 +1,55 @@
  import type { AstroAdapter, AstroIntegration } from 'astro';
  import { AstroError } from 'astro/errors';
  import type { Options, UserOptions } from './types.js';
-+import type { WebSocket } from "./websocket/websocket.js"
 +import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.js"
 +
 +export interface Locals {
-+	upgradeWebSocket(): { socket: WebSocket, response: Response };
++    /**
++     * Upgrade an incoming HTTP request to a bidirectional WebSocket
++     * connection.
++     *
++     * Returns a pair of {@linkcode WebSocket} and {@linkcode Response}
++     * instances. The request must be responded to with the provided
++     * response for the provided WebSocket to open and start receiving
++     * messages from the browser.
++     *
++     * ```ts
++     * export const GET: APIRoute = ctx => {
++     *     if (ctx.request.headers.get("upgrade") === "websocket") {
++     *         const { response, socket } = ctx.locals.upgradeWebSocket()
++     *         socket.onmessage = event => {
++     *             if (event.data === "ping") {
++     *                 socket.send("pong")
++     *             }
++     *         }
++     *         return response
++     *     }
++     *     return new Response("Upgrade required", { status: 426 })
++     * }
++     * ```
++     *
++     * Calling this function on its own does not connect the WebSocket.
++     * It only returns a pair of objects that will establish the connection
++     * once the generated response has been returned from the API Route.
++     *
++     * Throws if the request is not an upgrade request.
++     */
++    upgradeWebSocket(): { socket: WebSocket, response: Response };
 +}
 +
 +interface NodeLocals extends Locals {}
@@ -44,7 +73,7 @@ index e91ed17..1a6c04a 100644
  		exports: ['handler', 'startServer', 'options'],
  		args: options,
  		adapterFeatures: {
-@@ -30,20 +44,36 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+@@ -30,20 +73,36 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
  	}
  
  	let _options: Options;
@@ -84,7 +113,7 @@ index e91ed17..1a6c04a 100644
  			},
  			'astro:config:done': ({ setAdapter, config }) => {
  				_options = {
-@@ -56,6 +86,12 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+@@ -56,6 +115,12 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
  				};
  				setAdapter(getAdapter(_options));
  			},
