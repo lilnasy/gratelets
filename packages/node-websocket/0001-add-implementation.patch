@@ -1,7 +1,7 @@
-From 05ee5a71dfc6e602721debb108c94beafd90197f Mon Sep 17 00:00:00 2001
+From 332ef9d894e54cbd2d92d394f4f0a2279aeb179b Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:09 +0530
-Subject: [PATCH 1/4] add implementation
+Subject: [PATCH 1/5] add implementation
 
 ---
  packages/node/src/websocket/attach.ts         |  17 ++
