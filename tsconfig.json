@@ -1,5 +1,6 @@
 {
     "extends": "astro/tsconfigs/strict",
+    "exclude": ["packages/node-websocket"],
     "compilerOptions": {
         "jsx": "preserve"
     }

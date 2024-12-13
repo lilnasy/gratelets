@@ -1,0 +1,5 @@
+[submodule "packages/node-websocket/withastro/adapters"]
+	path = packages/node-websocket/withastro/adapters
+	url = https://github.com/withastro/adapters
+	branch = main
+	shallow = true

@@ -1,0 +1,164 @@
+From f0cc061f6ad5c3d8fb6c4e2b4c2b97b9291a0e71 Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Thu, 12 Dec 2024 19:02:43 +0530
+Subject: [PATCH 2/5] use implementation
+
+---
+ packages/node/src/index.ts      | 48 ++++++++++++++++++++++++++++-----
+ packages/node/src/serve-app.ts  | 13 +++++++--
+ packages/node/src/standalone.ts |  2 ++
+ packages/node/src/types.ts      |  2 +-
+ 4 files changed, 56 insertions(+), 9 deletions(-)
+
+diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
+index e91ed17..1a6c04a 100644
+--- a/packages/node/src/index.ts
++++ b/packages/node/src/index.ts
+@@ -1,12 +1,26 @@
+ import type { AstroAdapter, AstroIntegration } from 'astro';
+ import { AstroError } from 'astro/errors';
+ import type { Options, UserOptions } from './types.js';
++import type { WebSocket } from "./websocket/websocket.js"
++import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.js"
++
++export interface Locals {
++	upgradeWebSocket(): { socket: WebSocket, response: Response };
++}
++
++interface NodeLocals extends Locals {}
++
++declare global {
++	namespace App {
++		export interface Locals extends NodeLocals {}
++	}
++}
+ 
+ export function getAdapter(options: Options): AstroAdapter {
+ 	return {
+-		name: '@astrojs/node',
+-		serverEntrypoint: '@astrojs/node/server.js',
+-		previewEntrypoint: '@astrojs/node/preview.js',
++		name: "astro-node-websocket",
++		serverEntrypoint: new URL("./server.ts", import.meta.url),
++		previewEntrypoint: new URL("./preview.ts", import.meta.url),
+ 		exports: ['handler', 'startServer', 'options'],
+ 		args: options,
+ 		adapterFeatures: {
+@@ -30,20 +44,36 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+ 	}
+ 
+ 	let _options: Options;
++	let viteDevServer: ViteDevServer;
+ 	return {
+-		name: '@astrojs/node',
++		name: "astro-node-websocket",
+ 		hooks: {
+-			'astro:config:setup': async ({ updateConfig, config }) => {
++			'astro:config:setup': async ({ addMiddleware, command, updateConfig, config }) => {
+ 				updateConfig({
+ 					image: {
+ 						endpoint: config.image.endpoint ?? 'astro/assets/endpoint/node',
+ 					},
+ 					vite: {
+ 						ssr: {
+-							noExternal: ['@astrojs/node'],
++							noExternal: ["astro-node-websocket"],
++						},
++						esbuild: {
++							tsconfigRaw: {
++								compilerOptions: {
++									// make the compilation of classes
++									// compatable with standard ES6
++									useDefineForClassFields: true,
++								},
++							}
+ 						},
+ 					},
+ 				});
++				if (command === "dev") {
++					addMiddleware({
++						order: "pre",
++						entrypoint: new URL("./websocket/dev-middleware.ts", import.meta.url)
++					})
++				}
+ 			},
+ 			'astro:config:done': ({ setAdapter, config }) => {
+ 				_options = {
+@@ -56,6 +86,12 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+ 				};
+ 				setAdapter(getAdapter(_options));
+ 			},
++			'astro:server:setup' ({ server }) {
++				viteDevServer = server
++			},
++			'astro:server:start' () {
++				handleUpgradeRequests(viteDevServer)
++			}
+ 		},
+ 	};
+ }
+diff --git a/packages/node/src/serve-app.ts b/packages/node/src/serve-app.ts
+index 2934a01..635ded2 100644
+--- a/packages/node/src/serve-app.ts
++++ b/packages/node/src/serve-app.ts
+@@ -20,7 +20,7 @@ export function createAppHandler(app: NodeApp): RequestHandler {
+ 		console.error(reason);
+ 	});
+ 
+-	return async (req, res, next, locals) => {
++	return async (req, res, next, locals = {}) => {
+ 		let request: Request;
+ 		try {
+ 			request = NodeApp.createRequest(req);
+@@ -31,7 +31,16 @@ export function createAppHandler(app: NodeApp): RequestHandler {
+ 			res.end('Internal Server Error');
+ 			return;
+ 		}
+-
++		/**
++		 * An upgrade request will be handled by a listener attached to the `upgrade` event,
++		 * which is the returned function from createWebsocketHandler().
++		 *
++		 * The fact that a request is being handled by this function, a listener for the
++		 * `request` event, means that the request was not an upgrade request.
++		 */
++		locals.upgradeWebSocket = () => {
++			throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
++		}
+ 		const routeData = app.match(request);
+ 		if (routeData) {
+ 			const response = await als.run(request.url, () =>
+diff --git a/packages/node/src/standalone.ts b/packages/node/src/standalone.ts
+index c7c8033..7653536 100644
+--- a/packages/node/src/standalone.ts
++++ b/packages/node/src/standalone.ts
+@@ -7,6 +7,7 @@ import enableDestroy from 'server-destroy';
+ import { logListeningOn } from './log-listening-on.js';
+ import { createAppHandler } from './serve-app.js';
+ import { createStaticHandler } from './serve-static.js';
++import { createWebsocketHandler } from "./websocket/serve-websocket.js"
+ import type { Options } from './types.js';
+ 
+ // Used to get Host Value at Runtime
+@@ -22,6 +23,7 @@ export default function standalone(app: NodeApp, options: Options) {
+ 	const host = process.env.HOST ?? hostOptions(options.host);
+ 	const handler = createStandaloneHandler(app, options);
+ 	const server = createServer(handler, host, port);
++	server.server.on("upgrade", createWebsocketHandler(app))
+ 	server.server.listen(port, host);
+ 	if (process.env.ASTRO_NODE_LOGGING !== 'disabled') {
+ 		logListeningOn(app.getAdapterLogger(), server.server, options);
+diff --git a/packages/node/src/types.ts b/packages/node/src/types.ts
+index 010053d..8b50a20 100644
+--- a/packages/node/src/types.ts
++++ b/packages/node/src/types.ts
+@@ -35,5 +35,5 @@ export type RequestHandlerParams = [
+ 	req: IncomingMessage,
+ 	res: ServerResponse,
+ 	next?: (err?: unknown) => void,
+-	locals?: object,
++	locals?: { [key: string]: any },
+ ];
+-- 
+2.47.0.windows.2
+

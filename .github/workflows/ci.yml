@@ -20,10 +20,10 @@ env:
 
 jobs:
   prelim:
-    name: "Linux - Node 20"
+    name: "Linux - Node 22"
     uses: ./.github/workflows/test.yml
     with:
-      node: 20
+      node: 22
       os: ubuntu-latest
       check: true
   Linux:
@@ -35,21 +35,21 @@ jobs:
       os: ubuntu-latest
     strategy:
       matrix:
-        NODE_VERSION: [18, 22, 23]
+        NODE_VERSION: [18, 20, 22, 23]
       fail-fast: false
   Windows:
-    name: "Windows - Node 20"
+    name: "Windows - Node 22"
     needs: prelim
     uses: ./.github/workflows/test.yml
     with:
-      node: 20
+      node: 22
       os: windows-latest
   macOS:
-    name: "macOS - Node 20"
+    name: "macOS - Node 22"
     needs: prelim
     uses: ./.github/workflows/test.yml
     with:
-      node: 20
+      node: 22
       os: macos-14
   Chrome:
     name: E2E Tests

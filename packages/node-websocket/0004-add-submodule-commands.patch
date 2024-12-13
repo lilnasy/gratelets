@@ -1,0 +1,29 @@
+From b552f75bbcca0086eb7db6ee16640300f570e903 Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Thu, 12 Dec 2024 19:15:49 +0530
+Subject: [PATCH 4/5] add submodule commands
+
+---
+ packages/node/package.json | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/packages/node/package.json b/packages/node/package.json
+index 24d1de4..2aa18a0 100644
+--- a/packages/node/package.json
++++ b/packages/node/package.json
+@@ -23,7 +23,11 @@
+   "files": ["dist"],
+   "scripts": {
+     "build": "tsc",
+-    "test": "astro-scripts test \"test/**/*.test.js\""
++    "test": "astro-scripts test \"test/**/*.test.js\"",
++    "create_patches": "git format-patch origin/main -o ../../../..",
++    "load_patches": "git am ../../../../*.patch",
++    "delete_all_changes_and_unload_patches": "git reset --hard origin/main",
++    "delete_all_changes_and_reload_patches": "git reset --hard origin/main && git am ../../../../*.patch"
+   },
+   "dependencies": {
+     "bufferutil": "^4.0.8",
+-- 
+2.47.0.windows.2
+

@@ -38,7 +38,10 @@ on:
           - windows-latest
           - windows-2022
           - windows-2019
-
+      check:
+        description: Type-check with tsc
+        type: boolean
+        default: false
 env:
   ASTRO_TELEMETRY_DISABLED: true
 
@@ -64,6 +67,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       
+      - name: Init submodules
+        if: ${{ inputs.node == 23 || inputs.check }}
+        run: |
+          cd packages/node-websocket
+          git submodule update --init
+          cd withastro/adapters
+          git config user.email "ci@c.i"
+          git config user.name "CI"
+          git am ../../*.patch
+          cd packages/node
+          pnpm --filter . install
+
       - name: Check
         if: ${{ inputs.check }}
         run: pnpm run check
