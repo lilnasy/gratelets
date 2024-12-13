@@ -3,6 +3,6 @@
     "private": true,
     "dependencies": {
         "astro": "5",
-        "astro-node-ws": "workspace:*"
+        "astro-node-websocket": "workspace:*"
     }
 }

@@ -84,7 +84,7 @@ importers:
         specifier: workspace:*
         version: 'link:'
 
-  packages/node-ws:
+  packages/node-websocket:
     dependencies:
       '@types/ws':
         specifier: ^8.5.12
@@ -314,14 +314,14 @@ importers:
         specifier: '10'
         version: 10.24.3
 
-  tests/fixtures/node-ws:
+  tests/fixtures/node-websocket:
     dependencies:
       astro:
         specifier: '5'
         version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
-      astro-node-ws:
+      astro-node-websocket:
         specifier: workspace:*
-        version: link:../../../packages/node-ws
+        version: link:../../../packages/node-websocket
 
   tests/fixtures/prerender-patterns:
     dependencies:

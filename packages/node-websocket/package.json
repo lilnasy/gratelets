@@ -1,5 +1,5 @@
 {
-    "name": "astro-node-ws",
+    "name": "astro-node-websocket",
     "type": "module",
     "description": "Use WebSockets in your Astro SSR Apps",
     "version": "1.0.0",

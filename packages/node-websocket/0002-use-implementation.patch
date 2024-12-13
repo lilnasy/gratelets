@@ -1,4 +1,4 @@
-From d904ce5d878a0156ba4ff27af85aea3a0881c102 Mon Sep 17 00:00:00 2001
+From 23d7eb24d19b7379efff584412f5d7010fc62566 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:43 +0530
 Subject: [PATCH 2/4] use implementation
@@ -11,7 +11,7 @@ Subject: [PATCH 2/4] use implementation
  4 files changed, 56 insertions(+), 9 deletions(-)
 
 diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
-index e91ed17..937c404 100644
+index e91ed17..1a6c04a 100644
 --- a/packages/node/src/index.ts
 +++ b/packages/node/src/index.ts
 @@ -1,12 +1,26 @@
@@ -38,7 +38,7 @@ index e91ed17..937c404 100644
 -		name: '@astrojs/node',
 -		serverEntrypoint: '@astrojs/node/server.js',
 -		previewEntrypoint: '@astrojs/node/preview.js',
-+		name: "astro-node-ws",
++		name: "astro-node-websocket",
 +		serverEntrypoint: new URL("./server.ts", import.meta.url),
 +		previewEntrypoint: new URL("./preview.ts", import.meta.url),
  		exports: ['handler', 'startServer', 'options'],
@@ -51,7 +51,7 @@ index e91ed17..937c404 100644
 +	let viteDevServer: ViteDevServer;
  	return {
 -		name: '@astrojs/node',
-+		name: "astro-node-ws",
++		name: "astro-node-websocket",
  		hooks: {
 -			'astro:config:setup': async ({ updateConfig, config }) => {
 +			'astro:config:setup': async ({ addMiddleware, command, updateConfig, config }) => {
@@ -62,7 +62,7 @@ index e91ed17..937c404 100644
  					vite: {
  						ssr: {
 -							noExternal: ['@astrojs/node'],
-+							noExternal: ["astro-node-ws"],
++							noExternal: ["astro-node-websocket"],
 +						},
 +						esbuild: {
 +							tsconfigRaw: {

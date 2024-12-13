@@ -4,7 +4,7 @@ import { dev, type DevServer, build, type BuildFixture } from "./utils.ts"
 describe("dev", { timeout: 1000 }, () => {
     let server: DevServer
 
-    beforeAll(async () => server = await dev("./fixtures/node-ws"))
+    beforeAll(async () => server = await dev("./fixtures/node-websocket"))
 
     afterAll(() => server.stop())
 

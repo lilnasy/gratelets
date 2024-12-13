@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config"
-import nodeWs from "astro-node-ws"
+import nodeWebSocket from "astro-node-websocket"
 
 // https://astro.build/config
 export default defineConfig({
-    adapter: nodeWs({ mode: "standalone" })
+    adapter: nodeWebSocket({ mode: "standalone" })
 })
