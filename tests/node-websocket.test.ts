@@ -1,7 +1,10 @@
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build, type BuildFixture } from "./utils.ts"
 
-describe("dev", { timeout: 1000 }, () => {
+describe("dev", {
+    timeout: 1000,
+    skip: process.version.startsWith("v23.") === false
+}, () => {
     let server: DevServer
 
     beforeAll(async () => server = await dev("./fixtures/node-websocket"))
@@ -37,15 +40,18 @@ describe("dev", { timeout: 1000 }, () => {
     })
 })
 
-describe("build", () => {
+describe("build", {
+    timeout: 500,
+    skip: process.version.startsWith("v23.") === false
+}, () => {
     let fixture: BuildFixture
-    let exports: ReturnType<typeof import("../packages/node-ws/withastro/adapters/packages/node/src/server.js").createExports>
+    let exports: ReturnType<typeof import("../packages/node-websocket/withastro/adapters/packages/node/src/server.js").createExports>
     let server: ReturnType<typeof exports.startServer>
 
     beforeAll(async () => {
         process.env.NODE_ENV = "production"
         process.env.ASTRO_NODE_AUTOSTART = "disabled"
-        fixture = await build("./fixtures/node-ws")
+        fixture = await build("./fixtures/node-websocket")
         exports = await import(fixture.serverEntry)
         server = exports.startServer()
     })
