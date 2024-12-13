@@ -86,7 +86,7 @@ Note that this integration does not require any special client-side WebSocket li
 
 ### Error: "The request must be an upgrade request to upgrade the connection to a WebSocket."
 
-This error occurs when a request is made to a WebSocket endpoint without the necessary headers to upgrade the connection. Note that within a browser, the globally-available `WebSocket` is the only way to create an upgrade request. The `fetch()` API cannot make an upgrade request.
+This error occurs when a request is made to a WebSocket endpoint without the necessary headers to upgrade the connection. Note that within a browser, the globally-available `WebSocket` is the only way to create an upgrade request.
 
 For additional help, check out the `Discussions` tab on the [GitHub repo](https://github.com/lilnasy/gratelets/discussions).
 
