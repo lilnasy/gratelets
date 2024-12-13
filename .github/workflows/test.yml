@@ -68,6 +68,7 @@ jobs:
         run: pnpm install
       
       - name: Init submodules
+        if: ${{ inputs.node == 23 || inputs.check }}
         run: |
           cd packages/node-websocket
           git submodule update --init

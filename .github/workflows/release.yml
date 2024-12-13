@@ -25,11 +25,20 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Init submodules
+        run: |
+          cd packages/node-websocket
+          git submodule update --init
+          cd withastro/adapters
+          git config user.email "ci@c.i"
+          git config user.name "CI"
+          git am ../../*.patch
 
       - name: Create Release Pull Request or Publish
         id: changesets
