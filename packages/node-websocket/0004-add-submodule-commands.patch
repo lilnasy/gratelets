@@ -1,7 +1,7 @@
-From b552f75bbcca0086eb7db6ee16640300f570e903 Mon Sep 17 00:00:00 2001
+From df13381e43cd026611ffccd394ee9b03d21da698 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:15:49 +0530
-Subject: [PATCH 4/5] add submodule commands
+Subject: [PATCH 4/4] add submodule commands
 
 ---
  packages/node/package.json | 6 +++++-
