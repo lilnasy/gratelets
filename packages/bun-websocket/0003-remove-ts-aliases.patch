@@ -1,4 +1,4 @@
-From e5165e6b84bc93070fdbf9d6a08276b342212129 Mon Sep 17 00:00:00 2001
+From de93c45afd9e5bbd9e4fb615bce648d376b015ff Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 20 Dec 2024 03:43:36 +0530
 Subject: [PATCH 3/3] remove ts aliases
@@ -7,10 +7,11 @@ Subject: [PATCH 3/3] remove ts aliases
  package/src/index.ts        | 6 +++---
  package/src/server/index.ts | 4 ++--
  package/src/server/utils.ts | 2 +-
- package/src/types.ts        | 2 +-
+ package/src/types.ts        | 4 ++--
+ package/src/validators.ts   | 2 +-
  package/tsconfig.json       | 4 ----
  playground/astro.config.ts  | 2 +-
- 6 files changed, 8 insertions(+), 12 deletions(-)
+ 7 files changed, 10 insertions(+), 14 deletions(-)
 
 diff --git a/package/src/index.ts b/package/src/index.ts
 index 2aa8167..6f89084 100644
@@ -64,18 +65,29 @@ index c4ad9cb..0d68bd3 100644
  /**
   * Extract the hostname from a provided string.
 diff --git a/package/src/types.ts b/package/src/types.ts
-index b5c3fb1..4fbc61c 100644
+index b5c3fb1..8c2bbbd 100644
 --- a/package/src/types.ts
 +++ b/package/src/types.ts
 @@ -1,7 +1,7 @@
  import type { Server } from 'bun';
- import type { z } from 'zod';
+-import type { z } from 'zod';
++import type { z } from 'astro/zod';
  
 -import type { OptionsSchema } from '~/validators';
 +import type { OptionsSchema } from './validators.ts';
  
  export enum CreateExportsEnum {
    HANDLE = 'handle',
+diff --git a/package/src/validators.ts b/package/src/validators.ts
+index 033c51f..b87c12c 100644
+--- a/package/src/validators.ts
++++ b/package/src/validators.ts
+@@ -1,4 +1,4 @@
+-import { z } from 'zod';
++import { z } from 'astro/zod';
+ 
+ export const OptionsSchema = z
+   .object({
 diff --git a/package/tsconfig.json b/package/tsconfig.json
 index 1d504c9..389e102 100644
 --- a/package/tsconfig.json
