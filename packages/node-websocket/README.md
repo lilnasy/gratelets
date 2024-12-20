@@ -11,7 +11,7 @@ This **[Astro integration][astro-integration]** provides an SSR adapter for Astr
 
 ## Why astro-node-websocket?
 
-The `astro-node-websocket` integration allows you to handle WebSocket connections in your Astro project and deploy it on Node.js or a Node.js-compatible runtime. You no longer need to maintain a separate WebSocket server and complicated build processes to add realtime features. You can handle WebSocket requests directly in your API Routes, middleware, event in the frontmatter of your Astro pages.
+The `astro-node-websocket` integration allows you to handle WebSocket connections in your Astro project and deploy it on Node.js or a Node.js-compatible runtime. You no longer need to maintain a separate WebSocket server and complicated build processes to add realtime features. You can handle WebSocket requests directly in your API Routes, middleware, and even in the frontmatter of your Astro pages!
 
 As a fork of the official `@astrojs/node` adapter, it provides the same configuration options, and remains backwards compatible with its features and behavior.
 
@@ -101,7 +101,7 @@ For additional help, check out the `Discussions` tab on the [GitHub repo](https:
 
 This package is maintained by [lilnasy](https://github.com/lilnasy) independently from Astro.
 
-The code for this package is commited to the repository as a series of patches applied on top of [withastro/adapters](https://github.com/withastro/adapters), which is where the code for the official `@astrojs/node` adapter is maintained. Additionally, the `withastro/adapters` repository added as a git submodule to make updating the patches easier. The `package.json` file contains scripts to automatically manage the upstream repository and the patches.
+The code for this package is commited to the repository as a series of patches applied on top of the [`withastro/adapters`](https://github.com/withastro/adapters) repository, which is where the code for the official `@astrojs/node` adapter is maintained. Additionally, the `withastro/adapters` repository is added as a git submodule to make updating the patches easier. The [`package.json`](https://github.com/lilnasy/gratelets/blob/main/packages/node-websocket/package.json#L29-L33) file contains scripts to automatically manage the upstream repository and the patches.
 
 To introduce a change, make sure you're in `packages/node-websocket` directory:
 ```bash
@@ -114,6 +114,7 @@ Then, run the `load_patches` script using `pnpm` to clone the upstream repositor
 Now, you can browse around the code by going into the `withastro/adapters` submodule:
 ```bash
 ../gratelets/packages/node-websocket/ $ cd withastro/adapters/packages/node
+../adapters/packages/node/ $ code .
 ```
 Note that dependencies would need to separately be installed in the `withastro/adapters` submodule. You can optionally provide the [`--filter`](https://pnpm.io/filtering) option to pnpm to install only the dependencies relevant to the node adapter package.
 ```bash
@@ -128,9 +129,6 @@ This will add and update patches present in `packages/node-websocket` with the c
 Now, you can commit these patch files to the gratelets repository, and push.
 ```bash
 ../adapters/packages/node/ $ cd ../../../..
-# with the *.patch filter, we avoid updating the submodule, which at this point
-# no longer points to a commit in the withastro/adapters repository
-../gratelets/packages/node-websocket/ $ git add *.patch
 ../gratelets/packages/node-websocket/ $ git commit -m "fix bug"
 ../gratelets/packages/node-websocket/ $ git push
 ```

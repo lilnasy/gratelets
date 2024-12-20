@@ -16,7 +16,7 @@ importers:
         version: 2.27.9
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)(yaml@2.6.1)
       typescript:
         specifier: '5.6'
         version: 5.6.3
@@ -28,13 +28,28 @@ importers:
         version: 20.17.6
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
+
+  packages/bun-websocket:
+    dependencies:
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.5.13
+      astro-integration-kit:
+        specifier: ^0.17.0
+        version: 0.17.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))
+      ws:
+        specifier: ^8.18.0
+        version: 8.18.0(bufferutil@4.0.8)
+      zod:
+        specifier: ^3.24.1
+        version: 3.24.1
 
   packages/client-interaction:
     dependencies:
       astro:
         specifier: 4 || 5
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
     devDependencies:
       '@types/node':
         specifier: '20'
@@ -44,7 +59,7 @@ importers:
     dependencies:
       astro:
         specifier: 4 || 5
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
     devDependencies:
       '@types/node':
         specifier: '20'
@@ -67,10 +82,10 @@ importers:
         version: 20.17.6
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       vite:
         specifier: '6'
-        version: 6.0.2(@types/node@20.17.6)
+        version: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
 
   packages/global:
     devDependencies:
@@ -79,7 +94,7 @@ importers:
         version: 20.17.6
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-global:
         specifier: workspace:*
         version: 'link:'
@@ -109,7 +124,7 @@ importers:
         version: 20.17.6
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
 
   packages/scope:
     devDependencies:
@@ -118,10 +133,10 @@ importers:
         version: 20.17.6
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       vite:
         specifier: '6'
-        version: 6.0.2(@types/node@20.17.6)
+        version: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
 
   packages/server-only-modules:
     devDependencies:
@@ -130,7 +145,7 @@ importers:
         version: 20.17.6
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
 
   packages/stylex:
     dependencies:
@@ -152,7 +167,7 @@ importers:
         version: 20.17.6
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
 
   packages/typed-api:
     dependencies:
@@ -168,16 +183,16 @@ importers:
     devDependencies:
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
 
   tests:
     devDependencies:
       '@astrojs/node':
         specifier: '9'
-        version: 9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3))
+        version: 9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)(yaml@2.6.1))
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)(yaml@2.6.1)
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
@@ -192,7 +207,7 @@ importers:
     devDependencies:
       '@astrojs/node':
         specifier: '9'
-        version: 9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))
+        version: 9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))
       playwright:
         specifier: 1.40.1
         version: 1.40.1
@@ -201,13 +216,13 @@ importers:
     dependencies:
       '@astrojs/mdx':
         specifier: '4'
-        version: 4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))
+        version: 4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))
       '@astrojs/preact':
         specifier: '4'
-        version: 4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)
+        version: 4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)(yaml@2.6.1)
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-client-interaction:
         specifier: workspace:*
         version: link:../../../packages/client-interaction
@@ -219,10 +234,10 @@ importers:
     dependencies:
       '@astrojs/node':
         specifier: '9'
-        version: 9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))
+        version: 9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-typed-api:
         specifier: workspace:*
         version: link:../../../packages/typed-api
@@ -234,10 +249,10 @@ importers:
     dependencies:
       '@astrojs/mdx':
         specifier: '4'
-        version: 4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))
+        version: 4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-adds-to-head:
         specifier: workspace:*
         version: link:../../../packages/adds-to-head
@@ -246,7 +261,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-dynamic-import:
         specifier: workspace:*
         version: link:../../../packages/dynamic-import
@@ -255,16 +270,16 @@ importers:
     dependencies:
       '@astrojs/preact':
         specifier: '4'
-        version: 4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)
+        version: 4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)(yaml@2.6.1)
       '@astrojs/react':
         specifier: '4'
-        version: 4.0.0(@types/node@20.17.6)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 4.0.0(@types/node@20.17.6)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yaml@2.6.1)
       '@astrojs/solid-js':
         specifier: '5'
-        version: 5.0.0(@types/node@20.17.6)(solid-js@1.9.3)
+        version: 5.0.0(@types/node@20.17.6)(solid-js@1.9.3)(yaml@2.6.1)
       '@astrojs/svelte':
         specifier: '7'
-        version: 7.0.1(@types/node@20.17.6)(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))(svelte@5.4.0)(typescript@5.7.2)
+        version: 7.0.1(@types/node@20.17.6)(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))(svelte@5.4.0)(typescript@5.7.2)(yaml@2.6.1)
       '@preact/signals':
         specifier: '1'
         version: 1.3.0(preact@10.24.3)
@@ -276,7 +291,7 @@ importers:
         version: 18.3.1
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-emotion:
         specifier: workspace:*
         version: link:../../../packages/emotion
@@ -300,13 +315,13 @@ importers:
     dependencies:
       '@astrojs/mdx':
         specifier: '4'
-        version: 4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))
+        version: 4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))
       '@astrojs/preact':
         specifier: '3'
-        version: 3.5.3(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6))
+        version: 3.5.3(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-global:
         specifier: workspace:*
         version: link:../../../packages/global
@@ -314,20 +329,11 @@ importers:
         specifier: '10'
         version: 10.24.3
 
-  tests/fixtures/node-websocket:
-    dependencies:
-      astro:
-        specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
-      astro-node-websocket:
-        specifier: workspace:*
-        version: link:../../../packages/node-websocket
-
   tests/fixtures/prerender-patterns:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-prerender-patterns:
         specifier: workspace:*
         version: link:../../../packages/prerender-patterns
@@ -336,7 +342,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-scope:
         specifier: workspace:*
         version: link:../../../packages/scope
@@ -345,7 +351,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-server-only-modules:
         specifier: workspace:*
         version: link:../../../packages/server-only-modules
@@ -354,16 +360,16 @@ importers:
     dependencies:
       '@astrojs/preact':
         specifier: '4'
-        version: 4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)
+        version: 4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)(yaml@2.6.1)
       '@astrojs/react':
         specifier: '4'
-        version: 4.0.0(@types/node@20.17.6)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 4.0.0(@types/node@20.17.6)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yaml@2.6.1)
       '@astrojs/solid-js':
         specifier: '5'
-        version: 5.0.0(@types/node@20.17.6)(solid-js@1.9.3)
+        version: 5.0.0(@types/node@20.17.6)(solid-js@1.9.3)(yaml@2.6.1)
       '@astrojs/svelte':
         specifier: '7'
-        version: 7.0.1(@types/node@20.17.6)(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))(svelte@5.4.0)(typescript@5.7.2)
+        version: 7.0.1(@types/node@20.17.6)(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))(svelte@5.4.0)(typescript@5.7.2)(yaml@2.6.1)
       '@preact/signals':
         specifier: '1'
         version: 1.3.0(preact@10.24.3)
@@ -378,7 +384,7 @@ importers:
         version: 18.3.1
       astro:
         specifier: '5'
-        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       astro-stylex:
         specifier: workspace:*
         version: link:../../../packages/stylex
@@ -397,6 +403,15 @@ importers:
       svelte:
         specifier: '5'
         version: 5.4.0
+
+  tests/fixtures/websocket:
+    dependencies:
+      astro:
+        specifier: '5'
+        version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
+      astro-node-websocket:
+        specifier: workspace:*
+        version: link:../../../packages/node-websocket
 
 packages:
 
@@ -1453,9 +1468,18 @@ packages:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
 
+  ast-types@0.16.1:
+    resolution: {integrity: sha512-6t10qk83GOG8p0vKmaCr8eiilZwO171AvbROMtvvNiwrTly62t+7XkA8RdIIVbpMhCASAsxgAzdRSwh6nw/5Dg==}
+    engines: {node: '>=4'}
+
   astring@1.9.0:
     resolution: {integrity: sha512-LElXdjswlqjWrPpJFg1Fx4wpkOCxj1TDHlSV4PlaRxHGWko024xICaa97ZkMfs6DRKlCguiAI+rbXv5GWwXIkg==}
     hasBin: true
+
+  astro-integration-kit@0.17.0:
+    resolution: {integrity: sha512-fe31CCKmrGYn/kkBd1J4b7P02gEdMdEIFBz14zdAud+YAmJeLtZD6wmrCz3LDau+lE1oM1hQnvmZXVSM/YveKw==}
+    peerDependencies:
+      astro: ^4.12.0 || ^5.0.0-beta
 
   astro@5.0.3:
     resolution: {integrity: sha512-qpeN+POmmfAQu/XDXaI2CxkUgQFwH9uMUVaA1reV9rybzIbOVYc3E3BU5SkiP/W4BMUFPdJtyw6+/n/0AUv6rw==}
@@ -2606,6 +2630,10 @@ packages:
     resolution: {integrity: sha512-VIMnQi/Z4HT2Fxuwg5KrY174U1VdUIASQVWXXyqtNRtxSr9IYkn1rsI6Tb6HsrHCmB7gVpNwX6JxPTHcH6IoTA==}
     engines: {node: '>=6'}
 
+  recast@0.23.9:
+    resolution: {integrity: sha512-Hx/BGIbwj+Des3+xy5uAtAbdCyqK9y9wbBcDFDYanLS9JnMqf7OeF87HQwUimE87OEc72mr6tkKUKMBBL+hF9Q==}
+    engines: {node: '>= 4'}
+
   recma-build-jsx@1.0.0:
     resolution: {integrity: sha512-8GtdyqaBcDfva+GUKDr3nev3VpKAhup1+RvkMvUxURHpW7QyIvk9F5wz7Vzo06CEMSilw6uArgRqhpiUcWp8ew==}
 
@@ -2786,6 +2814,10 @@ packages:
     resolution: {integrity: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==}
     engines: {node: '>=0.10.0'}
 
+  source-map@0.6.1:
+    resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
+    engines: {node: '>=0.10.0'}
+
   source-map@0.7.4:
     resolution: {integrity: sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==}
     engines: {node: '>= 8'}
@@ -2865,6 +2897,9 @@ packages:
   term-size@2.2.1:
     resolution: {integrity: sha512-wK0Ri4fOGjv/XPy8SBHZChl8CM7uMc5VML7SqiQ0zG7+J5Vr+RMQDoHa2CNT6KHUnTGIXH34UDMkPzAUyapBZg==}
     engines: {node: '>=8'}
+
+  tiny-invariant@1.3.3:
+    resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
@@ -3179,6 +3214,11 @@ packages:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
 
+  yaml@2.6.1:
+    resolution: {integrity: sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==}
+    engines: {node: '>= 14'}
+    hasBin: true
+
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
@@ -3211,6 +3251,9 @@ packages:
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -3250,12 +3293,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))':
+  '@astrojs/mdx@4.0.1(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))':
     dependencies:
       '@astrojs/markdown-remark': 6.0.0
       '@mdx-js/mdx': 3.1.0(acorn@8.14.0)
       acorn: 8.14.0
-      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       es-module-lexer: 1.5.4
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.3
@@ -3269,27 +3312,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/node@9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3))':
+  '@astrojs/node@9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)(yaml@2.6.1))':
     dependencies:
-      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)
+      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)(yaml@2.6.1)
       send: 1.1.0
       server-destroy: 1.0.1
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/node@9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))':
+  '@astrojs/node@9.0.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))':
     dependencies:
-      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       send: 1.1.0
       server-destroy: 1.0.1
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/preact@3.5.3(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6))':
+  '@astrojs/preact@3.5.3(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))':
     dependencies:
       '@babel/plugin-transform-react-jsx': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-development': 7.25.9(@babel/core@7.26.0)
-      '@preact/preset-vite': 2.8.2(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6))
+      '@preact/preset-vite': 2.8.2(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       '@preact/signals': 1.3.0(preact@10.24.3)
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.26.0)
       preact: 10.24.3
@@ -3299,16 +3342,16 @@ snapshots:
       - supports-color
       - vite
 
-  '@astrojs/preact@4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)':
+  '@astrojs/preact@4.0.0(@babel/core@7.26.0)(@types/node@20.17.6)(preact@10.24.3)(yaml@2.6.1)':
     dependencies:
       '@babel/plugin-transform-react-jsx': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-development': 7.25.9(@babel/core@7.26.0)
-      '@preact/preset-vite': 2.8.2(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6))
+      '@preact/preset-vite': 2.8.2(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       '@preact/signals': 1.3.0(preact@10.24.3)
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.26.0)
       preact: 10.24.3
       preact-render-to-string: 6.5.11(preact@10.24.3)
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/node'
@@ -3328,15 +3371,15 @@ snapshots:
     dependencies:
       prismjs: 1.29.0
 
-  '@astrojs/react@4.0.0(@types/node@20.17.6)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@astrojs/react@4.0.0(@types/node@20.17.6)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yaml@2.6.1)':
     dependencies:
       '@types/react': 18.3.12
       '@types/react-dom': 18.3.1
-      '@vitejs/plugin-react': 4.3.4(vite@6.0.2(@types/node@20.17.6))
+      '@vitejs/plugin-react': 4.3.4(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       ultrahtml: 1.5.3
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -3351,11 +3394,11 @@ snapshots:
       - tsx
       - yaml
 
-  '@astrojs/solid-js@5.0.0(@types/node@20.17.6)(solid-js@1.9.3)':
+  '@astrojs/solid-js@5.0.0(@types/node@20.17.6)(solid-js@1.9.3)(yaml@2.6.1)':
     dependencies:
       solid-js: 1.9.3
-      vite: 6.0.2(@types/node@20.17.6)
-      vite-plugin-solid: 2.11.0(solid-js@1.9.3)(vite@6.0.2(@types/node@20.17.6))
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
+      vite-plugin-solid: 2.11.0(solid-js@1.9.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
     transitivePeerDependencies:
       - '@testing-library/jest-dom'
       - '@types/node'
@@ -3371,14 +3414,14 @@ snapshots:
       - tsx
       - yaml
 
-  '@astrojs/svelte@7.0.1(@types/node@20.17.6)(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2))(svelte@5.4.0)(typescript@5.7.2)':
+  '@astrojs/svelte@7.0.1(@types/node@20.17.6)(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1))(svelte@5.4.0)(typescript@5.7.2)(yaml@2.6.1)':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6))
-      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)
+      '@sveltejs/vite-plugin-svelte': 5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
+      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
       svelte: 5.4.0
       svelte2tsx: 0.7.22(svelte@5.4.0)(typescript@5.7.2)
       typescript: 5.7.2
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -4059,12 +4102,12 @@ snapshots:
 
   '@oslojs/encoding@1.1.0': {}
 
-  '@preact/preset-vite@2.8.2(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6))':
+  '@preact/preset-vite@2.8.2(@babel/core@7.26.0)(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-development': 7.25.9(@babel/core@7.26.0)
-      '@prefresh/vite': 2.4.6(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6))
+      '@prefresh/vite': 2.4.6(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       '@rollup/pluginutils': 4.2.1
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.26.0)
       debug: 4.3.7
@@ -4074,7 +4117,7 @@ snapshots:
       resolve: 1.22.8
       source-map: 0.7.4
       stack-trace: 1.0.0-pre2
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - preact
       - supports-color
@@ -4094,7 +4137,7 @@ snapshots:
 
   '@prefresh/utils@1.2.0': {}
 
-  '@prefresh/vite@2.4.6(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6))':
+  '@prefresh/vite@2.4.6(preact@10.24.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))':
     dependencies:
       '@babel/core': 7.26.0
       '@prefresh/babel-plugin': 0.5.1
@@ -4102,7 +4145,7 @@ snapshots:
       '@prefresh/utils': 1.2.0
       '@rollup/pluginutils': 4.2.1
       preact: 10.24.3
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -4226,25 +4269,25 @@ snapshots:
       invariant: 2.2.4
       styleq: 0.1.3
 
-  '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)))(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6))':
+  '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1)))(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6))
+      '@sveltejs/vite-plugin-svelte': 5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       debug: 4.3.7
       svelte: 5.4.0
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6))':
+  '@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 4.0.1(@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)))(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6))
+      '@sveltejs/vite-plugin-svelte-inspector': 4.0.1(@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1)))(svelte@5.4.0)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       debug: 4.3.7
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.14
       svelte: 5.4.0
-      vite: 6.0.2(@types/node@20.17.6)
-      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6))
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
+      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -4330,14 +4373,14 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitejs/plugin-react@4.3.4(vite@6.0.2(@types/node@20.17.6))':
+  '@vitejs/plugin-react@4.3.4(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -4421,9 +4464,19 @@ snapshots:
 
   assertion-error@2.0.1: {}
 
+  ast-types@0.16.1:
+    dependencies:
+      tslib: 2.8.1
+
   astring@1.9.0: {}
 
-  astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3):
+  astro-integration-kit@0.17.0(astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)):
+    dependencies:
+      astro: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1)
+      pathe: 1.1.2
+      recast: 0.23.9
+
+  astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)(yaml@2.6.1):
     dependencies:
       '@astrojs/compiler': 2.10.3
       '@astrojs/internal-helpers': 0.4.2
@@ -4474,8 +4527,8 @@ snapshots:
       ultrahtml: 1.5.3
       unist-util-visit: 5.0.0
       vfile: 6.0.3
-      vite: 6.0.2(@types/node@20.17.6)
-      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6))
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
+      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       which-pm: 3.0.0
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
@@ -4501,7 +4554,7 @@ snapshots:
       - typescript
       - yaml
 
-  astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2):
+  astro@5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.7.2)(yaml@2.6.1):
     dependencies:
       '@astrojs/compiler': 2.10.3
       '@astrojs/internal-helpers': 0.4.2
@@ -4552,8 +4605,8 @@ snapshots:
       ultrahtml: 1.5.3
       unist-util-visit: 5.0.0
       vfile: 6.0.3
-      vite: 6.0.2(@types/node@20.17.6)
-      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6))
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
+      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
       which-pm: 3.0.0
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
@@ -6067,6 +6120,14 @@ snapshots:
       pify: 4.0.1
       strip-bom: 3.0.0
 
+  recast@0.23.9:
+    dependencies:
+      ast-types: 0.16.1
+      esprima: 4.0.1
+      source-map: 0.6.1
+      tiny-invariant: 1.3.3
+      tslib: 2.8.1
+
   recma-build-jsx@1.0.0:
     dependencies:
       '@types/estree': 1.0.6
@@ -6368,6 +6429,8 @@ snapshots:
 
   source-map@0.5.7: {}
 
+  source-map@0.6.1: {}
+
   source-map@0.7.4: {}
 
   space-separated-tokens@2.0.2: {}
@@ -6452,6 +6515,8 @@ snapshots:
       zimmerframe: 1.1.2
 
   term-size@2.2.1: {}
+
+  tiny-invariant@1.3.3: {}
 
   tinybench@2.9.0: {}
 
@@ -6601,7 +6666,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-solid@2.11.0(solid-js@1.9.3)(vite@6.0.2(@types/node@20.17.6)):
+  vite-plugin-solid@2.11.0(solid-js@1.9.3)(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1)):
     dependencies:
       '@babel/core': 7.26.0
       '@types/babel__core': 7.20.5
@@ -6609,8 +6674,8 @@ snapshots:
       merge-anything: 5.1.7
       solid-js: 1.9.3
       solid-refresh: 0.6.3(solid-js@1.9.3)
-      vite: 6.0.2(@types/node@20.17.6)
-      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6))
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
+      vitefu: 1.0.4(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -6623,7 +6688,7 @@ snapshots:
       '@types/node': 20.17.6
       fsevents: 2.3.3
 
-  vite@6.0.2(@types/node@20.17.6):
+  vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1):
     dependencies:
       esbuild: 0.24.0
       postcss: 8.4.49
@@ -6631,10 +6696,11 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.17.6
       fsevents: 2.3.3
+      yaml: 2.6.1
 
-  vitefu@1.0.4(vite@6.0.2(@types/node@20.17.6)):
+  vitefu@1.0.4(vite@6.0.2(@types/node@20.17.6)(yaml@2.6.1)):
     optionalDependencies:
-      vite: 6.0.2(@types/node@20.17.6)
+      vite: 6.0.2(@types/node@20.17.6)(yaml@2.6.1)
 
   vitest@2.1.4(@types/node@20.17.6):
     dependencies:
@@ -6717,6 +6783,9 @@ snapshots:
 
   yaml@1.10.2: {}
 
+  yaml@2.6.1:
+    optional: true
+
   yargs-parser@21.1.1: {}
 
   yocto-queue@1.1.1: {}
@@ -6744,5 +6813,7 @@ snapshots:
       zod: 3.23.8
 
   zod@3.23.8: {}
+
+  zod@3.24.1: {}
 
   zwitch@2.0.4: {}
