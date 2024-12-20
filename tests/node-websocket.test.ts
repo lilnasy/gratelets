@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build, type BuildFixture } from "./utils.ts"
-import nodeWsAdapter from "../packages/node-websocket/withastro/adapters/packages/node/src/index.ts"
+import nodeWsAdapter from "astro-node-websocket"
 
 describe("dev", {
     timeout: 1000,

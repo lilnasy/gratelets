@@ -193,6 +193,12 @@ importers:
       astro:
         specifier: '5'
         version: 5.0.3(@types/node@20.17.6)(rollup@4.24.4)(typescript@5.6.3)(yaml@2.6.1)
+      astro-bun-websocket:
+        specifier: workspace:*
+        version: link:../packages/bun-websocket
+      astro-node-websocket:
+        specifier: workspace:*
+        version: link:../packages/node-websocket
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12

@@ -11,6 +11,7 @@
         "astro-adapter",
         "websocket"
     ],
+    "homepage": "https://github.com/lilnasy/gratelets/packages/node-websocket",
     "files": [
         "withastro/adapters/packages/node/src"
     ],

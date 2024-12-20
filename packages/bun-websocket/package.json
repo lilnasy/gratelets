@@ -12,7 +12,7 @@
         "bun",
         "websocket"
     ],
-    "homepage": "https://github.com/lilnasy/grstelets/packages/bun-websocket",
+    "homepage": "https://github.com/lilnasy/gratelets/packages/bun-websocket",
     "files": [
         "NuroDev/astro-bun/package/src",
         "NuroDev/astro-bun/LICENSE"

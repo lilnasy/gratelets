@@ -3,8 +3,10 @@
 	url = https://github.com/withastro/adapters
 	branch = main
 	shallow = true
+	ignore = all
 [submodule "packages/bun-websocket/NuroDev/astro-bun"]
 	path = packages/bun-websocket/NuroDev/astro-bun
 	url = https://github.com/NuroDev/astro-bun
 	branch = main
 	shallow = true
+	ignore = all

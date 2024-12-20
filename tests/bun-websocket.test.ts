@@ -1,7 +1,7 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
-import { dev, type DevServer, build, type BuildFixture } from "./utils.ts"
-import nodeBunAdapter from "../packages/bun-websocket/NuroDev/astro-bun/package/src/index.ts"
+import { dev, type DevServer, build } from "./utils.ts"
+import nodeBunAdapter from "astro-bun-websocket"
 
 describe("dev", {
     timeout: 1000,
@@ -45,25 +45,28 @@ describe("dev", {
 })
 
 describe("build", {
-    timeout: 2000,
+    timeout: 500,
     skip: process.version.startsWith("v23.") === false
 }, () => {
-    let fixture: BuildFixture
     let bun: ChildProcessWithoutNullStreams
 
     beforeAll(async () => {
-        fixture = await build("./fixtures/websocket", {
+        const fixture = await build("./fixtures/websocket", {
             adapter: nodeBunAdapter()
         })
         bun = spawn("bun", [ fixture.serverEntry ])
-        const { promise, resolve } = Promise.withResolvers<void>()
-        bun.stdout.on("data", function onData (data) {
+        const { promise, resolve, reject } = Promise.withResolvers<void>()
+        bun.stdout.on("data", function onData(data) {
             if (data.toString().includes("Server listening")) {
                 resolve()
             }
         })
+        bun.stderr.on("data", function onData(data) {
+            reject(data.toString())
+        })
+        bun.on("error", error => reject(error))
         await promise
-    })
+    }, 2000)
 
     afterAll(() => bun.kill())
 
@@ -75,12 +78,6 @@ describe("build", {
             ws.close()
             expect(e.data).to.equal("olleH")
             resolve()
-        }
-        ws.onerror = e => {
-            console.log(e)
-        }
-        ws.onclose = () => {
-            console.log("closed")
         }
         await promise
     })
