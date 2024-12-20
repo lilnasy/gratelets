@@ -2,7 +2,7 @@
     "name": "astro-bun-websocket",
     "type": "module",
     "description": "Use WebSockets in your Astro SSR Apps and run it on Bun",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "license": "MIT",
     "keywords": [
         "withastro",
@@ -18,17 +18,17 @@
         "NuroDev/astro-bun/LICENSE"
     ],
     "exports": {
-      ".": "./NuroDev/astro-bun/package/src/index.ts",
-      "./websocket": {
-        "development": "./NuroDev/astro-bun/package/src/websocket/dev-websocket.ts",
-        "production": "./NuroDev/astro-bun/package/src/websocket/bun-websocket.ts"
-      }
+        ".": "./NuroDev/astro-bun/package/src/index.ts",
+        "./websocket": {
+            "development": "./NuroDev/astro-bun/package/src/websocket/dev-websocket.ts",
+            "production": "./NuroDev/astro-bun/package/src/websocket/bun-websocket.ts"
+        }
     },
     "dependencies": {
-      "@types/ws": "^8.5.13",
-      "astro-integration-kit": "^0.17.0",
-      "ws": "^8.18.0",
-      "zod": "^3.24.1"
+        "@types/ws": "^8.5.13",
+        "astro-integration-kit": "^0.17.0",
+        "ws": "^8.18.0",
+        "zod": "^3.24.1"
     },
     "scripts": {
         "clone": "git submodule update --init",
@@ -38,5 +38,4 @@
         "delete_all_changes_and_reload_patches": "cd NuroDev/astro-bun && git reset --hard origin/main && git am ../../*.patch",
         "test": "pnpm -w test bun-websocket.test.ts"
     }
-  }
-  
+}
