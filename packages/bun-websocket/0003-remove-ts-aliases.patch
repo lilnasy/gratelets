@@ -1,0 +1,121 @@
+From 2ebdca3eebcbe9f98ec23cdf6ac84dd5e2466a06 Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Fri, 20 Dec 2024 03:43:36 +0530
+Subject: [PATCH 3/3] remove ts aliases
+
+---
+ package/src/index.ts        | 6 +++---
+ package/src/server/index.ts | 4 ++--
+ package/src/server/utils.ts | 2 +-
+ package/src/types.ts        | 5 +++--
+ package/src/validators.ts   | 2 +-
+ package/tsconfig.json       | 4 ----
+ playground/astro.config.ts  | 2 +-
+ 7 files changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/package/src/index.ts b/package/src/index.ts
+index 2aa8167..6f89084 100644
+--- a/package/src/index.ts
++++ b/package/src/index.ts
+@@ -1,11 +1,11 @@
+ import { defineIntegration } from 'astro-integration-kit';
+ 
+-import { CreateExportsEnum } from '~/types.ts';
+-import { OptionsSchema } from '~/validators';
++import { CreateExportsEnum } from './types.ts';
++import { OptionsSchema } from './validators.ts';
+ 
+ import type { AstroAdapter } from 'astro';
+ 
+-import type { Options } from '~/types.ts';
++import type { Options } from './types.ts';
+ import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.ts"
+ 
+ export interface Locals {
+diff --git a/package/src/server/index.ts b/package/src/server/index.ts
+index 8096456..a189070 100644
+--- a/package/src/server/index.ts
++++ b/package/src/server/index.ts
+@@ -2,7 +2,7 @@
+ 
+ import { App } from 'astro/app';
+ 
+-import { extractHostname, serveStaticFile } from '~/server/utils.ts';
++import { extractHostname, serveStaticFile } from '../server/utils.ts';
+ 
+ import { UpgradeResponse } from "../websocket/response.ts"
+ import { WebSocket } from "../websocket/bun-websocket.ts"
+@@ -11,7 +11,7 @@ import { attach } from "../websocket/bun-attach.ts"
+ import type { SSRManifest } from 'astro';
+ import type { Server } from 'bun';
+ 
+-import type { CreateExports, Options } from '~/types.ts';
++import type { CreateExports, Options } from '../types.ts';
+ import type { Locals } from "../index.ts"
+ 
+ export function createExports(manifest: SSRManifest, options: Options): CreateExports {
+diff --git a/package/src/server/utils.ts b/package/src/server/utils.ts
+index c4ad9cb..0d68bd3 100644
+--- a/package/src/server/utils.ts
++++ b/package/src/server/utils.ts
+@@ -1,4 +1,4 @@
+-import type { Options } from '~/types.ts';
++import type { Options } from '../types.ts';
+ 
+ /**
+  * Extract the hostname from a provided string.
+diff --git a/package/src/types.ts b/package/src/types.ts
+index b5c3fb1..31b331c 100644
+--- a/package/src/types.ts
++++ b/package/src/types.ts
+@@ -1,7 +1,8 @@
++// @ts-nocheck
+ import type { Server } from 'bun';
+-import type { z } from 'zod';
++import type { z } from 'astro/zod';
+ 
+-import type { OptionsSchema } from '~/validators';
++import type { OptionsSchema } from './validators.ts';
+ 
+ export enum CreateExportsEnum {
+   HANDLE = 'handle',
+diff --git a/package/src/validators.ts b/package/src/validators.ts
+index 033c51f..b87c12c 100644
+--- a/package/src/validators.ts
++++ b/package/src/validators.ts
+@@ -1,4 +1,4 @@
+-import { z } from 'zod';
++import { z } from 'astro/zod';
+ 
+ export const OptionsSchema = z
+   .object({
+diff --git a/package/tsconfig.json b/package/tsconfig.json
+index 1d504c9..389e102 100644
+--- a/package/tsconfig.json
++++ b/package/tsconfig.json
+@@ -26,9 +26,5 @@
+ 
+     // Custom import path aliases
+     "baseUrl": ".",
+-    "paths": {
+-      "~/*": ["./src/*"],
+-      "~/package.json": ["./package.json"]
+-    }
+   }
+ }
+diff --git a/playground/astro.config.ts b/playground/astro.config.ts
+index ca08fda..629b391 100644
+--- a/playground/astro.config.ts
++++ b/playground/astro.config.ts
+@@ -2,7 +2,7 @@ import { createResolver } from 'astro-integration-kit';
+ import { hmrIntegration } from 'astro-integration-kit/dev';
+ import { defineConfig } from 'astro/config';
+ 
+-const { default: bun } = await import('@nurodev/astro-bun');
++const { default: bun } = await import('../../astro-bun/package/src/index.ts');
+ 
+ // https://astro.build/config
+ export default defineConfig({
+-- 
+2.47.0.windows.2
+

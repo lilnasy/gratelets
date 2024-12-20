@@ -1,7 +1,8 @@
 {
     "packages": [
         "**",
-        # exclude the git submodule, it is managed manually
-        "!packages/node-websocket/withastro/adapters/**"
+        # exclude the git submodules, they managed manually
+        "!packages/node-websocket/withastro/adapters/**",
+        "!packages/bun-websocket/NuroDev/astro-bun/**",
     ]
 }

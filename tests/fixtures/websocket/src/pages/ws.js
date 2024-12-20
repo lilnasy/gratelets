@@ -1,15 +1,14 @@
-import type { APIContext } from "astro";
-
 export const prerender = false
 
-export function GET(context: APIContext) {
+/** @type {import("astro").APIRoute} */
+export function GET(context) {
     const { headers } = context.request
     if (
         headers.get("upgrade") === "websocket" &&
         headers.get("sec-websocket-protocol") !== "unsupported-protocol"
     ) {
         const { response, socket } = context.locals.upgradeWebSocket()
-        socket.onmessage = (e: MessageEvent<string>) => socket.send([...e.data].reverse ().join(""))
+        socket.onmessage = (/** @type {MessageEvent<string>} */ e) => socket.send([...e.data].reverse().join(""))
         return response
     }
     return new Response("Upgrade Required", {

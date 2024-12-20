@@ -4,6 +4,14 @@
     "description": "Use WebSockets in your Astro SSR Apps",
     "version": "1.1.0",
     "license": "MIT",
+    "keywords": [
+        "withastro",
+        "astro",
+        "astro-integration",
+        "astro-adapter",
+        "websocket"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/packages/node-websocket",
     "files": [
         "withastro/adapters/packages/node/src"
     ],
@@ -18,12 +26,16 @@
         "server-destroy": "^1.0.1",
         "ws": "^8.18.0"
     },
+    "devDependencies": {
+        "@types/send": "^0.17.4",
+        "@types/server-destroy": "^1.0.4"
+    },
     "scripts": {
         "clone": "git submodule update --init",
         "create_patches": "cd withastro/adapters && git format-patch origin/main -o ../..",
         "load_patches": "git submodule update --init && cd withastro/adapters && git am ../../*.patch",
         "delete_all_changes_and_unload_patches": "cd withastro/adapters && git reset --hard origin/main",
         "delete_all_changes_and_reload_patches": "cd withastro/adapters && git reset --hard origin/main && git am ../../*.patch",
-        "test": "pnpm -w test node-ws.test.ts"
+        "test": "pnpm -w test node-websocket.test.ts"
     }
 }

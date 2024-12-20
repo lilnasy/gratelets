@@ -1,0 +1,300 @@
+From 4a6f466e56826d58341086d13bfd452bb762755c Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Fri, 20 Dec 2024 03:36:55 +0530
+Subject: [PATCH 2/3] use implementation
+
+---
+ package/src/index.ts        | 88 +++++++++++++++++++++++++++++++++++--
+ package/src/server/index.ts | 79 +++++++++++++++++++++++++++++++--
+ package/src/types.ts        |  2 +-
+ package/tsconfig.json       |  2 +-
+ 4 files changed, 161 insertions(+), 10 deletions(-)
+
+diff --git a/package/src/index.ts b/package/src/index.ts
+index 99bf106..2aa8167 100644
+--- a/package/src/index.ts
++++ b/package/src/index.ts
+@@ -1,12 +1,60 @@
+ import { defineIntegration } from 'astro-integration-kit';
+ 
+-import { name as packageName } from '~/package.json';
+ import { CreateExportsEnum } from '~/types.ts';
+ import { OptionsSchema } from '~/validators';
+ 
+ import type { AstroAdapter } from 'astro';
+ 
+ import type { Options } from '~/types.ts';
++import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.ts"
++
++export interface Locals {
++  /**
++   * Whether the current request wants the connection to be upgraded
++   * to a WebSocket.
++   */
++  isUpgradeRequest: boolean
++  /**
++   * Upgrade an incoming HTTP request to a bidirectional WebSocket
++   * connection.
++   *
++   * Returns a pair of {@linkcode WebSocket} and {@linkcode Response}
++   * instances. The request must be responded to with the provided
++   * response for the provided WebSocket to open and start receiving
++   * messages from the browser.
++   *
++   * ```ts
++   * export const GET: APIRoute = ctx => {
++   *     if (ctx.locals.isUpgradeRequest) {
++   *         const { response, socket } = ctx.locals.upgradeWebSocket()
++   *         socket.onmessage = event => {
++   *             if (event.data === "ping") {
++   *                 socket.send("pong")
++   *             }
++   *         }
++   *         return response
++   *     }
++   *     return new Response("Upgrade required", { status: 426 })
++   * }
++   * ```
++   *
++   * Calling this function on its own does not connect the WebSocket.
++   * It only returns a pair of objects that will establish the connection
++   * once the generated response has been returned from the API Route.
++   *
++   * Throws if the request is not an upgrade request.
++   */
++  upgradeWebSocket(): { socket: WebSocket, response: Response };
++}
++
++interface Locals_ extends Locals {}
++
++declare global {
++  namespace App {
++    export interface Locals extends Locals_ {}
++  }
++}
++
+ 
+ export function getAdapter(args: Options = {}): AstroAdapter {
+   return {
+@@ -17,8 +65,8 @@ export function getAdapter(args: Options = {}): AstroAdapter {
+       CreateExportsEnum.START,
+       CreateExportsEnum.STOP,
+     ] satisfies Array<CreateExportsEnum>,
+-    name: packageName,
+-    serverEntrypoint: `${packageName}/server.js`,
++    name: "astro-bun-websocket",
++    serverEntrypoint: new URL("./server/index.ts", import.meta.url),
+     supportedAstroFeatures: {
+       envGetSecret: 'experimental',
+       hybridOutput: 'deprecated',
+@@ -30,11 +78,37 @@ export function getAdapter(args: Options = {}): AstroAdapter {
+   };
+ }
+ 
++let viteDevServer: ViteDevServer;
++
+ export default defineIntegration({
+-  name: packageName,
++  name: "astro-bun-websocket",
+   optionsSchema: OptionsSchema.optional(),
+   setup: (integration) => ({
+     hooks: {
++      'astro:config:setup': ({ addMiddleware, command, updateConfig }) => {
++        updateConfig({
++          vite: {
++            ssr: {
++              noExternal: ["astro-bun-websocket"]
++            },
++            esbuild: {
++              tsconfigRaw: {
++                compilerOptions: {
++                  // make the compilation of classes
++                  // compatable with standard ES6
++                  useDefineForClassFields: true,
++                },
++              }
++            },
++          }
++        })
++        if (command === "dev") {
++          addMiddleware({
++            order: "pre",
++            entrypoint: new URL("./websocket/dev-middleware.ts", import.meta.url)
++          })
++        }
++      },
+       'astro:config:done': (params) => {
+         params.setAdapter(
+           getAdapter({
+@@ -47,6 +121,12 @@ export default defineIntegration({
+           }),
+         );
+       },
++      'astro:server:setup' ({ server }) {
++        viteDevServer = server
++      },
++      'astro:server:start' () {
++        handleUpgradeRequests(viteDevServer)
++      }
+     },
+   }),
+ });
+diff --git a/package/src/server/index.ts b/package/src/server/index.ts
+index 3ae53c8..8096456 100644
+--- a/package/src/server/index.ts
++++ b/package/src/server/index.ts
+@@ -4,10 +4,15 @@ import { App } from 'astro/app';
+ 
+ import { extractHostname, serveStaticFile } from '~/server/utils.ts';
+ 
++import { UpgradeResponse } from "../websocket/response.ts"
++import { WebSocket } from "../websocket/bun-websocket.ts"
++import { attach } from "../websocket/bun-attach.ts"
++
+ import type { SSRManifest } from 'astro';
+ import type { Server } from 'bun';
+ 
+ import type { CreateExports, Options } from '~/types.ts';
++import type { Locals } from "../index.ts"
+ 
+ export function createExports(manifest: SSRManifest, options: Options): CreateExports {
+   return {
+@@ -30,7 +35,7 @@ export function start(manifest: SSRManifest, options: Options) {
+   const hostname = process.env.HOST ?? extractHostname(options.host);
+   const port = process.env.PORT ? Number.parseInt(process.env.PORT) : options.port;
+ 
+-  _server = Bun.serve({
++  _server = Bun.serve<WebSocket>({
+     development: import.meta.env.DEV,
+     error: (error) =>
+       new Response(`<pre>${error}\n${error.stack}</pre>`, {
+@@ -39,6 +44,41 @@ export function start(manifest: SSRManifest, options: Options) {
+     fetch: handler(manifest, options),
+     hostname,
+     port,
++    websocket: {
++      open(sws) {
++        if (sws.data.binaryType === "arraybuffer") {
++          sws.binaryType = "arraybuffer"
++        } else if (sws.data.binaryType === "blob") {
++          /**
++           * bun does not support "blob" binary type
++           * https://github.com/oven-sh/bun/issues/8721
++           */
++          // sws.binaryType = "blob"
++        } else if (sws.data.binaryType === "uint8array") {
++          sws.binaryType = "uint8array"
++        }
++        attach(sws.data, sws)
++        const event = new Event("open")
++        sws.data.onopen?.(event)
++        sws.data.dispatchEvent(event)
++      },
++      message(sws, message) {
++        const event = new MessageEvent("message", {
++          data:
++            typeof message === "string" ? message :
++            sws.data.binaryType === "arraybuffer" && message instanceof ArrayBuffer === false ? message.buffer :
++            sws.data.binaryType === "blob" && message instanceof Blob === false ? new Blob([message]) :
++            message
++        })
++        sws.data.onmessage?.(event)
++        sws.data.dispatchEvent(event)
++      },
++      close(sws, code, reason) {
++        const event = new CloseEvent("close", { code, reason })
++        sws.data.onclose?.(event)
++        sws.data.dispatchEvent(event)
++      },
++    }
+   });
+ 
+   function exit() {
+@@ -56,12 +96,12 @@ export function start(manifest: SSRManifest, options: Options) {
+ function handler(
+   manifest: SSRManifest,
+   options: Options,
+-): (req: Request, server: Server) => Promise<Response> {
++): (req: Request, server: Server) => Promise<Response | undefined> {
+   const clientRoot = options.client ?? new URL('../client/', import.meta.url).href;
+ 
+   const app = new App(manifest);
+ 
+-  return (req: Request, server: Server) => {
++  return async (req: Request, server: Server) => {
+     const routeData = app.match(req);
+     if (!routeData) {
+       const url = new URL(req.url);
+@@ -85,10 +125,41 @@ function handler(
+       }
+     }
+ 
+-    return app.render(req, {
++    const response = await app.render(req, {
+       addCookieHeader: true,
+       clientAddress: server.requestIP(req)?.address,
+       routeData,
++      locals: {
++        get isUpgradeRequest() {
++          return req.headers.get("upgrade") === "websocket"
++        },
++        upgradeWebSocket() {
++          const response = new UpgradeResponse
++          const socket = new WebSocket
++          responseToSocketMap.set(response, socket)
++          return { response, socket }
++        }
++      } satisfies Locals
+     });
++    if (response instanceof UpgradeResponse) {
++      const socket = responseToSocketMap.get(response)!
++      const success = server.upgrade<WebSocket>(req, { data: socket })
++      if (!success) {
++        throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
++      }
++      return undefined
++    }
++    return response
+   };
+ }
++
++/**
++ * The websocket instance is created as soon as
++ * `locals.upgradeWebSocket()` is called. It gets
++ * attached to an actual connection once the app
++ * code returns a response.
++ *
++ * This map is used to keep track of the
++ * responses' associated websocket instance.
++ */
++const responseToSocketMap = new WeakMap<Response, WebSocket>
+\ No newline at end of file
+diff --git a/package/src/types.ts b/package/src/types.ts
+index 9b39717..b5c3fb1 100644
+--- a/package/src/types.ts
++++ b/package/src/types.ts
+@@ -11,7 +11,7 @@ export enum CreateExportsEnum {
+ }
+ 
+ export type CreateExports = {
+-  [CreateExportsEnum.HANDLE]: (req: Request, server: Server) => Promise<Response>;
++  [CreateExportsEnum.HANDLE]: (req: Request, server: Server) => Promise<Response | undefined>;
+   [CreateExportsEnum.RUNNING]: () => boolean;
+   [CreateExportsEnum.START]: () => void;
+   [CreateExportsEnum.STOP]: () => void;
+diff --git a/package/tsconfig.json b/package/tsconfig.json
+index 68e7f88..1d504c9 100644
+--- a/package/tsconfig.json
++++ b/package/tsconfig.json
+@@ -1,7 +1,7 @@
+ {
+   "compilerOptions": {
+     // Enable latest features
+-    "lib": ["ESNext", "DOM"],
++    "lib": ["ESNext", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
+     "target": "ESNext",
+     "module": "ESNext",
+     "moduleDetection": "force",
+-- 
+2.47.0.windows.2
+
