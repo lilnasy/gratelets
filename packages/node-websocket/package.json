@@ -26,6 +26,10 @@
         "server-destroy": "^1.0.1",
         "ws": "^8.18.0"
     },
+    "devDependencies": {
+        "@types/send": "^0.17.4",
+        "@types/server-destroy": "^1.0.4"
+    },
     "scripts": {
         "clone": "git submodule update --init",
         "create_patches": "cd withastro/adapters && git format-patch origin/main -o ../..",
