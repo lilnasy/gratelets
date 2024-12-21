@@ -38,7 +38,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: pnpm exec changeset version
+          version: sh .github/workflows/version.sh
           publish: pnpm exec changeset publish
           commit: "[ci] release"
           title: "[ci] release"
