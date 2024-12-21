@@ -58,17 +58,21 @@ describe("build", {
         const { promise, resolve, reject } = Promise.withResolvers<void>()
         deno.stderr.on("data", function onData(data) {
             const output = data.toString()
-            if (output.includes("Listening on http://localhost:8085/")) {
+            if (
+                output.includes("Listening on http://localhost:8085/") ||
+                output.includes("Listening on http://0.0.0.0:8085/")
+            ) {
                 resolve()
             } else if (output.includes("Server running on port 8085")) {
                 resolve()
+            } else if (output.includes("Download\u001b[0m https://jsr.io")) {
             } else {
                 reject(output)
             }
         })
         deno.on("error", error => reject(error))
         await promise
-    }, 2000)
+    }, 6000)
 
     afterAll(() => deno.kill())
 
