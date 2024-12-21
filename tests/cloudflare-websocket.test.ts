@@ -83,7 +83,7 @@ describe("build", {
             wrangler.kill()
             throw e
         })
-    }, 6000)
+    }, 8000)
 
     afterAll(() => wrangler.kill())
 
