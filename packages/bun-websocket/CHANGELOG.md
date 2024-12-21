@@ -1,5 +1,13 @@
 # astro-bun-websocket
 
+## 1.0.1
+
+### Patch Changes
+
+- [#114](https://github.com/lilnasy/gratelets/pull/114) [`ab033d4`](https://github.com/lilnasy/gratelets/commit/ab033d4b4e75d5dbd291ff5157d09a2cf3bfe45f) Thanks [@lilnasy](https://github.com/lilnasy)! - Updated the documentation to include a section on authentication.
+
+- [#114](https://github.com/lilnasy/gratelets/pull/114) [`ab033d4`](https://github.com/lilnasy/gratelets/commit/ab033d4b4e75d5dbd291ff5157d09a2cf3bfe45f) Thanks [@lilnasy](https://github.com/lilnasy)! - Removed an unnecessary dependency from the NPM package.
+
 ## 1.0.0
 
 ### Major Changes
