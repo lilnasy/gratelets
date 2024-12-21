@@ -26,6 +26,7 @@
         }
     },
     "dependencies": {
+        "@types/lodash": "^4.17.13",
         "@types/ws": "^8.5.13",
         "esbuild": "^0.19.2",
         "lodash": "^4.17.21",

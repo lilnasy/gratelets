@@ -54,6 +54,9 @@ importers:
 
   packages/deno-websocket:
     dependencies:
+      '@types/lodash':
+        specifier: ^4.17.13
+        version: 4.17.13
       '@types/ws':
         specifier: ^8.5.13
         version: 8.5.13
