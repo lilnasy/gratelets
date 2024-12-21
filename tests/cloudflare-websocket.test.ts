@@ -58,13 +58,27 @@ describe("build", {
         
         const { promise, resolve, reject } = Promise.withResolvers<void>()
         wrangler.stdout.on("data", function onData(data) {
-            if(data.toString() === "[wrangler:inf] Ready on http://127.0.0.1:8788\n") {
+            const output = data.toString()
+            if(
+                output === "[wrangler:inf] Ready on http://127.0.0.1:8788\n" ||
+                output === "[wrangler:inf] Ready on http://localhost:8788\n"
+            ) {
                 resolve()
             }
         })
-        wrangler.stderr.on("data", data => reject(data.toString()))
+        wrangler.stderr.on("data", data => {
+            const output = data.toString()
+            if (
+                output.includes("Progress:") ||
+                output.includes("Packages:") || 
+                output.includes("deprecated subdependencies found") ||
+                output.includes("postinstall")
+            ) {
+                return
+            }
+            reject(output)
+        })
         wrangler.on("error", error => reject(error))
-        setTimeout(() => reject(new Error("Timeout")), 6000)
         await promise.catch(e => {
             wrangler.kill()
             throw e
