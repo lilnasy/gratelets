@@ -19,3 +19,10 @@
 	shallow = true
 	ignore = all
 	active = false
+[submodule "packages/cloudflare-websocket/withastro/adapters"]
+	path = packages/cloudflare-websocket/withastro/adapters
+	url = https://github.com/withastro/adapters
+	branch = cloudflare-astro-v5
+	shallow = true
+	ignore = all
+	active = false
