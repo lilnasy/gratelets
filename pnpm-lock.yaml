@@ -267,6 +267,9 @@ importers:
       astro-bun-websocket:
         specifier: workspace:*
         version: link:../packages/bun-websocket
+      astro-deno-websocket:
+        specifier: workspace:*
+        version: link:../packages/deno-websocket
       astro-node-websocket:
         specifier: workspace:*
         version: link:../packages/node-websocket

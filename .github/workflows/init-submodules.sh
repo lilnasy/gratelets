@@ -11,3 +11,9 @@ git config user.email "ci@c.i"
 git config user.name "CI"
 git am ../../*.patch
 cd ../../../..
+
+cd packages/deno-websocket/denoland/deno-astro-adapter
+git config user.email "ci@c.i"
+git config user.name "CI"
+git am ../../*.patch
+cd ../../../..
