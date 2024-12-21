@@ -3,19 +3,22 @@
 	url = https://github.com/withastro/adapters
 	branch = main
 	shallow = true
-	ignore = all
 	active = false
 [submodule "packages/bun-websocket/NuroDev/astro-bun"]
 	path = packages/bun-websocket/NuroDev/astro-bun
 	url = https://github.com/NuroDev/astro-bun
 	branch = main
 	shallow = true
-	ignore = all
 	active = false
 [submodule "packages/deno-websocket/denoland/deno-astro-adapter"]
 	path = packages/deno-websocket/denoland/deno-astro-adapter
 	url = https://github.com/denoland/deno-astro-adapter
 	branch = main
 	shallow = true
-	ignore = all
+	active = false
+[submodule "packages/cloudflare-websocket/withastro/adapters"]
+	path = packages/cloudflare-websocket/withastro/adapters
+	url = https://github.com/withastro/adapters
+	branch = cloudflare-astro-v5
+	shallow = true
 	active = false

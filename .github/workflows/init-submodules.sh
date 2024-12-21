@@ -17,3 +17,9 @@ git config user.email "ci@c.i"
 git config user.name "CI"
 git am ../../*.patch
 cd ../../../..
+
+cd packages/cloudflare-websocket/withastro/adapters
+git config user.email "ci@c.i"
+git config user.name "CI"
+git am ../../*.patch
+cd ../../../..

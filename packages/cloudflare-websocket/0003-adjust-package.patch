@@ -1,0 +1,83 @@
+From b0fa80443b5a61cd85dd3807bb66cadef503b620 Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Sun, 22 Dec 2024 01:52:33 +0530
+Subject: [PATCH 3/3] adjust package
+
+---
+ packages/cloudflare/src/index.ts              | 10 +++++-----
+ packages/cloudflare/src/utils/image-config.ts |  5 +++--
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
+index 26af5003..71065495 100644
+--- a/packages/cloudflare/src/index.ts
++++ b/packages/cloudflare/src/index.ts
+@@ -174,7 +174,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 	let viteDevServer: ViteDevServer;
+ 
+ 	return {
+-		name: '@astrojs/cloudflare',
++		name: "astro-cloudflare-websocket",
+ 		hooks: {
+ 			'astro:config:setup': ({
+ 				command,
+@@ -218,7 +218,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 					addWatchFile(new URL('./wrangler.jsonc', config.root));
+ 				}
+ 				addMiddleware({
+-					entrypoint: '@astrojs/cloudflare/entrypoints/middleware.js',
++					entrypoint: new URL("./entrypoints/middleware.ts", import.meta.url),
+ 					order: 'pre',
+ 				});
+ 				if (command === "dev") {
+@@ -234,15 +234,15 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 			'astro:config:done': ({ setAdapter, config, buildOutput, logger }) => {
+ 				if (buildOutput === 'static') {
+ 					logger.warn(
+-						'[@astrojs/cloudflare] This adapter is intended to be used with server rendered pages, which this project does not contain any of. As such, this adapter is unnecessary.'
++						'This adapter is intended to be used with server rendered pages, which this project does not contain any of. As such, this adapter is unnecessary.'
+ 					);
+ 				}
+ 
+ 				_config = config;
+ 
+ 				setAdapter({
+-					name: '@astrojs/cloudflare',
+-					serverEntrypoint: '@astrojs/cloudflare/entrypoints/server.js',
++					name: "astro-cloudflare-websocket",
++					serverEntrypoint: new URL("./entrypoints/server.ts", import.meta.url),
+ 					exports: ['default'],
+ 					adapterFeatures: {
+ 						edgeMiddleware: false,
+diff --git a/packages/cloudflare/src/utils/image-config.ts b/packages/cloudflare/src/utils/image-config.ts
+index 58e0f76a..6b18b8b9 100644
+--- a/packages/cloudflare/src/utils/image-config.ts
++++ b/packages/cloudflare/src/utils/image-config.ts
+@@ -1,5 +1,6 @@
+ import type { AstroConfig, AstroIntegrationLogger, HookParameters } from 'astro';
+ import { passthroughImageService, sharpImageService } from 'astro/config';
++import { fileURLToPath } from "node:url"
+ 
+ export function setImageConfig(
+ 	service: string,
+@@ -17,7 +18,7 @@ export function setImageConfig(
+ 				service:
+ 					command === 'dev'
+ 						? sharpImageService()
+-						: { entrypoint: '@astrojs/cloudflare/image-service' },
++						: { entrypoint: fileURLToPath(new URL('../entrypoints/image-service.ts', import.meta.url)) },
+ 			};
+ 
+ 		case 'compile':
+@@ -25,7 +26,7 @@ export function setImageConfig(
+ 				...config,
+ 				service: sharpImageService(),
+ 				endpoint: {
+-					entrypoint: command === 'dev' ? undefined : '@astrojs/cloudflare/image-endpoint',
++					entrypoint: command === 'dev' ? undefined : fileURLToPath(new URL('../entrypoints/image-endpoint.ts', import.meta.url)),
+ 				},
+ 			};
+ 
+-- 
+2.47.0.windows.2
+

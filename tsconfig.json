@@ -2,6 +2,7 @@
     "extends": "astro/tsconfigs/strict",
     "exclude": [
         "packages/bun-websocket",
+        "packages/cloudflare-websocket",
         "packages/deno-websocket",
         "packages/node-websocket",
     ],

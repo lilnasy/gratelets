@@ -7,6 +7,7 @@
         "@astrojs/node": "9",
         "astro": "5",
         "astro-bun-websocket": "workspace:*",
+        "astro-cloudflare-websocket": "workspace:*",
         "astro-deno-websocket": "workspace:*",
         "astro-node-websocket": "workspace:*",
         "cheerio": "1.0.0-rc.12",

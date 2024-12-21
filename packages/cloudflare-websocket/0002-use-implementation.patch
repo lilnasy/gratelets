@@ -1,0 +1,212 @@
+From 2a6cbac46ca012c238f0af507b09f700e4c8da3b Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Sun, 22 Dec 2024 01:42:33 +0530
+Subject: [PATCH 2/3] use implementation
+
+---
+ packages/cloudflare/src/entrypoints/server.ts | 47 +++++++++++++-
+ packages/cloudflare/src/index.ts              | 63 ++++++++++++++++++-
+ 2 files changed, 108 insertions(+), 2 deletions(-)
+
+diff --git a/packages/cloudflare/src/entrypoints/server.ts b/packages/cloudflare/src/entrypoints/server.ts
+index 0ccc39e2..2f591c92 100644
+--- a/packages/cloudflare/src/entrypoints/server.ts
++++ b/packages/cloudflare/src/entrypoints/server.ts
+@@ -7,6 +7,7 @@ import type { SSRManifest } from 'astro';
+ import { App } from 'astro/app';
+ import { setGetEnv } from 'astro/env/setup';
+ import { createGetEnv } from '../utils/env.js';
++import type { Locals } from '../index.js';
+ 
+ type Env = {
+ 	[key: string]: unknown;
+@@ -23,6 +24,16 @@ export interface Runtime<T extends object = object> {
+ 	};
+ }
+ 
++/**
++ * Cloudflare workers do not fire the open event. This results
++ * in interop issues with the other runtimes.
++ *
++ * The server websocket is tracked in this so that - when the
++ * corresponding response is returned - the open event can be
++ * dispatched on it.
++ */
++const responseToSocketMap = new WeakMap<Response, WebSocket>()
++
+ export function createExports(manifest: SSRManifest) {
+ 	const app = new App(manifest);
+ 
+@@ -61,11 +72,31 @@ export function createExports(manifest: SSRManifest) {
+ 			}
+ 		})();
+ 
+-		const locals: Runtime = {
++		const locals: Runtime & Locals = {
++			get isUpgradeRequest() {
++				return request.headers.get("upgrade") === "websocket"
++			},
++
++			upgradeWebSocket() {
++				// @ts-expect-error modifiers can appear here
++				declare const WebSocketPair: typeof import('@cloudflare/workers-types').WebSocketPair
++				const { 0: clientWs, 1: serverWs } = new WebSocketPair
++				const response = new Response(null, {
++					status: 101,
++					// @ts-expect-error Cloudflare extends Response with a webSocket property
++					webSocket: clientWs,
++				})
++				// @ts-expect-error Cloudflare's WebSocket is missing a few properties from the
++				// browser's WebSocket interface
++				const socket: WebSocket = serverWs
++				responseToSocketMap.set(response, socket)
++				return { response, socket };
++			},
+ 			runtime: {
+ 				env: env,
+ 				cf: request.cf,
+ 				caches: caches as unknown as CLOUDFLARE_CACHESTORAGE,
++				// @ts-ignore
+ 				ctx: {
+ 					waitUntil: (promise: Promise<any>) => context.waitUntil(promise),
+ 					// Currently not available: https://developers.cloudflare.com/pages/platform/known-issues/#pages-functions
+@@ -82,6 +113,20 @@ export function createExports(manifest: SSRManifest) {
+ 
+ 		const response = await app.render(request, { routeData, locals });
+ 
++		const socket = responseToSocketMap.get(response)
++		if (socket) {
++			// @ts-expect-error Cloudflare's extends WebSocket with an accept
++			// method that must be called before the socket can be used.
++			// In our API, returning the upgrade response from an API route
++			// or the page implies accepting the WebSocket connection.
++			socket.accept()
++			// @ts-expect-error This listener should exist to avoid
++			// "script will never generate a response" errors, but for some
++			// reason, they happen anyway in workerd.
++			socket.addEventListener("close", e => e.currentTarget.close())
++			socket.dispatchEvent(new Event("open"))
++		}
++
+ 		if (app.setCookieHeaders) {
+ 			for (const setCookieHeader of app.setCookieHeaders(response)) {
+ 				response.headers.append('Set-Cookie', setCookieHeader);
+diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
+index c69cfbc7..26af5003 100644
+--- a/packages/cloudflare/src/index.ts
++++ b/packages/cloudflare/src/index.ts
+@@ -5,7 +5,7 @@ import type {
+ 	IntegrationResolvedRoute,
+ 	IntegrationRouteData,
+ } from 'astro';
+-import type { PluginOption } from 'vite';
++import type { PluginOption, ViteDevServer } from 'vite';
+ 
+ import { createReadStream } from 'node:fs';
+ import { appendFile, rename, stat } from 'node:fs/promises';
+@@ -26,6 +26,7 @@ import {
+ import { createGetEnv } from './utils/env.js';
+ import { createRoutesFile, getParts } from './utils/generate-routes-json.js';
+ import { setImageConfig } from './utils/image-config.js';
++import { handleUpgradeRequests } from './websocket/dev-middleware.js';
+ 
+ export type { Runtime } from './entrypoints/server.js';
+ 
+@@ -74,6 +75,54 @@ export type Options = {
+ 	cloudflareModules?: boolean;
+ };
+ 
++
++export interface Locals {
++	/**
++	 * Whether the current request wants the connection to be upgraded
++	 * to a WebSocket.
++	 */
++    isUpgradeRequest: boolean
++    /**
++     * Upgrade an incoming HTTP request to a bidirectional WebSocket
++     * connection.
++     *
++     * Returns a pair of {@linkcode WebSocket} and {@linkcode Response}
++     * instances. The request must be responded to with the provided
++     * response for the provided WebSocket to open and start receiving
++     * messages from the browser.
++     *
++     * ```ts
++     * export const GET: APIRoute = ctx => {
++     *     if (ctx.locals.isUpgradeRequest) {
++     *         const { response, socket } = ctx.locals.upgradeWebSocket()
++     *         socket.onmessage = event => {
++     *             if (event.data === "ping") {
++     *                 socket.send("pong")
++     *             }
++     *         }
++     *         return response
++     *     }
++     *     return new Response("Upgrade required", { status: 426 })
++     * }
++     * ```
++     *
++     * Calling this function on its own does not connect the WebSocket.
++     * It only returns a pair of objects that will establish the connection
++     * once the generated response has been returned from the API Route.
++     *
++     * Throws if the request is not an upgrade request.
++     */
++    upgradeWebSocket(): { socket: WebSocket, response: Response };
++}
++
++interface NodeLocals extends Locals {}
++
++declare global {
++	namespace App {
++		export interface Locals extends NodeLocals {}
++	}
++}
++
+ function wrapWithSlashes(path: string): string {
+ 	return prependForwardSlash(appendForwardSlash(path));
+ }
+@@ -122,6 +171,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 
+ 	let _routes: IntegrationResolvedRoute[];
+ 
++	let viteDevServer: ViteDevServer;
++
+ 	return {
+ 		name: '@astrojs/cloudflare',
+ 		hooks: {
+@@ -170,6 +221,12 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 					entrypoint: '@astrojs/cloudflare/entrypoints/middleware.js',
+ 					order: 'pre',
+ 				});
++				if (command === "dev") {
++					addMiddleware({
++						entrypoint: new URL("./websocket/dev-middleware.ts", import.meta.url),
++						order: "pre"
++					})
++				}
+ 			},
+ 			'astro:routes:resolved': ({ routes }) => {
+ 				_routes = routes;
+@@ -206,6 +263,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 				});
+ 			},
+ 			'astro:server:setup': async ({ server }) => {
++				viteDevServer = server;
+ 				if ((args?.platformProxy?.enabled ?? true) === true) {
+ 					const platformProxy = await getPlatformProxy(args?.platformProxy);
+ 
+@@ -234,6 +292,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 					});
+ 				}
+ 			},
++			"astro:server:start" () {
++				handleUpgradeRequests(viteDevServer)
++			},
+ 			'astro:build:setup': ({ vite, target }) => {
+ 				if (target === 'server') {
+ 					vite.resolve ||= {};
+-- 
+2.47.0.windows.2
+
