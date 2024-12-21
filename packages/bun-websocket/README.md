@@ -87,11 +87,40 @@ To simplify the detection of whether a request can be upgraded to a WebSocket co
 + if (ctx.locals.isUpgradeRequest) { ... }
 ```
 
+### Authorizing and rejecting requests
+
+If the endpoint returns any response other than the one provided by `upgradeWebSocket()`, the upgrade request will be rejected, and a WebSocket connection will not be established. This enables you to easily implement authorization logic or other checks before accepting the upgrade request.
+
+For example, the following code shows how you would check for the presence of a cookie:
+
+```ts
+// src/pages/api/socket.ts
+export const GET: APIRoute = ctx => {
+    const cookie = ctx.cookies.get("xyz")
+    if (!cookie) {
+        return new Response("Unauthorized", { status: 401 })
+    }
+    if (!ctx.locals.isUpgradeRequest) {
+        return new Response("Upgrade Required", { status: 426 })
+    }
+    const { response, socket } = ctx.locals.upgradeWebSocket()
+    handleWebSocket(socket)
+    return response
+}
+```
+
+When a `WebSocket` connection fails to establish, browsers do not provide specific information in the `error` event about the cause. A `WebSocket` connection can close "cleanly" if it was successfully established and then intentionally closed. Alternatively, it can close non-cleanly if the server becomes unreachable due to network issues or if the connection could not be established in the first place. See the MDN documentation for more information: [CloseEvent: wasClean property - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/wasClean).
+
 ## Troubleshooting
 
 ### Error: "The request must be an upgrade request to upgrade the connection to a WebSocket."
 
-This error occurs when a request is made to a WebSocket endpoint without the necessary headers to upgrade the connection. Note that within a browser, the globally-available `WebSocket` is the only way to create an upgrade request.
+This error occurs when a connection upgrade attempt is made using `locals.upgradeWebSocket()` on a request that does not have the necessary headers.
+
+On the server, verify that the request is an upgrade request by checking `locals.isUpgradeRequest` before calling `locals.upgradeWebSocket()`.
+
+It is important to know that in the browser, the `fetch` API cannot be used to send an upgrade request. Make sure that you are instantiating the built-in `WebSocket` class. See examples on MDN: [WebSocket - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#examples).
+
 
 For additional help, check out the `Discussions` tab on the [GitHub repo](https://github.com/lilnasy/gratelets/discussions).
 
@@ -99,7 +128,7 @@ For additional help, check out the `Discussions` tab on the [GitHub repo](https:
 
 This package is maintained by [lilnasy](https://github.com/lilnasy) independently from Astro.
 
-The code for this package is commited to the repository as a series of patches applied on top of the [`NuroDev/astro-bun`](https://github.com/NuroDev/astro-bun) repository, which is where the code for the `@NuroDev/astro-bun` adapter is maintained. Additionally, the `NuroDev/astro-bun` repository is added as a git submodule to make updating the patches easier. The [`package.json`](https://github.com/lilnasy/gratelets/blob/main/packages/bun-websocket/package.json#L34-L38) file contains scripts to automatically manage the upstream repository and the patches.
+The code for this package is commited to the repository as a series of patches applied on top of the [`NuroDev/astro-bun`](https://github.com/NuroDev/astro-bun) repository, which is where the code for the `@NuroDev/astro-bun` adapter is maintained. Additionally, the `NuroDev/astro-bun` repository is added as a git submodule to make it easier to update the patches. The [`package.json`](https://github.com/lilnasy/gratelets/blob/main/packages/bun-websocket/package.json#L34-L38) file contains scripts to automatically manage the upstream repository and the patches.
 
 To introduce a change, make sure you're in `packages/bun-websocket` directory:
 ```bash

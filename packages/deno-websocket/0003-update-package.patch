@@ -1,0 +1,58 @@
+From ee20f3b822cbeed690c6169506d30f1c10fdcb6e Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Sat, 21 Dec 2024 16:25:37 +0530
+Subject: [PATCH 3/4] update package
+
+---
+ src/index.ts  | 8 ++++----
+ src/server.ts | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/index.ts b/src/index.ts
+index 726b03f..bfad58b 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -117,15 +117,15 @@ const COMPATIBLE_NODE_MODULES = [
+ // We shim deno-specific imports so we can run the code in Node
+ // to prerender pages. In the final Deno build, this import is
+ // replaced with the Deno-specific contents listed below.
+-const DENO_IMPORTS_SHIM = `@deno/astro-adapter/__deno_imports.ts`;
++const DENO_IMPORTS_SHIM = `astro-deno-websocket/__deno_imports.ts`;
+ const DENO_IMPORTS =
+   `export { serveFile } from "jsr:@std/http@${STD_VERSION}/file-server";
+ export { fromFileUrl } from "jsr:@std/path@${STD_VERSION}";`;
+ 
+ export function getAdapter(args?: Options): AstroAdapter {
+   return {
+-    name: "@deno/astro-adapter",
+-    serverEntrypoint: "@deno/astro-adapter/server.ts",
++    name: "astro-deno-websocket",
++    serverEntrypoint: new URL("./server.ts", import.meta.url),
+     args: args ?? {},
+     exports: ["stop", "handle", "start", "running"],
+     supportedAstroFeatures: {
+@@ -175,7 +175,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+   let _vite: any;
+   let viteDevServer: ViteDevServer;
+   return {
+-    name: "@deno/astro-adapter",
++    name: "astro-deno-websocket",
+     hooks: {
+       "astro:config:setup": ({ addMiddleware, command, updateConfig }) => {
+         updateConfig({
+diff --git a/src/server.ts b/src/server.ts
+index 90bfdab..336893a 100644
+--- a/src/server.ts
++++ b/src/server.ts
+@@ -4,7 +4,7 @@ import { App } from "astro/app";
+ import type { Options } from "./types";
+ 
+ // @ts-expect-error
+-import { fromFileUrl, serveFile } from "@deno/astro-adapter/__deno_imports.ts";
++import { fromFileUrl, serveFile } from "astro-deno-websocket/__deno_imports.ts";
+ 
+ // @ts-ignore
+ let _server: Server | undefined = undefined;
+-- 
+2.47.0.windows.2
+

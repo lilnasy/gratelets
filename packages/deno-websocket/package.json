@@ -1,0 +1,43 @@
+{
+    "name": "astro-deno-websocket",
+    "type": "module",
+    "description": "Use WebSockets in your Astro SSR Apps and run it on Deno",
+    "version": "0.0.0",
+    "license": "MIT",
+    "keywords": [
+        "withastro",
+        "astro",
+        "astro-integration",
+        "astro-adapter",
+        "deno",
+        "websocket"
+    ],
+    "homepage": "https://github.com/lilnasy/gratelets/packages/deno-websocket",
+    "files": [
+        "denoland/deno-astro-adapter/src",
+        "denoland/deno-astro-adapter/LICENSE"
+    ],
+    "exports": {
+        ".": "./denoland/deno-astro-adapter/src/index.ts",
+        "./__deno_imports.ts": "./denoland/deno-astro-adapter/src/__deno_imports.ts",
+        "./websocket": {
+            "development": "./denoland/deno-astro-adapter/src/websocket/dev-websocket.ts",
+            "production": "./denoland/deno-astro-adapter/src/websocket/deno-websocket.ts"
+        }
+    },
+    "dependencies": {
+        "@types/lodash": "^4.17.13",
+        "@types/ws": "^8.5.13",
+        "esbuild": "^0.19.2",
+        "lodash": "^4.17.21",
+        "ws": "^8.18.0"
+    },
+    "scripts": {
+        "clone": "git submodule update --init .",
+        "create_patches": "cd denoland/deno-astro-adapter && git format-patch 7789dc0 -o ../..",
+        "load_patches": "git submodule update --init . && cd denoland/deno-astro-adapter && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd denoland/deno-astro-adapter && git reset --hard 7789dc0",
+        "delete_all_changes_and_reload_patches": "cd denoland/deno-astro-adapter && git reset --hard 7789dc0 && git am ../../*.patch",
+        "test": "pnpm -w test deno-websocket.test.ts"
+    }
+}

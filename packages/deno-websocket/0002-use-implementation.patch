@@ -1,0 +1,161 @@
+From b08b779eb349a98ec287dbcdca73d762c0ce4f5d Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Sat, 21 Dec 2024 16:24:01 +0530
+Subject: [PATCH 2/4] use implementation
+
+---
+ src/index.ts  | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/server.ts | 14 +++++++++-
+ 2 files changed, 90 insertions(+), 1 deletion(-)
+
+diff --git a/src/index.ts b/src/index.ts
+index cd7273c..726b03f 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -5,6 +5,54 @@ import * as npath from "node:path";
+ import { fileURLToPath } from "node:url";
+ import type { BuildConfig, Options } from "./types";
+ import { mergeObjects } from "./helpers";
++import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.js";
++
++export interface Locals {
++    /**
++     * Whether the current request wants the connection to be upgraded
++     * to a WebSocket.
++     */
++    isUpgradeRequest: boolean
++    /**
++     * Upgrade an incoming HTTP request to a bidirectional WebSocket
++     * connection.
++     *
++     * Returns a pair of {@linkcode WebSocket} and {@linkcode Response}
++     * instances. The request must be responded to with the provided
++     * response for the provided WebSocket to open and start receiving
++     * messages from the browser.
++     *
++     * ```ts
++     * export const GET: APIRoute = ctx => {
++     *     if (ctx.locals.isUpgradeRequest) {
++     *         const { response, socket } = ctx.locals.upgradeWebSocket()
++     *         socket.onmessage = event => {
++     *             if (event.data === "ping") {
++     *                 socket.send("pong")
++     *             }
++     *         }
++     *         return response
++     *     }
++     *     return new Response("Upgrade required", { status: 426 })
++     * }
++     * ```
++     *
++     * Calling this function on its own does not connect the WebSocket.
++     * It only returns a pair of objects that will establish the connection
++     * once the generated response has been returned from the API Route.
++     *
++     * Throws if the request is not an upgrade request.
++     */
++    upgradeWebSocket(): { socket: WebSocket, response: Response };
++}
++
++interface NodeLocals extends Locals {}
++
++declare global {
++    namespace App {
++        export interface Locals extends NodeLocals {}
++    }
++}
+ 
+ const SHIM = `globalThis.process = {
+ 	argv: [],
+@@ -84,6 +132,7 @@ export function getAdapter(args?: Options): AstroAdapter {
+       hybridOutput: "stable",
+       staticOutput: "stable",
+       serverOutput: "stable",
++      // @ts-expect-error this needs to be updated upstream
+       assets: {
+         supportKind: "stable",
+         isSharpCompatible: false,
+@@ -124,13 +173,41 @@ const denoRenameNodeModulesPlugin = {
+ export default function createIntegration(args?: Options): AstroIntegration {
+   let _buildConfig: BuildConfig;
+   let _vite: any;
++  let viteDevServer: ViteDevServer;
+   return {
+     name: "@deno/astro-adapter",
+     hooks: {
++      "astro:config:setup": ({ addMiddleware, command, updateConfig }) => {
++        updateConfig({
++          vite: {
++            esbuild: {
++              tsconfigRaw: {
++                compilerOptions: {
++                  // make the compilation of classes
++									// compatable with standard ES6
++                  useDefineForClassFields: true,
++                }
++              }
++            }
++          }
++        })
++        if (command === "dev") {
++					addMiddleware({
++						order: "pre",
++						entrypoint: new URL("./websocket/dev-middleware.ts", import.meta.url)
++					})
++				}
++      },
+       "astro:config:done": ({ setAdapter, config }) => {
+         setAdapter(getAdapter(args));
+         _buildConfig = config.build;
+       },
++      "astro:server:setup"({ server }) {
++        viteDevServer = server;
++      },
++      "astro:server:start" () {
++        handleUpgradeRequests(viteDevServer);
++      },
+       "astro:build:setup": ({ vite, target }) => {
+         if (target === "server") {
+           _vite = vite;
+diff --git a/src/server.ts b/src/server.ts
+index 430198b..90bfdab 100644
+--- a/src/server.ts
++++ b/src/server.ts
+@@ -6,6 +6,7 @@ import type { Options } from "./types";
+ // @ts-expect-error
+ import { fromFileUrl, serveFile } from "@deno/astro-adapter/__deno_imports.ts";
+ 
++// @ts-ignore
+ let _server: Server | undefined = undefined;
+ let _startPromise: Promise<void> | undefined = undefined;
+ 
+@@ -35,7 +36,17 @@ export function start(manifest: SSRManifest, options: Options) {
+     if (app.match(request)) {
+       const hostname = handlerInfo.remoteAddr?.hostname;
+       Reflect.set(request, Symbol.for("astro.clientAddress"), hostname);
+-      const response = await app.render(request);
++      const response = await app.render(request, {
++        locals: {
++          get isUpgradeRequest() {
++            return request.headers.get("upgrade") === "websocket"
++          },
++          upgradeWebSocket() {
++            // @ts-ignore
++            return Deno.upgradeWebSocket(request);
++          }
++        }
++      });
+       if (app.setCookieHeaders) {
+         for (const setCookieHeader of app.setCookieHeaders(response)) {
+           response.headers.append("Set-Cookie", setCookieHeader);
+@@ -86,6 +97,7 @@ export function start(manifest: SSRManifest, options: Options) {
+ 
+   const port = options.port ?? 8085;
+   const hostname = options.hostname ?? "0.0.0.0";
++  // @ts-ignore
+   _server = Deno.serve({ port, hostname }, handler);
+   _startPromise = _server.finished;
+   console.error(`Server running on port ${port}`);
+-- 
+2.47.0.windows.2
+

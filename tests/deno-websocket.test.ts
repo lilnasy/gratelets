@@ -1,7 +1,7 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build } from "./utils.ts"
-import bunAdapter from "astro-bun-websocket"
+import denoAdapter from "astro-deno-websocket"
 
 describe("dev", {
     timeout: 1000,
@@ -10,7 +10,7 @@ describe("dev", {
     let server: DevServer
 
     beforeAll(async () => server = await dev("./fixtures/websocket", {
-        adapter: bunAdapter()
+        adapter: denoAdapter()
     }))
 
     afterAll(() => server.stop())
@@ -48,30 +48,36 @@ describe("build", {
     timeout: 500,
     skip: process.version.startsWith("v23.") === false
 }, () => {
-    let bun: ChildProcessWithoutNullStreams
+    let deno: ChildProcessWithoutNullStreams
 
     beforeAll(async () => {
         const fixture = await build("./fixtures/websocket", {
-            adapter: bunAdapter()
+            adapter: denoAdapter()
         })
-        bun = spawn("bun", [ fixture.serverEntry ])
+        deno = spawn("deno", [ "-A", "--no-lock", fixture.serverEntry ])
         const { promise, resolve, reject } = Promise.withResolvers<void>()
-        bun.stdout.on("data", function onData(data) {
-            if (data.toString().includes("Server listening")) {
+        deno.stderr.on("data", function onData(data) {
+            const output = data.toString()
+            if (
+                output.includes("Listening on http://localhost:8085/") ||
+                output.includes("Listening on http://0.0.0.0:8085/")
+            ) {
                 resolve()
+            } else if (output.includes("Server running on port 8085")) {
+                resolve()
+            } else if (output.includes("Download\u001b[0m https://jsr.io")) {
+            } else {
+                reject(output)
             }
         })
-        bun.stderr.on("data", function onData(data) {
-            reject(data.toString())
-        })
-        bun.on("error", error => reject(error))
+        deno.on("error", error => reject(error))
         await promise
-    }, 2000)
+    }, 6000)
 
-    afterAll(() => bun.kill())
+    afterAll(() => deno.kill())
 
     test("performs upgrade", async () => {
-        const ws = new WebSocket(`ws://localhost:4321/ws`)
+        const ws = new WebSocket(`ws://localhost:8085/ws`)
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onopen = () => ws.send("Hello")
         ws.onmessage = (e) => {
@@ -83,7 +89,7 @@ describe("build", {
     })
 
     test("endpoint can reject upgrade request", async () => {
-        const ws = new WebSocket(`ws://localhost:4321/ws`, "unsupported-protocol")
+        const ws = new WebSocket(`ws://localhost:8085/ws`, "unsupported-protocol")
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onerror = e => {
             expect("message" in e && e.message).to.equal("Received network error or non-101 status code.")

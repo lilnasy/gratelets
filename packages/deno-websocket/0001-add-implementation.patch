@@ -1,0 +1,497 @@
+From acb8487dfae110a6e16333138eaa5f3d3632e61c Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
+Date: Sat, 21 Dec 2024 16:17:26 +0530
+Subject: [PATCH 1/4] add implementation
+
+---
+ src/websocket/deno-websocket.ts |   4 +
+ src/websocket/dev-attach.ts     |  17 +++
+ src/websocket/dev-middleware.ts | 190 ++++++++++++++++++++++++++++++++
+ src/websocket/dev-response.ts   |  51 +++++++++
+ src/websocket/dev-websocket.ts  | 183 ++++++++++++++++++++++++++++++
+ 5 files changed, 445 insertions(+)
+ create mode 100644 src/websocket/deno-websocket.ts
+ create mode 100644 src/websocket/dev-attach.ts
+ create mode 100644 src/websocket/dev-middleware.ts
+ create mode 100644 src/websocket/dev-response.ts
+ create mode 100644 src/websocket/dev-websocket.ts
+
+diff --git a/src/websocket/deno-websocket.ts b/src/websocket/deno-websocket.ts
+new file mode 100644
+index 0000000..c959cdb
+--- /dev/null
++++ b/src/websocket/deno-websocket.ts
+@@ -0,0 +1,4 @@
++// Deno's WebSocket implementation's public API
++// already resembles the Web standard WebSocket
++// interface. It can re-exported as is.
++export default WebSocket
+\ No newline at end of file
+diff --git a/src/websocket/dev-attach.ts b/src/websocket/dev-attach.ts
+new file mode 100644
+index 0000000..f72f697
+--- /dev/null
++++ b/src/websocket/dev-attach.ts
+@@ -0,0 +1,17 @@
++import type * as ws from "ws"
++import type { WebSocket } from "./dev-websocket.js"
++
++/**
++ * To keep the internals hidden, the function that attaches the
++ * ws.WebSocket to the WebSocket instance is created within
++ * WebSocket's static block, and assigned to this variable.
++ */
++export const attacher: { attach: null | typeof attach } = { attach: null }
++
++/**
++ * Attach a ws.WebSocket connected to I/O to the implementation
++ * of the standard WebSocket class exposed to the public API.
++ */
++export function attach(standard: WebSocket, ws: ws.WebSocket): void {
++    return attacher.attach?.(standard, ws)
++}
+diff --git a/src/websocket/dev-middleware.ts b/src/websocket/dev-middleware.ts
+new file mode 100644
+index 0000000..2fbeafe
+--- /dev/null
++++ b/src/websocket/dev-middleware.ts
+@@ -0,0 +1,190 @@
++import { AsyncLocalStorage } from "node:async_hooks"
++import type { APIContext, AstroIntegration, MiddlewareNext } from "astro"
++import * as ws from "ws"
++import { UpgradeResponse, writeResponseToSocket } from "./dev-response.js"
++import { WebSocket } from "./dev-websocket.js"
++import { attach as _attach } from "./dev-attach.js"
++
++export type ViteDevServer =
++    Parameters<
++        NonNullable<
++            AstroIntegration["hooks"]["astro:server:setup"]
++        >
++    >[0]["server"]
++
++type UpgradeHandler =
++    import("node:http").Server["on"] extends
++        (event: "upgrade", callback: infer UpgradeHandler) => unknown
++            ? UpgradeHandler
++            : never
++
++type AstroDevHandler = (
++    req: import("node:http").IncomingMessage,
++    res: import("node:http").ServerResponse,
++) => void
++
++/**
++ * This is a storage for the upgrade request.
++ *
++ * When the dev http server receives an upgrade request,
++ * the required objects are put into the storage, and
++ * when an upgrade response is returned, the objects are
++ * retrieved from it to perform the upgrade.
++ *
++ * To prevent issues around compilation and module
++ * duplication in the dev server, the instance is
++ * assigned onto globalThis to keep it singular.
++ */
++const upgradeRequestStorage: AsyncLocalStorage<[
++    wsServer: ws.WebSocketServer,
++    ...Parameters<UpgradeHandler>
++]> =
++    // @ts-expect-error
++    globalThis.__upgradeRequestStorage ??= new AsyncLocalStorage
++
++const responseToSocketMap: WeakMap<Response, WebSocket> =
++    // @ts-expect-error
++    globalThis.__responseToSocketMap ??= new WeakMap
++
++
++/**
++ * Similar to how `upgradeRequestStorage` and `responseToSocketMap`
++ * are kept singular.
++ *
++ * Except here the latest versions are kept instead of the first
++ * versions because of how the astro config module is loaded.
++ *
++ * The astro config module is loaded by a temporary vite instance,
++ * which does not read `tsconfig.json`. As a result, all typescript
++ * code is compiled with `useDefineForClassFields: false`, which
++ * prevents `UpgradeResponse` from overriding the status field of
++ * `Response`.
++ *
++ * As a workaround, the current `UpgradeResponse` class is put onto
++ * `globalThis`. This replaces the `UpgradeResponse` class being
++ * used by the locals with the functional version that is compiled
++ * later, during the compilation of the project's middleware chain.
++ */
++// @ts-expect-error
++globalThis.__UpgradeResponse = UpgradeResponse
++
++function newUpgradeResponse(): UpgradeResponse {
++    // @ts-expect-error
++    return new globalThis.__UpgradeResponse
++}
++
++// @ts-expect-error
++globalThis.__WebSocket = WebSocket
++
++function newWebSocket(): WebSocket {
++    // @ts-expect-error
++    return new globalThis.__WebSocket
++}
++
++// @ts-expect-error
++globalThis.__attach = _attach
++
++function attach(...args: Parameters<typeof _attach>): void {
++    // @ts-expect-error
++    return globalThis.__attach(...args)
++}
++
++/**
++ * This dev-only middleware is responsible for all requests
++ * that have been made as a result of an upgrade request.
++ *
++ * It checks whether the request is running within the context
++ * of an `upgradeRequestStorage`, which are created below in
++ * `hookIntoViteDevServer()`, and only runs if it is.
++ */
++export const onRequest = async function websocketDevMiddleware(context: APIContext, next: MiddlewareNext) {
++    const upgradeRequest = upgradeRequestStorage.getStore()
++
++    if (upgradeRequest === undefined) {
++        Object.assign(context.locals, {
++            isUpgradeRequest: false,
++            upgradeWebSocket() {
++                throw new Error("The request must be an upgrade request to upgrade the connection to a WebSocket.")
++            }
++        })
++        return next()
++    }
++
++    let response: Response | undefined
++    let error: unknown
++
++    try {
++        response = await next()
++    } catch (e) {
++        error = e
++    }
++
++
++    if (response) {
++        if (response instanceof UpgradeResponse) {
++            const standardWebSocket = responseToSocketMap.get(response)!
++            const [ wsServer, req, socket, head ] = upgradeRequest
++            wsServer.handleUpgrade(req, socket, head, ws => attach(standardWebSocket, ws))
++        } else {
++            /**
++             * If there was an upgrade request, but the response
++             * did not accept the upgrade, the response still
++             * needs to be manually handled.
++             */
++            const socket = upgradeRequest[2]
++            await writeResponseToSocket(socket, response)
++        }
++        /**
++         * Since the astroDevHandler has been given a fake
++         * response object to write the response into, the
++         * response returned here will not result in any
++         * network I/O. It is effectively just logging the
++         * status code of the response to the terminal.
++         */
++        return response
++    }
++
++    await writeResponseToSocket(upgradeRequest[2], new Response(null, { status: 500 }))
++
++    if (error && error instanceof Error) throw error
++
++    throw new Error("Unknown error", { cause: error })
++}
++
++const devLocals = {
++    isUpgradeRequest: true,
++    upgradeWebSocket() {
++        const response = newUpgradeResponse()
++        const socket = newWebSocket()
++        responseToSocketMap.set(response, socket)
++        return { socket, response }
++    }
++}
++
++export function handleUpgradeRequests(viteDevServer: ViteDevServer) {
++
++    const astroDevHandler =
++        viteDevServer.middlewares.stack
++        .find(stackItem => "name" in stackItem.handle && stackItem.handle.name === "astroDevHandler")!
++        .handle as AstroDevHandler
++
++    const wsServer = new ws.WebSocketServer({ noServer: true })
++
++    // vite dev server may be http2 or may not exist if it runs in middleware mode
++    // neither of these cases are supported by the current implementation
++    const httpServer = viteDevServer.httpServer as import("node:http").Server
++
++    httpServer.on("upgrade", (req, socket, head) => {
++        if (req.headers["sec-websocket-protocol"] === "vite-hmr") return
++        (req as any)[Symbol.for("astro.locals")] = devLocals
++        upgradeRequestStorage.run([ wsServer, req, socket, head ], astroDevHandler, req, fakeResponse)
++    })
++}
++
++const fakeResponse = {
++    setHeader() {},
++    write() {},
++    writeHead() {},
++    end() {},
++    on() {},
++} as any as import("node:http").ServerResponse
+diff --git a/src/websocket/dev-response.ts b/src/websocket/dev-response.ts
+new file mode 100644
+index 0000000..78069b5
+--- /dev/null
++++ b/src/websocket/dev-response.ts
+@@ -0,0 +1,51 @@
++import { pipeline } from "node:stream/promises"
++
++/**
++ * Custom subclass because spec-compliant Response objects can't have a status of 101.
++ */
++export class UpgradeResponse extends Response {
++    readonly status = 101
++}
++
++const { Headers } = globalThis
++
++/**
++ * The "upgrade" event callback doesn't provide a response object.
++ * If the userland code decides that protocol should not be upgraded,
++ * the rejection response must be manually streamed into the lower
++ * level socket.
++ */
++export async function writeResponseToSocket(socket: import("node:stream").Duplex, response: Response) {
++    const { headers, status, statusText } = response
++    let head = `HTTP/1.1 ${status} ${statusText}\r\n`
++    /**
++     * The `Headers` class will have made sure that it
++     * contains only valid header names and values.
++     *
++     * But we can't be sure that the prototypes of `Response`
++     * and `Headers` classes have not been tampered with.
++     *
++     * As a security measure, the headers are reconstructed
++     * here, performing the validation in the process.
++     *
++     * This function is not a hot path, it is only called
++     * when an upgrade request does not receive an upgrade
++     * response.
++     */
++    for (const [ header, value ] of new Headers(headers).entries()) {
++        head += header + ": " + value + "\r\n"
++    }
++    /**
++     * Windows has some odd streaming errors.
++     */
++    socket.on("error", console.error)
++    socket.write(head + "\r\n")
++    if (response.body) {
++        /**
++         * Astro is also going to attempt to read the body
++         * if it exists. Since streams can only be consumed
++         * once, we clone here.
++         */
++        await pipeline(response.clone().body!, socket)
++    }
++}
+diff --git a/src/websocket/dev-websocket.ts b/src/websocket/dev-websocket.ts
+new file mode 100644
+index 0000000..dd31a9b
+--- /dev/null
++++ b/src/websocket/dev-websocket.ts
+@@ -0,0 +1,183 @@
++import type * as ws from "ws"
++import { attacher } from "./dev-attach.js"
++
++type WebSocketInterface = globalThis.WebSocket
++
++export class WebSocket extends EventTarget implements WebSocketInterface {
++
++    static readonly CONNECTING = 0 as const
++    static readonly OPEN       = 1 as const
++    static readonly CLOSING    = 2 as const
++    static readonly CLOSED     = 3 as const
++
++    get url() {
++        return this.#ws?.url ?? ""
++    }
++
++
++    // ready state
++
++    // Describing the fields here would put
++    // them on the individual instances, but
++    // they should go on the prototype instead.
++    // Thererfore, they are assigned onto the
++    // prototype in the static block below.
++    declare readonly CONNECTING: 0
++    declare readonly OPEN      : 1
++    declare readonly CLOSING   : 2
++    declare readonly CLOSED    : 3
++
++    get readyState() {
++        return this.#ws?.readyState ?? this.CONNECTING
++    }
++
++    get bufferedAmount() {
++        return this.#ws?.bufferedAmount ?? 0
++    }
++
++
++    // networking
++
++    onopen : WebSocketInterface["onopen"]  = null
++    onerror: WebSocketInterface["onerror"] = null
++    onclose: WebSocketInterface["onclose"] = null
++
++    get extensions() {
++        return this.#ws?.extensions ?? ""
++    }
++
++    get protocol() {
++        return this.#ws?.protocol ?? ""
++    }
++
++    close() {
++        if (this.#ws) this.#ws.close()
++        else this.addEventListener("open", () => this.close(), { once: true })
++    }
++
++
++    // messaging
++
++    onmessage : WebSocketInterface["onmessage"] = null
++
++    get binaryType() {
++        return this.#ws?.binaryType as "arraybuffer" | "blob" ?? "blob"
++    }
++
++    set binaryType(value: "arraybuffer" | "blob") {
++        // There's nothing stopping the user from setting the binary type
++        // to either `"nodebuffer"` or `"fragments"`, just type errors.
++        // Deviating from the standard `WebSocket` interface to properly
++        // support it, however, will come at the cost of portability.
++        if (this.#ws) {
++            // @ts-expect-error `"blob"` is supported by `ws`
++            this.#ws.binaryType = value
++        } else {
++            this.addEventListener("open", () => this.binaryType = value, { once: true })
++        }
++    }
++
++    send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
++        if (data instanceof Blob) data.arrayBuffer().then(buffer => this.#ws!.send(buffer))
++        else this.#ws!.send(data)
++    }
++
++
++    // implementation details
++
++    // the half-web-compatible WebSocket implementation of "ws"
++    #ws: ws.WebSocket | undefined
++
++    static {
++
++        Object.assign(this.prototype, {
++            CONNECTING: 0,
++            OPEN      : 1,
++            CLOSING   : 2,
++            CLOSED    : 3
++        })
++
++        // Freeze the prototype and class to align the object shape
++        // with the spec.
++        // (configurable = false, enumerable = true, writable = false)
++        Object.freeze(this.prototype)
++        Object.freeze(this)
++
++        attacher.attach = (standard, ws) => {
++            if (standard.#ws) {
++                throw new Error("WebSocket already attached")
++            }
++            standard.#ws = ws
++            init(standard, ws)
++            return standard
++        }
++    }
++}
++
++function init(standard: WebSocket, ws: ws.WebSocket) {
++
++    // set the binary type to `"blob"` to align with the browser default
++    // @ts-expect-error `"blob"` is supported by `ws`
++    // https://github.com/websockets/ws/blob/8.18.0/lib/constants.js#L6
++    ws.binaryType = "blob"
++
++    if (ws.readyState === ws.OPEN) {
++        const event = new Event("open")
++        standard.onopen?.(event)
++        standard.dispatchEvent(event)
++    }
++
++    // The functions are not using the arrow syntax
++    // to allow the name to appear in stacktraces.
++    ws.on("open", function onOpen() {
++        const event = new Event("open")
++        standard.onopen?.(event)
++        standard.dispatchEvent(event)
++    })
++    ws.on("message", function onMessage(data, isBinary) {
++        const event = new MessageEvent("message", { data: isBinary ? data : data.toString(), })
++        standard.onmessage?.(event)
++        standard.dispatchEvent(event)
++    })
++    ws.on("error", function onError(error) {
++        const event = new ErrorEvent(error, error.message)
++        standard.onerror?.(event)
++        standard.dispatchEvent(event)
++    })
++    // Using `.addEventListener()` here instead of `.on()`,
++    // because the `wasClean` field is determined by ws's
++    // internals.
++    ws.addEventListener("close", function onClose(ev) {
++        /**
++         * The `CloseEvent` is available globally
++         * starting with Node.js 23. Use it if available.
++         * https://nodejs.org/api/globals.html#:~:text=The%20CloseEvent%20class
++         */
++        const event = new (globalThis.CloseEvent ?? CloseEvent)("close", ev)
++        standard.onclose?.(event)
++        standard.dispatchEvent(event)
++    })
++}
++
++// `ErrorEvent` does not exist in browsers. The "error"
++// event is an instance of `Error`, but on the server,
++// there is more information available about the exact
++// error, which is exposed via this subclass.
++export class ErrorEvent extends Event {
++    constructor(readonly error: Error, readonly message: string) {
++        super("error")
++    }
++}
++
++export class CloseEvent extends Event implements globalThis.CloseEvent {
++    readonly code: number
++    readonly reason: string
++    readonly wasClean: boolean
++
++    constructor(type: string, eventInitDict: CloseEventInit) {
++        super(type, eventInitDict)
++        this.code = eventInitDict.code ?? 0
++        this.reason = eventInitDict.reason ?? ""
++        this.wasClean = eventInitDict.wasClean ?? false
++    }
++}
+-- 
+2.47.0.windows.2
+

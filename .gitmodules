@@ -4,9 +4,18 @@
 	branch = main
 	shallow = true
 	ignore = all
+	active = false
 [submodule "packages/bun-websocket/NuroDev/astro-bun"]
 	path = packages/bun-websocket/NuroDev/astro-bun
 	url = https://github.com/NuroDev/astro-bun
 	branch = main
 	shallow = true
 	ignore = all
+	active = false
+[submodule "packages/deno-websocket/denoland/deno-astro-adapter"]
+	path = packages/deno-websocket/denoland/deno-astro-adapter
+	url = https://github.com/denoland/deno-astro-adapter
+	branch = main
+	shallow = true
+	ignore = all
+	active = false
