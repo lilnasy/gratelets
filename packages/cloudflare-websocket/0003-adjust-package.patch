@@ -1,4 +1,4 @@
-From 16b9265a1e248c7769f5d2fc7291b640754fdbc5 Mon Sep 17 00:00:00 2001
+From 15acaf09f79c018e2e9e61f2be7eb4aeefc9a47c Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Sun, 22 Dec 2024 01:52:33 +0530
 Subject: [PATCH 3/3] adjust package
@@ -9,7 +9,7 @@ Subject: [PATCH 3/3] adjust package
  2 files changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
-index c1a5b249..855e9e6d 100644
+index 26af5003..71065495 100644
 --- a/packages/cloudflare/src/index.ts
 +++ b/packages/cloudflare/src/index.ts
 @@ -174,7 +174,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
@@ -29,8 +29,8 @@ index c1a5b249..855e9e6d 100644
 +					entrypoint: new URL("./entrypoints/middleware.ts", import.meta.url),
  					order: 'pre',
  				});
- 			},
-@@ -228,15 +228,15 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 				if (command === "dev") {
+@@ -234,15 +234,15 @@ export default function createIntegration(args?: Options): AstroIntegration {
  			'astro:config:done': ({ setAdapter, config, buildOutput, logger }) => {
  				if (buildOutput === 'static') {
  					logger.warn(

@@ -2,3 +2,4 @@
 **/dist
 **/dist_*
 **/.astro
+tests/.wrangler

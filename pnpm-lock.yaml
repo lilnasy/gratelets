@@ -218,6 +218,9 @@ importers:
       astro-bun-websocket:
         specifier: workspace:*
         version: link:../packages/bun-websocket
+      astro-cloudflare-websocket:
+        specifier: workspace:*
+        version: link:../packages/cloudflare-websocket
       astro-deno-websocket:
         specifier: workspace:*
         version: link:../packages/deno-websocket

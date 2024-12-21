@@ -1,15 +1,15 @@
-From e81d06d0cbc245207705c5bbae39bac9badf45d8 Mon Sep 17 00:00:00 2001
+From 7951f599557f7f5415893c68ecd8b43db9af9109 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Sun, 22 Dec 2024 01:42:33 +0530
 Subject: [PATCH 2/3] use implementation
 
 ---
- packages/cloudflare/src/entrypoints/server.ts | 38 ++++++++++++-
- packages/cloudflare/src/index.ts              | 57 ++++++++++++++++++-
- 2 files changed, 93 insertions(+), 2 deletions(-)
+ packages/cloudflare/src/entrypoints/server.ts | 47 +++++++++++++-
+ packages/cloudflare/src/index.ts              | 63 ++++++++++++++++++-
+ 2 files changed, 108 insertions(+), 2 deletions(-)
 
 diff --git a/packages/cloudflare/src/entrypoints/server.ts b/packages/cloudflare/src/entrypoints/server.ts
-index 0ccc39e2..fc8e6306 100644
+index 0ccc39e2..ad03ec90 100644
 --- a/packages/cloudflare/src/entrypoints/server.ts
 +++ b/packages/cloudflare/src/entrypoints/server.ts
 @@ -7,6 +7,7 @@ import type { SSRManifest } from 'astro';
@@ -70,12 +70,21 @@ index 0ccc39e2..fc8e6306 100644
  				ctx: {
  					waitUntil: (promise: Promise<any>) => context.waitUntil(promise),
  					// Currently not available: https://developers.cloudflare.com/pages/platform/known-issues/#pages-functions
-@@ -82,6 +113,11 @@ export function createExports(manifest: SSRManifest) {
+@@ -82,6 +113,20 @@ export function createExports(manifest: SSRManifest) {
  
  		const response = await app.render(request, { routeData, locals });
  
 +		const socket = responseToSocketMap.get(response)
 +		if (socket) {
++			// @ts-expect-error Cloudflare's extends WebSocket with an accept
++			// method that must be called before the socket can be used.
++			// In our API, returning the upgrade response from an API route
++			// or the page implies accepting the WebSocket connection.
++			socket.accept()
++			// @ts-expect-error This listener should exist to avoid
++			// "script will never generate a response" errors, but for some
++			// reason, they happen anyway in workerd.
++			socket.addEventListener("close", e => e.currentTarget.close())
 +			socket.dispatchEvent(new Event("open"))
 +		}
 +
@@ -83,7 +92,7 @@ index 0ccc39e2..fc8e6306 100644
  			for (const setCookieHeader of app.setCookieHeaders(response)) {
  				response.headers.append('Set-Cookie', setCookieHeader);
 diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
-index c69cfbc7..c1a5b249 100644
+index c69cfbc7..26af5003 100644
 --- a/packages/cloudflare/src/index.ts
 +++ b/packages/cloudflare/src/index.ts
 @@ -5,7 +5,7 @@ import type {
@@ -167,7 +176,20 @@ index c69cfbc7..c1a5b249 100644
  	return {
  		name: '@astrojs/cloudflare',
  		hooks: {
-@@ -206,6 +257,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -170,6 +221,12 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 					entrypoint: '@astrojs/cloudflare/entrypoints/middleware.js',
+ 					order: 'pre',
+ 				});
++				if (command === "dev") {
++					addMiddleware({
++						entrypoint: new URL("./websocket/dev-middleware.ts", import.meta.url),
++						order: "pre"
++					})
++				}
+ 			},
+ 			'astro:routes:resolved': ({ routes }) => {
+ 				_routes = routes;
+@@ -206,6 +263,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  				});
  			},
  			'astro:server:setup': async ({ server }) => {
@@ -175,7 +197,7 @@ index c69cfbc7..c1a5b249 100644
  				if ((args?.platformProxy?.enabled ?? true) === true) {
  					const platformProxy = await getPlatformProxy(args?.platformProxy);
  
-@@ -234,6 +286,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -234,6 +292,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					});
  				}
  			},
