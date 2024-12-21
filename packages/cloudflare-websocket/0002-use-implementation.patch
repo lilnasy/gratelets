@@ -1,4 +1,4 @@
-From 7951f599557f7f5415893c68ecd8b43db9af9109 Mon Sep 17 00:00:00 2001
+From 2a6cbac46ca012c238f0af507b09f700e4c8da3b Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Sun, 22 Dec 2024 01:42:33 +0530
 Subject: [PATCH 2/3] use implementation
@@ -9,7 +9,7 @@ Subject: [PATCH 2/3] use implementation
  2 files changed, 108 insertions(+), 2 deletions(-)
 
 diff --git a/packages/cloudflare/src/entrypoints/server.ts b/packages/cloudflare/src/entrypoints/server.ts
-index 0ccc39e2..ad03ec90 100644
+index 0ccc39e2..2f591c92 100644
 --- a/packages/cloudflare/src/entrypoints/server.ts
 +++ b/packages/cloudflare/src/entrypoints/server.ts
 @@ -7,6 +7,7 @@ import type { SSRManifest } from 'astro';
@@ -27,7 +27,7 @@ index 0ccc39e2..ad03ec90 100644
 +/**
 + * Cloudflare workers do not fire the open event. This results
 + * in interop issues with the other runtimes.
-+ * 
++ *
 + * The server websocket is tracked in this so that - when the
 + * corresponding response is returned - the open event can be
 + * dispatched on it.
