@@ -78,6 +78,9 @@ importers:
       miniflare:
         specifier: ^3.20241106.1
         version: 3.20241218.0(bufferutil@4.0.8)
+      rollup:
+        specifier: ^4.29.1
+        version: 4.29.1
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9

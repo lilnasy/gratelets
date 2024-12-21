@@ -33,6 +33,7 @@
         "estree-walker": "^3.0.3",
         "magic-string": "^0.30.14",
         "miniflare": "^3.20241106.1",
+        "rollup": "^4.29.1",
         "tiny-glob": "^0.2.9",
         "vite": "^6.0.2",
         "wrangler": "^3.91.0",
