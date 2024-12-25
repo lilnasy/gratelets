@@ -35,7 +35,7 @@
         "zod": "3"
     },
     "dependencies": {
-        "es-codec": "0.5",
+        "devalue": "5",
         "globby": "14"
     },
     "devDependencies": {

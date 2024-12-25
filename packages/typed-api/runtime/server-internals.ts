@@ -1,5 +1,4 @@
 import type { APIRoute } from "astro"
-import { encode, decode } from "es-codec"
 import {
     AcceptHeaderMissing,
     UnsupportedClient,
@@ -9,39 +8,54 @@ import {
     OutputNotSerializable,
     TypedAPIError
 } from "./errors.ts"
-import { paramsToData } from "./param-codec.ts"
 import type { TypedAPIContext } from "./server.ts"
+import { stringify, parse } from "devalue"
 
-export function createApiRoute(fetch: (input: unknown, content: TypedAPIContext) => unknown): APIRoute {
+export function createApiRoute(fetchImpl: (input: unknown, content: TypedAPIContext) => unknown): APIRoute {
     return async function (ctx) {
-        const { request } = ctx
-        const { method, headers, url } = request
+        const { request, url: { pathname, searchParams} } = ctx
+        const { headers } = request
         const contentType = headers.get("Content-Type")
         const accept = headers.get("Accept")
-        if (accept === null) throw new AcceptHeaderMissing(request)
+        if (accept === null) {
+            throw new AcceptHeaderMissing(request)
+        }
         if (
-            accept.includes("application/escodec") === false &&
+            accept.includes("application/devalue") === false &&
             accept.includes("application/json") === false
-        ) throw new UnsupportedClient(request)
-        
+        ) {
+            throw new UnsupportedClient(request)
+        }
         let input: any
-        if (method === "GET") {
-            const { searchParams } = new URL(url)
-            input = Object.fromEntries(searchParams.entries())
-            input = paramsToData(input)
+        if (contentType === "application/json-urlencoded") {
+            input = searchParams.get("input")
+            if (input) try {
+                input = JSON.parse(input)
+            } catch (error) {
+                throw new InputNotDeserializable(error, pathname)
+            }
+        } else if (contentType === "application/devalue-urlencoded") {
+            input = searchParams.get("input")
+            if (input) try {
+                input = parse(input)
+            } catch (error) {
+                throw new InputNotDeserializable(error, pathname)
+            }
         } else if (contentType === "application/json") {
             try {
                 input = await request.json()
             } catch (error) {
-                throw new InputNotDeserializable(error, url)
+                throw new InputNotDeserializable(error, pathname)
             }
-        } else if (contentType === "application/escodec") {
+        } else if (contentType === "application/devalue") {
             try {
-                input = decode(await request.arrayBuffer())
+                input = parse(await request.text())
             } catch (error) {
-                throw new InputNotDeserializable(error, url)
+                throw new InputNotDeserializable(error, pathname)
             }
-        } else throw new UnknownRequestFormat(request)
+        } else if (contentType !== null) {
+            throw new UnknownRequestFormat(request)
+        }
         
         const response = {
             status: 200,
@@ -59,10 +73,10 @@ export function createApiRoute(fetch: (input: unknown, content: TypedAPIContext)
         
         let output: any
         try {
-            output = await fetch(input, context)
+            output = await fetchImpl(input, context)
         } catch (error) {
             if (error instanceof TypedAPIError) throw error
-            const procedureFailed = new ProcedureFailed(error, url)
+            const procedureFailed = new ProcedureFailed(error, pathname)
             if (import.meta.env.DEV) {
                 // some errors are thrown intentionally
                 // until a full error handling api is implemented, manually return 500 responses
@@ -75,19 +89,19 @@ export function createApiRoute(fetch: (input: unknown, content: TypedAPIContext)
             }
         }
         
-        let outputBody
-        if (accept.includes("application/escodec")) {
+        let outputBody: string | undefined = undefined
+        if (accept.includes("application/devalue")) {
             try {
-                outputBody = encode(output)
+                outputBody = stringify(output)
             } catch (error) {
-                throw new OutputNotSerializable(error, url)
+                throw new OutputNotSerializable(error, pathname)
             }
-            response.headers.set("Content-Type", "application/escodec")
+            response.headers.set("Content-Type", "application/devalue")
         } else if (accept.includes("application/json")) {
             try {
                 outputBody = JSON.stringify(output)
             } catch (error) {
-                throw new OutputNotSerializable(error, url)
+                throw new OutputNotSerializable(error, pathname)
             }
             response.headers.set("Content-Type", "application/json")
         }
