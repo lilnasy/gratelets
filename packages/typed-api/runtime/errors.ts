@@ -13,7 +13,7 @@ export class MissingHTTPVerb extends TypedAPIError<undefined> {
         super(
             undefined,
             `Request to endpoint ${endpoint} cannot be made because the method is missing.`,
-            "When targetting the ALL API Route handler, the method must be provided in options."
+            "When targetting the 'ALL' API Route handler, the method must be provided in options."
         )
     }
 }

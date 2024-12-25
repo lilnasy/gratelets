@@ -1,31 +1,46 @@
-import { encode, decode } from "es-codec"
+import { parse, stringify } from "devalue"
 import {
     MissingHTTPVerb,
     IncorrectHTTPVerb,
     ResponseNotOK,
     UnknownResponseFormat
 } from "./errors.ts"
-import { dataToParams } from "./param-codec.ts"
 
-export const proxyTarget = { typedApiEndpoint: new Array<string> }
-export const proxyHandler: ProxyHandler<typeof proxyTarget> = { get }
+export function proxyTarget() {}
+
+export const proxyHandler: ProxyHandler<typeof proxyTarget> & { path: string[] } = {
+    path: [],
+    get(target, prop) {
+        const x = this
+        if (typeof prop === "symbol") {
+            throw new TypeError(`The typed API client cannot be keyed with ${String(prop)}.`)
+        }
+        return new Proxy(target, {
+            ...proxyHandler,
+            // @ts-expect-error Object literal may only specify known properties, and 'path'
+            // does not exist in type 'ProxyHandler<() => void>'.
+            path: [
+                ...this.path,
+                prop
+            ]
+        })
+    },
+    apply(target, thisArg, argArray) {
+        const { path } = this
+        const callType = path.pop()!
+        const method = path.pop()!
+        if (callType === "fetch") {
+            return callServer(path, method, argArray[0], argArray[1])
+        }
+        return Reflect.apply(target, thisArg, argArray)
+    },
+}
 
 interface Options extends RequestInit {
     params?: Record<string, string>
 }
 
-function get(target: typeof proxyTarget, prop: string) {
-    if (typeof prop === "symbol") throw new TypeError(`The typed API client cannot be keyed with ${String(prop)}.`)
-    const { typedApiEndpoint } = target
-    if (prop === "fetch") {
-        const method = typedApiEndpoint.pop()!
-        return (input: any, options?: Options) => callServer(typedApiEndpoint, method, input, options)
-    }
-    return new Proxy({ typedApiEndpoint: [...typedApiEndpoint, prop] }, proxyHandler)
-}
-
 async function callServer(segments: string[], method_: string, input: any, options: Options = {}) {
-    const { origin } = location
     let pathname_ = "/api"
     const { params } = options
     nextSegment:
@@ -48,20 +63,50 @@ async function callServer(segments: string[], method_: string, input: any, optio
         if (pathname_.endsWith("/") === false) pathname_ += "/"
     }
     const pathname = pathname_
+
     const method = method_ === "ALL" ? options.method : method_
     if (method === undefined) throw new MissingHTTPVerb(pathname)
     if (method !== method.toUpperCase()) throw new IncorrectHTTPVerb(method, pathname)
     const isGET = method === "GET"
-    const searchParams = isGET ? "?" + String(new URLSearchParams(dataToParams(input))) : ""
-    const url = new URL(pathname + searchParams, origin)
+    const url = new URL(pathname, location.origin)
     const headers = new Headers(options.headers)
-    headers.set("Accept", "application/escodec, application/json")
-    if (isGET === false) headers.set("Content-Type", "application/escodec")
-    const body = isGET ? undefined : encode(input)
+    headers.set("Accept",
+        import.meta.env.TYPED_API_SERIALIZATION === "devalue"
+            ? "application/devalue, application/json"
+            : "application/json"
+        )
+
+    let body: BodyInit | null = null
+    if (input !== undefined) {
+        if (isGET) {
+            if (import.meta.env.TYPED_API_SERIALIZATION === "devalue") {
+                headers.set("Content-Type", "application/devalue-urlencoded")
+                url.searchParams.set("input", stringify(input))
+            } else {
+                headers.set("Content-Type", "application/json-urlencoded")
+                url.searchParams.set("input", JSON.stringify(input))
+            }
+        } else {
+            if (import.meta.env.TYPED_API_SERIALIZATION === "devalue") {
+                headers.set("Content-Type", "application/devalue")
+                body = stringify(input)
+            } else {
+                headers.set("Content-Type", "application/json")
+                body = JSON.stringify(input)
+            }
+        }
+    }
+
     const response = await fetch(url, { ...options, method, body, headers })
-    if (response.ok === false) throw new ResponseNotOK(response)
+
+    if (response.ok === false) {
+        throw new ResponseNotOK(response)
+    }
     const contentType = response.headers.get("Content-Type")
-    if (contentType === "application/escodec") return decode(await response.arrayBuffer())
-    if (contentType === "application/json") return await response.json()
+    if (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && contentType === "application/devalue") {
+        return parse(await response.text())
+    } else if (contentType === "application/json") {
+        return await response.json()
+    }
     throw new UnknownResponseFormat(response)
 }

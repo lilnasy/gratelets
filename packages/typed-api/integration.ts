@@ -4,9 +4,24 @@ import path from "node:path"
 import { globby } from "globby"
 import type { AstroIntegration } from "astro"
 
-export interface Options {}
+export interface Options {
+    /**
+     * The serialization format to use for the API.
+     * The value can be `"JSON"`, or `"devalue"`
+     * 
+     * - `"JSON"`: messages will be serialized using
+     * the built-in `JSON.stringify()` and deserialized
+     * using `JSON.parse()`.
+     * 
+     * - `"devalue"`: messages will be serialized
+     * using the `stringify()` function and deserialized
+     * using the `parse()` function from the [`devalue` npm
+     * package](https://www.npmjs.com/package/devalue).
+     */
+    serialization?: "JSON" | "devalue"
+}
 
-export default function (_?: Partial<Options>): AstroIntegration {
+export default function (options?: Partial<Options>): AstroIntegration {
     let apiDir: URL
     let root: URL
     let dotAstroDir: URL
@@ -30,7 +45,8 @@ export default function (_?: Partial<Options>): AstroIntegration {
                 updateConfig({
                     vite: {
                         define: {
-                            "import.meta.env._TRAILING_SLASH": JSON.stringify(config.trailingSlash)
+                            "import.meta.env._TRAILING_SLASH": JSON.stringify(config.trailingSlash),
+                            "import.meta.env.TYPED_API_SERIALIZATION": JSON.stringify(options?.serialization)
                         },
                         ssr: {
                             // this package is published as uncompiled typescript, which we need vite to process
