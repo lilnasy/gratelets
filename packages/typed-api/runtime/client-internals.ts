@@ -4,7 +4,7 @@ import {
     IncorrectHTTPVerb,
     ResponseNotOK,
     UnknownResponseFormat
-} from "./errors.ts"
+} from "./errors.client.ts"
 
 export function proxyTarget() {}
 
@@ -30,46 +30,31 @@ export const proxyHandler: ProxyHandler<typeof proxyTarget> & { path: string[] }
         const callType = path.pop()!
         const method = path.pop()!
         if (callType === "fetch") {
-            return callServer(path, method, argArray[0], argArray[1])
+            return callFetch(path, method, argArray[0], argArray[1])
+        } else if (callType === "subscribe") {
+            return createEventSource(path, argArray[0], argArray[1])
         }
         return Reflect.apply(target, thisArg, argArray)
     },
 }
 
-interface Options extends RequestInit {
+interface ParamOptions {
     params?: Record<string, string>
 }
 
-async function callServer(segments: string[], method_: string, input: any, options: Options = {}) {
-    let pathname_ = "/api"
-    const { params } = options
-    nextSegment:
-    for (const segment of segments) {
-        if (typeof params === "object") {
-            for (const paramName in params) {
-                if (segment === `_${paramName}` || segment === `_${paramName}_`) {
-                    const paramValue = params[paramName]
-                    pathname_ += "/" + paramValue
-                    continue nextSegment
-                }
-            }
-        }
-        pathname_ += "/" + segment
-    }
-    if (import.meta.env.BASE_URL !== "/") {
-        pathname_ = (import.meta.env.BASE_URL + pathname_).split("/").filter(Boolean).join("/")
-    }
-    if (import.meta.env._TRAILING_SLASH === "always") {
-        if (pathname_.endsWith("/") === false) pathname_ += "/"
-    }
-    const pathname = pathname_
+interface FetchOptions extends RequestInit, ParamOptions {}
 
-    const method = method_ === "ALL" ? options.method : method_
+async function callFetch(segments: string[], method_: string, input: any, options?: FetchOptions) {
+    
+    const pathname = path(segments, options)
+    
+    const method = method_ === "ALL" ? options?.method : method_
     if (method === undefined) throw new MissingHTTPVerb(pathname)
     if (method !== method.toUpperCase()) throw new IncorrectHTTPVerb(method, pathname)
+    
     const isGET = method === "GET"
     const url = new URL(pathname, location.origin)
-    const headers = new Headers(options.headers)
+    const headers = new Headers(options?.headers)
     headers.set("Accept",
         import.meta.env.TYPED_API_SERIALIZATION === "devalue"
             ? "application/devalue, application/json"
@@ -109,4 +94,60 @@ async function callServer(segments: string[], method_: string, input: any, optio
         return await response.json()
     }
     throw new UnknownResponseFormat(response)
+}
+
+interface EventSourceOptions extends EventSourceInit, ParamOptions {}
+
+async function createEventSource(segments: string[], input: any, options?: EventSourceOptions): Promise<AsyncIterator<any>> {
+    const pathname = path(segments, options)
+    const url = new URL(pathname, location.origin)
+    if (input !== undefined) {
+        if (import.meta.env.TYPED_API_SERIALIZATION === "devalue") {
+            url.searchParams.set("input", stringify(input))
+        } else {
+            url.searchParams.set("input", JSON.stringify(input))
+        }
+    }
+    const es = new EventSource(url, options)
+    await new Promise((resolve, reject) => {
+        es.onopen = resolve
+        es.onerror = reject
+    })
+    return {
+        next() {
+            return new Promise((resolve, reject) => {
+                es.onmessage = event => resolve({ value: event.data, done: false })
+                es.onerror = reject
+            })
+        },
+        async return() {
+            es.close()
+            return { value: undefined, done: true }
+        }
+    }
+}
+
+function path(segments: string[], options?: ParamOptions) {
+    let pathname = "/api"
+    const params = options?.params
+    nextSegment:
+    for (const segment of segments) {
+        if (typeof params === "object") {
+            for (const paramName in params) {
+                if (segment === `_${paramName}` || segment === `_${paramName}_`) {
+                    const paramValue = params[paramName]
+                    pathname += "/" + paramValue
+                    continue nextSegment
+                }
+            }
+        }
+        pathname += "/" + segment
+    }
+    if (import.meta.env.BASE_URL !== "/") {
+        pathname = (import.meta.env.BASE_URL + pathname).split("/").filter(Boolean).join("/")
+    }
+    if (import.meta.env._TRAILING_SLASH === "always") {
+        if (pathname.endsWith("/") === false) pathname += "/"
+    }
+    return pathname
 }
