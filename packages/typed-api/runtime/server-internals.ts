@@ -1,31 +1,43 @@
-import type { APIRoute } from "astro"
+import type { APIContext, APIRoute } from "astro"
+import { TypedAPIError } from "./errors.ts"
 import {
     AcceptHeaderMissing,
     UnsupportedClient,
     UnknownRequestFormat,
     InputNotDeserializable,
     ProcedureFailed,
+    ProcedureNotImplemented,
     OutputNotSerializable,
-    TypedAPIError
-} from "./errors.ts"
-import type { TypedAPIContext } from "./server.ts"
+    ZodNotInstalled,
+    InvalidSchema,
+    ValidationFailed,
+} from "./errors.server.ts"
 import { stringify, parse } from "devalue"
+import type { ZodTypeAny } from "zod"
+import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
 
-export function createApiRoute(fetchImpl: (input: unknown, content: TypedAPIContext) => unknown): APIRoute {
+export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
     return async function (ctx) {
-        const { request, url: { pathname, searchParams} } = ctx
+        const { request, url: { pathname, searchParams } } = ctx
         const { headers } = request
         const contentType = headers.get("Content-Type")
         const accept = headers.get("Accept")
         if (accept === null) {
             throw new AcceptHeaderMissing(request)
         }
+
+        const acceptsDevalue = accept.includes("application/devalue")
+        const acceptsJson = accept.includes("application/json")
+        const acceptsEventStream = accept.includes("text/event-stream")
+        
         if (
-            accept.includes("application/devalue") === false &&
-            accept.includes("application/json") === false
+            acceptsDevalue === false &&
+            acceptsJson === false && 
+            acceptsEventStream === false
         ) {
             throw new UnsupportedClient(request)
         }
+
         let input: any
         if (contentType === "application/json-urlencoded") {
             input = searchParams.get("input")
@@ -56,6 +68,10 @@ export function createApiRoute(fetchImpl: (input: unknown, content: TypedAPICont
         } else if (contentType !== null) {
             throw new UnknownRequestFormat(request)
         }
+
+        if ("schema" in handler && handler.schema) {
+            input = await validateInput(input, handler.schema, pathname)
+        }
         
         const response = {
             status: 200,
@@ -73,7 +89,28 @@ export function createApiRoute(fetchImpl: (input: unknown, content: TypedAPICont
         
         let output: any
         try {
-            output = await fetchImpl(input, context)
+            if (acceptsEventStream && "subscribe" in handler && handler.subscribe) {
+                const iterator = await handler.subscribe(input, context)
+                const stream = new ReadableStream({
+                    async pull(controller) {
+                        const { value, done } = await iterator.next()
+                        if (done) {
+                            controller.close()
+                        } else {
+                            controller.enqueue(value)
+                        }
+                    },
+                    async cancel() {
+                        await iterator.return?.()
+                    }
+                })
+                response.headers.set("Content-Type", "text/event-stream")
+                return new Response(stream, response)
+            } else if ("fetch" in handler && handler.fetch) {
+                output = await handler.fetch(input, context)
+            } else {
+                throw new ProcedureNotImplemented(pathname, acceptsEventStream)
+            }
         } catch (error) {
             if (error instanceof TypedAPIError) throw error
             const procedureFailed = new ProcedureFailed(error, pathname)
@@ -90,14 +127,14 @@ export function createApiRoute(fetchImpl: (input: unknown, content: TypedAPICont
         }
         
         let outputBody: string | undefined = undefined
-        if (accept.includes("application/devalue")) {
+        if (acceptsDevalue) {
             try {
                 outputBody = stringify(output)
             } catch (error) {
                 throw new OutputNotSerializable(error, pathname)
             }
             response.headers.set("Content-Type", "application/devalue")
-        } else if (accept.includes("application/json")) {
+        } else if (acceptsJson) {
             try {
                 outputBody = JSON.stringify(output)
             } catch (error) {
@@ -107,5 +144,22 @@ export function createApiRoute(fetchImpl: (input: unknown, content: TypedAPICont
         }
         
         return new Response(outputBody, response)
+    }
+}
+
+async function validateInput(input: unknown, schema: unknown, pathname: string) {
+    let zod: typeof import("zod") | undefined
+    try {
+        zod = await import("zod")
+    } catch {
+        throw new ZodNotInstalled
+    }
+    if (schema instanceof zod.ZodType === false) {
+        throw new InvalidSchema(schema)
+    }
+    try {
+        return schema.parse(input)
+    } catch (error) {
+        throw new ValidationFailed(error, pathname, input)
     }
 }
