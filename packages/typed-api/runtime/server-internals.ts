@@ -13,7 +13,6 @@ import {
     ValidationFailed,
 } from "./errors.server.ts"
 import { stringify, parse } from "devalue"
-import type { ZodTypeAny } from "zod"
 import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
 
 export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
@@ -39,14 +38,20 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
         }
 
         let input: any
-        if (contentType === "application/json-urlencoded") {
+        if (
+            contentType === "application/json-urlencoded" ||
+            (import.meta.env.TYPED_API_SERIALIZATION !== "devalue" && acceptsEventStream)
+        ) {
             input = searchParams.get("input")
             if (input) try {
                 input = JSON.parse(input)
             } catch (error) {
                 throw new InputNotDeserializable(error, pathname)
             }
-        } else if (contentType === "application/devalue-urlencoded") {
+        } else if (
+            contentType === "application/devalue-urlencoded" ||
+            (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && acceptsEventStream)
+        ) {
             input = searchParams.get("input")
             if (input) try {
                 input = parse(input)
@@ -72,21 +77,21 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
         if ("schema" in handler && handler.schema) {
             input = await validateInput(input, handler.schema, pathname)
         }
-        
+
         const response = {
             status: 200,
             statusText: "OK",
             headers: new Headers
         }
-        
+
         Object.defineProperty(response, "headers", {
             value: response.headers,
             enumerable: true,
             writable: false
         })
-        
+
         const context: TypedAPIContext = Object.assign(ctx, { response })
-        
+
         let output: any
         try {
             if (acceptsEventStream && "subscribe" in handler && handler.subscribe) {
@@ -95,9 +100,14 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
                     async pull(controller) {
                         const { value, done } = await iterator.next()
                         if (done) {
+                            controller.enqueue("event:close\ndata:\n\n")
                             controller.close()
                         } else {
-                            controller.enqueue(value)
+                            controller.enqueue(`data:${
+                                import.meta.env.TYPED_API_SERIALIZATION === "devalue"
+                                    ? stringify(value)
+                                    : JSON.stringify(value)
+                            }\n\n`)
                         }
                     },
                     async cancel() {
@@ -125,7 +135,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
                 throw procedureFailed
             }
         }
-        
+
         let outputBody: string | undefined = undefined
         if (acceptsDevalue) {
             try {

@@ -88,7 +88,7 @@ export default function (options?: Partial<Options>): AstroIntegration {
     }
 }
 
-async function generateAndWriteDeclaration(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
+function generateAndWriteDeclaration(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
     fs.mkdirSync(new URL(".", declarationFileUrl), { recursive: true })
     fs.writeFileSync(declarationFileUrl, generateDeclaration(filenames, apiDir, declarationFileUrl))
 }

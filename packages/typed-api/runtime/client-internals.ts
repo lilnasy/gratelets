@@ -11,7 +11,6 @@ export function proxyTarget() {}
 export const proxyHandler: ProxyHandler<typeof proxyTarget> & { path: string[] } = {
     path: [],
     get(target, prop) {
-        const x = this
         if (typeof prop === "symbol") {
             throw new TypeError(`The typed API client cannot be keyed with ${String(prop)}.`)
         }
@@ -109,6 +108,7 @@ async function createEventSource(segments: string[], input: any, options?: Event
         }
     }
     const es = new EventSource(url, options)
+    es.addEventListener("close",() => es.close())
     await new Promise((resolve, reject) => {
         es.onopen = resolve
         es.onerror = reject
