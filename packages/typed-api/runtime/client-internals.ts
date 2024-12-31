@@ -56,7 +56,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
     const headers = new Headers(options?.headers)
     headers.set("Accept",
         import.meta.env.TYPED_API_SERIALIZATION === "devalue"
-            ? "application/devalue, application/json"
+            ? "application/devalue+json, application/json"
             : "application/json"
         )
 
@@ -72,7 +72,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
             }
         } else {
             if (import.meta.env.TYPED_API_SERIALIZATION === "devalue") {
-                headers.set("Content-Type", "application/devalue")
+                headers.set("Content-Type", "application/devalue+json")
                 body = stringify(input)
             } else {
                 headers.set("Content-Type", "application/json")
@@ -87,7 +87,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
         throw new ResponseNotOK(response)
     }
     const contentType = response.headers.get("Content-Type")
-    if (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && contentType === "application/devalue") {
+    if (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && contentType === "application/devalue+json") {
         return parse(await response.text())
     } else if (contentType === "application/json") {
         return await response.json()
@@ -97,7 +97,11 @@ async function callFetch(segments: string[], method_: string, input: any, option
 
 interface EventSourceOptions extends EventSourceInit, ParamOptions {}
 
-async function createEventSource(segments: string[], input: any, options?: EventSourceOptions): Promise<AsyncIterator<any>> {
+async function createEventSource(
+    segments: string[],
+    input: any,
+    options?: EventSourceOptions
+): Promise<AsyncIterableIterator<any>> {
     const pathname = path(segments, options)
     const url = new URL(pathname, location.origin)
     if (input !== undefined) {
@@ -113,11 +117,40 @@ async function createEventSource(segments: string[], input: any, options?: Event
         es.onopen = resolve
         es.onerror = reject
     })
-    return {
+    const iter = {
+        [Symbol.asyncIterator]() {
+            return this
+        },
         next() {
-            return new Promise((resolve, reject) => {
-                es.onmessage = event => resolve({ value: event.data, done: false })
-                es.onerror = reject
+            return new Promise<{ value: any, done: boolean }>((resolve, reject) => {
+                const ac = new AbortController()
+                es.addEventListener(
+                    "message",
+                    event => {
+                        ac.abort()
+                        const value = import.meta.env.TYPED_API_SERIALIZATION === "devalue"
+                            ? parse(event.data)
+                            : JSON.parse(event.data)
+                        resolve({ done: false, value })
+                    },
+                    { once: true, signal: ac.signal }
+                )
+                es.addEventListener(
+                    "close",
+                    _ => {
+                        ac.abort()
+                        resolve({ done: true, value: undefined })
+                    },
+                    { once: true, signal: ac.signal }
+                )
+                es.addEventListener(
+                    "error",
+                    event => {
+                        ac.abort()
+                        reject(event)
+                    },
+                    { once: true, signal: ac.signal }
+                )
             })
         },
         async return() {
@@ -125,6 +158,7 @@ async function createEventSource(segments: string[], input: any, options?: Event
             return { value: undefined, done: true }
         }
     }
+    return iter
 }
 
 function path(segments: string[], options?: ParamOptions) {
