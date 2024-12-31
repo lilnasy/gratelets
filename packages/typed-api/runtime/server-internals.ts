@@ -13,7 +13,7 @@ import {
     ValidationFailed,
 } from "./errors.server.ts"
 import { stringify, parse } from "devalue"
-import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
+import type { TypedAPIContext, TypedAPIHandler, TypedAPISubscriptionContext } from "./server.ts"
 
 export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
     return async function (ctx) {
@@ -90,11 +90,10 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             writable: false
         })
 
-        const context: TypedAPIContext = Object.assign(ctx, { response })
-
         let output: any
         try {
             if (acceptsEventStream && "subscribe" in handler && handler.subscribe) {
+                const context: TypedAPISubscriptionContext = Object.assign(ctx, { response, lastEventId: headers.get("Last-Event-ID") })
                 const iterator = await handler.subscribe(input, context)
                 const stream = new ReadableStream({
                     async pull(controller) {
@@ -117,6 +116,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
                 response.headers.set("Content-Type", "text/event-stream")
                 return new Response(stream, response)
             } else if ("fetch" in handler && handler.fetch) {
+                const context: TypedAPIContext = Object.assign(ctx, { response })
                 output = await handler.fetch(input, context)
             } else {
                 throw new ProcedureNotImplemented(pathname, acceptsEventStream)
