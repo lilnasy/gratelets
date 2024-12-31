@@ -27,7 +27,7 @@ type ModuleProxy<EndpointModule, Params extends string> = {
 type MethodProxy<MethodExport, Params extends string, Method extends string> =
     MethodExport extends TypedAPIHandler<infer Input, infer Output>
         ? ClientFunctions<MethodExport, Input, Output, Params, Method>
-        : TypedAPITypeError<"This export from the API Route was not a typed handler. Please make sure it was created using `defineApiRoute`.">
+        : TypedAPITypeError<"This export from the API Route is not a typed handler. Please make sure it is created using either `defineApiRoute` or `defineEndpoint`, which are exported by the module `\"astro-typed-api/server\"`.">
 
 type EndpointToObject<Endpoint extends string, ModuleProxy> =
     Endpoint extends `[...${infer Param}]`
@@ -45,7 +45,8 @@ type RequireParam<MP, Param extends string> =
         ? ModuleProxy<EP, MapString<Params, never> | Param>
         : TypedAPITypeError<"Types for this route with params could not be generated. This is probably a bug. Please open an issue with the minimal reproduction steps.">
 
-/***** FETCH FUNCTION *****/
+
+/***** CALLABLE FUNCTIONS *****/
 
 export type ClientFunctions<
     MethodExport extends TypedAPIHandler<unknown, unknown>,
@@ -54,109 +55,113 @@ export type ClientFunctions<
     Params extends string,
     Method extends string
 > = 
-    IsNever<Params> extends true
-        // When the method is ALL, the options should become
-        // required and they must have the method field.
-        // FetchM is the type requiring those conditions.
+    IsEmptyUnion<Params> extends true
         ? Method extends "ALL"
-            ? MethodExport extends { fetch: unknown }
-                ? MethodExport extends { subscribe: unknown }
-                    // The EventSource browser built-in can only make GET requests.
-                    ? FetchM<Input, Output> & InvalidSubscribeUsage<"ALL">
-                    : FetchM<Input, Output>
-                : never
-            // Input may be optional. FetchO is the type not requiring
-            // any arguments, for that case.
+            ? 
+                (MethodExport extends { fetch: unknown } ? Fetchable.RequiresMethod<Input, Output> : {}) &
+                (MethodExport extends { subscribe: unknown }
+                    // Input may not be used by the server side. For this case,
+                    // Fetchable.InputOptional and Subscribable.InputOptional are
+                    // the types not requiring any arguments.
+                    // Fetchable.InputOptional is not used above because passing
+                    // the method in arguments is still required. 
+                    ? unknown extends Input
+                        ? Subscribable.InputOptional<Input, Output>
+                        : Subscribable<Input, Output>
+                    : {}
+                )
             : unknown extends Input
-                ? MethodExport extends { fetch: unknown }
-                    ? MethodExport extends { subscribe: unknown }
-                        ? FetchO<Input, Output> & (Method extends "GET" ? SubscribeO<Input, Output> : InvalidSubscribeUsage<Method>)
-                        : FetchO<Input, Output>
-                    : never
-                : MethodExport extends { fetch: unknown }
-                    ? MethodExport extends { subscribe: unknown }
-                        ? Fetch<Input, Output> & (Method extends "GET" ? Subscribe<Input, Output> : InvalidSubscribeUsage<Method>)
-                        : Fetch<Input, Output>
-                    : never
+                ?
+                    (MethodExport extends { fetch: unknown } ? Fetchable.InputOptional<Input, Output> : {}) &
+                    (MethodExport extends { subscribe: unknown } ? MapGET<Method, Subscribable.InputOptional<Input, Output>> : {})
+                :
+                    (MethodExport extends { fetch: unknown } ? Fetchable<Input, Output> : {}) &
+                    (MethodExport extends { subscribe: unknown } ? MapGET<Method, Subscribable<Input, Output>> : {})
         // When there is a dynamic segment in the path
         // (pages/api/[x].ts -> client.api._x.GET) the
         // options should become required and they must
         // have the params field.
-        //
-        // FetchP is the type requiring the params field.
-        //
-        // FetchMP is the type requiring both params and
-        // the method to be provided.
         : Method extends "ALL"
-            ? MethodExport extends { fetch: unknown }
-                ? MethodExport extends { subscribe: unknown }
-                    ? FetchMP<Input, Output, Params> & InvalidSubscribeUsage<"ALL">
-                    : FetchMP<Input, Output, Params>
-                : never
-            : MethodExport extends { fetch: unknown }
-                ? MethodExport extends { subscribe: unknown }
-                    ? FetchP<Input, Output, Params> & (Method extends "GET" ? SubscribeP<Input, Output, Params> : InvalidSubscribeUsage<Method>)
-                    : FetchP<Input, Output, Params>
-                : never
+            ?
+                (MethodExport extends { fetch: unknown } ? Fetchable.RequiresMethodAndParams<Input, Output, Params> : {}) &
+                (MethodExport extends { subscribe: unknown } ? Subscribable.RequiresParams<Input, Output, Params> : {})
+            :
+                (MethodExport extends { fetch: unknown } ? Fetchable.RequiresParams<Input, Output, Params> : {}) &
+                (MethodExport extends { subscribe: unknown } ? MapGET<Method, Subscribable.RequiresParams<Input, Output, Params>> : {})
+
+
+/***** FETCH FUNCTION *****/
+
+interface Fetchable<Input, Output> {
+    fetch(input: Input, options?: FetchOptions): Promise<Output>
+}
+
+namespace Fetchable {
+    export interface InputOptional<Input, Output> {
+        fetch(input?: Input, options?: FetchOptions): Promise<Output>
+    }
+    export interface RequiresMethod<Input, Output> {
+        fetch(input: Input, options: FetchOptionsWithMethod): Promise<Output>
+    }
+    export interface RequiresParams<Input, Output, Params extends string> {
+        fetch(input: Input, options: FetchOptionsWithParams<Params>): Promise<Output>
+    }
+    export interface RequiresMethodAndParams<Input, Output, Params extends string> {
+        fetch(input: Input, options: FetchOptionsWithMethodAndParams<Params>): Promise<Output>
+    }
+}
+
+interface FetchOptions extends Omit<RequestInit, "body" | "method"> {}
+
+interface FetchOptionsWithMethod extends FetchOptions, Required<Pick<RequestInit, "method">> {}
+
+interface FetchOptionsWithParams<Params extends string> extends FetchOptions {
+    params: Record<Params, string>
+}
+
+interface FetchOptionsWithMethodAndParams<Params extends string>
+    extends
+        FetchOptionsWithMethod,
+        FetchOptionsWithParams<Params> {}
+
+
+/***** SUBSCRIBE FUNCTION *****/
+
+interface Subscribable<Input, Output> {
+    subscribe(input: Input, options?: SubscribeOptions): Promise<AsyncIterableIterator<Output>>
+}
+
+namespace Subscribable {
+    export interface RequiresParams<Input, Output, Params extends string> {
+        subscribe(input: Input, options: SubscribeOptionsWithParams<Params>): Promise<AsyncIterableIterator<Output>>
+    }
+    export interface InputOptional<Input, Output> {
+        subscribe(input?: Input, options?: SubscribeOptions): Promise<AsyncIterableIterator<Output>>
+    }
+}
+
+interface SubscribeOptions extends EventSourceInit {}
+
+interface SubscribeOptionsWithParams<Params extends string> extends SubscribeOptions {
+    params: Record<Params, string>
+}
 
 interface InvalidSubscribeUsage<Method extends string> {
     subscribe: TypedAPITypeError<`Server sent events can only be subscribed to using the GET method. The ${Method} handler cannot be used.`>
 }
 
-interface Fetch<Input, Output> {
-    fetch(input: Input, options?: FetchOptions): Promise<Output>
-}
-
-interface FetchO<Input, Output> {
-    fetch(input?: Input, options?: FetchOptions): Promise<Output>
-}
-
-interface FetchM<Input, Output> {
-    fetch(input: Input, options: FetchOptionsM): Promise<Output>
-}
-
-interface FetchP<Input, Output, Params extends string> {
-    fetch(input: Input, options: FetchOptionsP<Params>): Promise<Output>
-}
-
-interface FetchMP<Input, Output, Params extends string> {
-    fetch(input: Input, options: OptionsMP<Params>): Promise<Output>
-}
-
-interface FetchOptions extends Omit<RequestInit, "body" | "method"> {}
-
-interface FetchOptionsM extends FetchOptions, Required<Pick<RequestInit, "method">> {}
-
-interface FetchOptionsP<Params extends string> extends FetchOptions {
-    params: Record<Params, string>
-}
-
-interface OptionsMP<Params extends string> extends FetchOptionsM, FetchOptionsP<Params> {}
-
-
-/***** SUBSCRIBE FUNCTION *****/
-
-interface Subscribe<Input, Output> {
-    subscribe(input: Input, options?: SubscribeOptions): AsyncIterable<Output>
-}
-
-interface SubscribeP<Input, Output, Params extends string> {
-    subscribe(input: Input, options: SubscribeOptionsP<Params>): AsyncIterable<Output>
-}
-
-interface SubscribeO<Input, Output> {
-    subscribe(input?: Input, options?: SubscribeOptions): AsyncIterable<Output>
-}
-
-
-interface SubscribeOptions extends EventSourceInit {}
-
-interface SubscribeOptionsP<Params extends string> extends SubscribeOptions {
-    params: Record<Params, string>
-}
-
 
 /***** UTLITY FUNCTIONS *****/
+
+/**
+ * EventSource is GET-only. `MapGET` reports invalid usage as a 
+ * type error if the subscription request method (first parameter)
+ * is not GET, and returns the second parameter otherwise.
+ */
+type MapGET<Method extends string, IfGET> =
+    Method extends "GET"
+        ? IfGET
+        : InvalidSubscribeUsage<Method>
 
 type DeepMerge<A, B> = {
     [Key in keyof A | keyof B]:
@@ -177,4 +182,4 @@ export type MapAny<T, IfAny> = (T extends never ? true : false) extends false ? 
 
 type MapString<T, IfString> = T extends string ? string extends T ? IfString : T : T
 
-type IsNever<T> = (T extends never ? true : false) extends true ? true : false  
+type IsEmptyUnion<T> = (T extends never ? true : false) extends true ? true : false  

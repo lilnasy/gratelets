@@ -5,8 +5,15 @@ import type { infer as ZodInfer, ZodTypeAny } from "zod"
 export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
 
 export interface TypedAPIHandler<Input, Output> {
-    fetch?(input: Input, context: TypedAPIContext): Promise<Output> | Output
-    subscribe?(input: Input, context: TypedAPIContext): Promise<AsyncIterator<Output>> | AsyncIterator<Output>
+    fetch?(input: Input, context: TypedAPIContext):
+        | Promise<Output>
+        | Output
+
+    subscribe?(input: Input, context: TypedAPIContext):
+        | Promise<Iterator<Output>
+        | AsyncIterator<Output>>
+        | Iterator<Output>
+        | AsyncIterator<Output>
 }
 
 export interface ZodAPIHandler<Schema extends ZodTypeAny, Output> extends TypedAPIHandler<ZodInfer<Schema>, Output> {

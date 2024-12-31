@@ -1,4 +1,4 @@
-import type { APIContext, APIRoute } from "astro"
+import type { APIRoute } from "astro"
 import { TypedAPIError } from "./errors.ts"
 import {
     AcceptHeaderMissing,
@@ -25,10 +25,10 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             throw new AcceptHeaderMissing(request)
         }
 
-        const acceptsDevalue = accept.includes("application/devalue")
+        const acceptsDevalue = accept.includes("application/devalue+json")
         const acceptsJson = accept.includes("application/json")
         const acceptsEventStream = accept.includes("text/event-stream")
-        
+
         if (
             acceptsDevalue === false &&
             acceptsJson === false && 
@@ -64,7 +64,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             } catch (error) {
                 throw new InputNotDeserializable(error, pathname)
             }
-        } else if (contentType === "application/devalue") {
+        } else if (contentType === "application/devalue+json") {
             try {
                 input = parse(await request.text())
             } catch (error) {
@@ -143,7 +143,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             } catch (error) {
                 throw new OutputNotSerializable(error, pathname)
             }
-            response.headers.set("Content-Type", "application/devalue")
+            response.headers.set("Content-Type", "application/devalue+json")
         } else if (acceptsJson) {
             try {
                 outputBody = JSON.stringify(output)
