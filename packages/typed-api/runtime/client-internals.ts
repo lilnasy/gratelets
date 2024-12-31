@@ -1,12 +1,14 @@
 import { parse, stringify } from "devalue"
 import {
-    MissingHTTPVerb,
-    IncorrectHTTPVerb,
-    ResponseNotOK,
-    UnknownResponseFormat
+    ResponseNotAcceptable,
+    InvalidUsage
 } from "./errors.client.ts"
 
-export function proxyTarget() {}
+export function proxyTarget() {
+    // still reachable with a [[Construct]] call, but
+    // that would be intentional invalid usage
+    throw new Error("Unreachable")
+}
 
 export const proxyHandler: ProxyHandler<typeof proxyTarget> & { path: string[] } = {
     path: [],
@@ -16,8 +18,9 @@ export const proxyHandler: ProxyHandler<typeof proxyTarget> & { path: string[] }
         }
         return new Proxy(target, {
             ...proxyHandler,
-            // @ts-expect-error Object literal may only specify known properties, and 'path'
-            // does not exist in type 'ProxyHandler<() => void>'.
+            // @ts-expect-error "Object literal may only specify known properties, and 'path'
+            // does not exist in type 'ProxyHandler<() => void>'.ts(2353)" The proxy handler
+            // can have additional properties, and it becomes available as 'this' in the traps.
             path: [
                 ...this.path,
                 prop
@@ -26,14 +29,14 @@ export const proxyHandler: ProxyHandler<typeof proxyTarget> & { path: string[] }
     },
     apply(target, thisArg, argArray) {
         const { path } = this
-        const callType = path.pop()!
-        const method = path.pop()!
+        const callType = path[path.length - 1]
+        const method = path[path.length - 2]
         if (callType === "fetch") {
-            return callFetch(path, method, argArray[0], argArray[1])
+            return callFetch(path.slice(0, -2), method, argArray[0], argArray[1])
         } else if (callType === "subscribe") {
-            return createEventSource(path, argArray[0], argArray[1])
+            return createEventSource(path.slice(0, -2), argArray[0], argArray[1])
         }
-        return Reflect.apply(target, thisArg, argArray)
+        throw new InvalidUsage("incorrect call", callType)
     },
 }
 
@@ -44,13 +47,13 @@ interface ParamOptions {
 interface FetchOptions extends RequestInit, ParamOptions {}
 
 async function callFetch(segments: string[], method_: string, input: any, options?: FetchOptions) {
-    
+
     const pathname = path(segments, options)
-    
+
     const method = method_ === "ALL" ? options?.method : method_
-    if (method === undefined) throw new MissingHTTPVerb(pathname)
-    if (method !== method.toUpperCase()) throw new IncorrectHTTPVerb(method, pathname)
-    
+    if (method === undefined) throw new InvalidUsage("missing method", pathname)
+    if (method !== method.toUpperCase()) throw new InvalidUsage("invalid method", pathname, method)
+
     const isGET = method === "GET"
     const url = new URL(pathname, location.origin)
     const headers = new Headers(options?.headers)
@@ -84,7 +87,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
     const response = await fetch(url, { ...options, method, body, headers })
 
     if (response.ok === false) {
-        throw new ResponseNotOK(response)
+        throw new ResponseNotAcceptable("not ok", response)
     }
     const contentType = response.headers.get("Content-Type")
     if (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && contentType === "application/devalue+json") {
@@ -92,7 +95,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
     } else if (contentType === "application/json") {
         return await response.json()
     }
-    throw new UnknownResponseFormat(response)
+    throw new ResponseNotAcceptable("unknown format", response)
 }
 
 interface EventSourceOptions extends EventSourceInit, ParamOptions {}
