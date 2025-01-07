@@ -1,5 +1,11 @@
 # astro-dynamic-import
 
+## 2.0.1
+
+### Patch Changes
+
+- [#122](https://github.com/lilnasy/gratelets/pull/122) [`33ce679`](https://github.com/lilnasy/gratelets/commit/33ce6794df312fc3147cefa625a0c8f968ef1317) Thanks [@lilnasy](https://github.com/lilnasy)! - Fixes an issue where the integration attempted to read a file (env.d.ts) that does not exist in Astro 5.x projects.
+
 ## 2.0.0
 
 ### Major Changes
