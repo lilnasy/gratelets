@@ -1,0 +1,21 @@
+<script>
+    import "../../.astro/integrations/astro-typed-api/types.d.ts"
+    import { api } from "astro-typed-api/client"
+    const input = document.querySelector("input")!
+    const button = document.querySelector("button")!
+    const output = document.querySelector("output")!
+    button.addEventListener("click", async () => {
+        const { value } = input
+        const iterator = await api.subscription.GET.subscribe(value)
+        output.textContent = ""
+        let messageCount = 0
+        for await (const char of iterator) {
+            output.textContent += char
+            messageCount++
+        }
+        output.textContent += `Received a total of ${messageCount} events.`
+    })
+</script>
+<input type="text">
+<button>Click me</button>
+<output>The result of the action should appear here</output>

@@ -4,9 +4,8 @@ import { expect } from "playwright/test"
 import type { AstroInlineConfig as Config } from "astro"
 
 const setups: Record<string, Config> = {
-    // output: "server" is duplicated here, even though it is also present in astro.config.ts so that
-    // the bug workaround for withastro/astro#12248 can be applied by build()
-    "default config": { output: "server" },
+    "default config": {},
+    "devalue": {},
     // "with trailingSlash set to never": { trailingSlash: "never" },
     // "with trailingSlash set to always": { trailingSlash: "always" },
     // "with a base path configured": { base: "/some-base" },
@@ -16,8 +15,16 @@ const setups: Record<string, Config> = {
 for (const [description, config] of Object.entries(setups)) {
     
     const test = testFactory("./fixtures/typed-api", config)
-
+    
     test.describe(`${description} - dev`, () => {
+        if (description === "devalue") {
+            test.beforeAll(() => {
+                process.env.TYPED_API_SERIALIZATION = "devalue"
+            })
+            test.afterAll(() => {
+                delete process.env.TYPED_API_SERIALIZATION
+            })
+        }
         test("an action can be called", ({ dev, page }) => basics(page, resolve))
         test("the method can be POST", ({ dev, page }) => post(page, resolve))
         test("the ALL handler can be fetched", ({ dev, page }) => all(page, resolve))
@@ -31,6 +38,14 @@ for (const [description, config] of Object.entries(setups)) {
     })
     
     test.describe(`${description} - build`, () => {
+        if (description === "devalue") {
+            test.beforeAll(() => {
+                process.env.TYPED_API_SERIALIZATION = "devalue"
+            })
+            test.afterAll(() => {
+                delete process.env.TYPED_API_SERIALIZATION
+            })
+        }
         test("an action can be called", ({ adapter, page }) => basics(page, resolve))
         test("the method can be POST", ({ adapter, page }) => post(page, resolve))
         test("the ALL handler can be fetched", ({ adapter, page }) => all(page, resolve))
