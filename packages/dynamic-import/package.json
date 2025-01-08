@@ -20,10 +20,14 @@
         "types.d.ts"
     ],
     "exports": {
-        ".": "./integration.js",
+        ".": {
+            "import": "./integration.js",
+            "types": "./integration.d.ts"
+        },
         "./runtime/*": "./runtime/*"
     },
     "scripts": {
+        "build": "tsc --allowJs --declaration --emitDeclarationOnly --skipLibCheck --types @types/node --target esnext --module esnext --moduleResolution bundler integration.js",
         "test": "pnpm -w test dynamic-import.test.ts"
     },
     "type": "module",
@@ -31,6 +35,7 @@
         "astro": "4 || 5"
     },
     "devDependencies": {
-        "@types/node": "20"
+        "@types/node": "20",
+        "vite": "^6.0.5"
     }
 }
