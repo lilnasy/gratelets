@@ -1,12 +1,7 @@
 import url from "node:url"
 import path from "node:path"
 import type { AstroIntegration } from "astro"
-/// <reference path="./types.d.ts" />
-
-// ./node_modules/astro/dist/core/index.js
-const astroEntry = import.meta.resolve("astro")
-const consts = new URL("../content/consts.js", astroEntry)
-const { PROPAGATED_ASSET_FLAG } = await import(consts.href)
+import "./types.d.ts"
 
 /**
  * Not used, the integration does not have any configuration options
@@ -36,7 +31,7 @@ export default function (_?: Options): AstroIntegration {
                     load(id) {
                         if (id === "astro-dynamic-import:internal") {
                             return `export const srcDirName = ${JSON.stringify(srcDirName)}\n` +
-                            `export const lookupMap = import.meta.glob('/${srcDirName}/components/**/*.astro', { query: { ${PROPAGATED_ASSET_FLAG}: true } })\n`
+                            `export const lookupMap = import.meta.glob('/${srcDirName}/components/**/*.astro', { query: { astroPropagatedAssets: true } })\n`
                         }
                     }
                 }]}})
