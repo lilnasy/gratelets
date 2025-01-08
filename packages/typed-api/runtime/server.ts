@@ -23,7 +23,7 @@ export interface TypedAPIHandler<Input, Output> {
         | Promise<Output>
         | Output
 
-    subscribe?(input: Input, context: TypedAPIContext):
+    subscribe?(input: Input, context: TypedAPISubscriptionContext):
         | Promise<Iterator<Output>
         | AsyncIterator<Output>>
         | Iterator<Output>
