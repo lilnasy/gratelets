@@ -15,15 +15,20 @@
         "directory": "packages/dynamic-import"
     },
     "files": [
-        "integration.ts",
+        "integration.js",
+        "integration.d.ts",
         "runtime",
         "types.d.ts"
     ],
     "exports": {
-        ".": "./integration.ts",
+        ".": {
+            "import": "./integration.js",
+            "types": "./integration.d.ts"
+        },
         "./runtime/*": "./runtime/*"
     },
     "scripts": {
+        "build": "tsc --allowJs --declaration --skipLibCheck --types @types/node --target esnext --module esnext --moduleResolution bundler integration.ts",
         "test": "pnpm -w test dynamic-import.test.ts"
     },
     "type": "module",

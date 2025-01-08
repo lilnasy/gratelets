@@ -1,11 +1,22 @@
 import url from "node:url"
 import path from "node:path"
 import type { AstroIntegration } from "astro"
-import { PROPAGATED_ASSET_FLAG } from "./node_modules/astro/dist/content/consts.js"
-import "./types.d.ts"
+/// <reference path="./types.d.ts" />
 
+// ./node_modules/astro/dist/core/index.js
+const astroEntry = import.meta.resolve("astro")
+const consts = new URL("../content/consts.js", astroEntry)
+const { PROPAGATED_ASSET_FLAG } = await import(consts.href)
+
+/**
+ * Not used, the integration does not have any configuration options
+ */
 interface Options {}
 
+/**
+ * Adds the ability to dynamically import components,
+ * including scripts and styles of only the picked components.
+ */
 export default function (_?: Options): AstroIntegration {
     return {
         name: "astro-dynamic-import",

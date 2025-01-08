@@ -54,35 +54,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
-      
+
       - name: Setup Node ${{ inputs.node }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node }}
           cache: "pnpm"
-      
+
       - name: Setup Bun
         if: ${{ inputs.node == 23 }}
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.1.40
-      
+
       - uses: denoland/setup-deno@v2
         with:
           deno-version: 2.1.4
-      
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Init submodules
         run: sh .github/workflows/init-submodules.sh
-      
+
+      - name: Build packages that have a build step
+        run: pnpm -r run build
+
       - name: Check
         if: ${{ inputs.check }}
         run: pnpm run check
-      
+
       - name: Test
         run: pnpm run test
