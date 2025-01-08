@@ -1,5 +1,11 @@
 # astro-dynamic-import
 
+## 2.0.3
+
+### Patch Changes
+
+- [#125](https://github.com/lilnasy/gratelets/pull/125) [`ce0b7b6`](https://github.com/lilnasy/gratelets/commit/ce0b7b654ac8dd46aabbe3debba96b5e5d6b6865) Thanks [@spacedawwwg](https://github.com/spacedawwwg)! - Fixes an issue introduced in v2.0.2 where the types for the "astro:import" would not be added to the project.
+
 ## 2.0.2
 
 ### Patch Changes
