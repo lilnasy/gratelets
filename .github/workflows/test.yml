@@ -80,9 +80,6 @@ jobs:
       - name: Init submodules
         run: sh .github/workflows/init-submodules.sh
 
-      - name: Build packages that have a build step
-        run: pnpm -r run build
-
       - name: Check
         if: ${{ inputs.check }}
         run: pnpm run check

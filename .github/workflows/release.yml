@@ -34,9 +34,6 @@ jobs:
       - name: Init submodules
         run: sh .github/workflows/init-submodules.sh
 
-      - name: Build packages that have a build step
-        run: pnpm -r run build
-
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
