@@ -15,12 +15,12 @@
         "directory": "packages/dynamic-import"
     },
     "files": [
-        "integration.ts",
+        "integration.js",
         "runtime",
         "types.d.ts"
     ],
     "exports": {
-        ".": "./integration.ts",
+        ".": "./integration.js",
         "./runtime/*": "./runtime/*"
     },
     "scripts": {
