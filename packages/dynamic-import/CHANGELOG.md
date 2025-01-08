@@ -1,5 +1,11 @@
 # astro-dynamic-import
 
+## 2.0.2
+
+### Patch Changes
+
+- [#126](https://github.com/lilnasy/gratelets/pull/126) [`47f496a`](https://github.com/lilnasy/gratelets/commit/47f496a6bfc42913a25dead817aa52b209d2007b) Thanks [@lilnasy](https://github.com/lilnasy)! - Fixes an issue where the integration could not import a required value (PROPAGATED_ASSET_FLAG) when installed in a monorepo.
+
 ## 2.0.1
 
 ### Patch Changes
