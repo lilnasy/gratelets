@@ -5,6 +5,10 @@ import path from "node:path";
 const astroEntry = import.meta.resolve("astro");
 const consts = new URL("../content/consts.js", astroEntry);
 const { PROPAGATED_ASSET_FLAG } = await import(consts.href);
+/**
+ * Adds the ability to dynamically import components,
+ * including scripts and styles of only the picked components.
+ */
 export default function (_) {
     return {
         name: "astro-dynamic-import",
