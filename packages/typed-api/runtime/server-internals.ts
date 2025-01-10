@@ -6,13 +6,12 @@ import {
     UnknownRequestFormat,
     InputNotDeserializable,
     ProcedureFailed,
-    ProcedureNotImplemented,
     OutputNotSerializable,
     InvalidSchema,
     ValidationFailed,
 } from "./errors.server.ts"
 import { stringify, parse } from "devalue"
-import type { TypedAPIContext, TypedAPIHandler, TypedAPISubscriptionContext } from "./server.ts"
+import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
 
 export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
     return async function (ctx) {
@@ -26,12 +25,10 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
 
         const acceptsDevalue = accept.includes("application/devalue+json")
         const acceptsJson = accept.includes("application/json")
-        const acceptsEventStream = accept.includes("text/event-stream")
 
         if (
             acceptsDevalue === false &&
-            acceptsJson === false && 
-            acceptsEventStream === false
+            acceptsJson === false
         ) {
             throw new UnsupportedClient(request)
         }
@@ -39,7 +36,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
         let input: any
         if (
             contentType === "application/json-urlencoded" ||
-            (import.meta.env.TYPED_API_SERIALIZATION !== "devalue" && acceptsEventStream)
+            (import.meta.env.TYPED_API_SERIALIZATION !== "devalue")
         ) {
             input = searchParams.get("input")
             if (input) try {
@@ -49,7 +46,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             }
         } else if (
             contentType === "application/devalue-urlencoded" ||
-            (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && acceptsEventStream)
+            (import.meta.env.TYPED_API_SERIALIZATION === "devalue")
         ) {
             input = searchParams.get("input")
             if (input) try {
@@ -91,35 +88,8 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
 
         let output: any
         try {
-            if (acceptsEventStream && "subscribe" in handler && handler.subscribe) {
-                const context: TypedAPISubscriptionContext = Object.assign(ctx, { response, lastEventId: headers.get("Last-Event-ID") })
-                const iterator = await handler.subscribe(input, context)
-                const stream = new ReadableStream({
-                    async pull(controller) {
-                        const { value, done } = await iterator.next()
-                        if (done) {
-                            controller.enqueue("event:close\ndata:\n\n")
-                            controller.close()
-                        } else {
-                            controller.enqueue(`data:${
-                                import.meta.env.TYPED_API_SERIALIZATION === "devalue"
-                                    ? stringify(value)
-                                    : JSON.stringify(value)
-                            }\n\n`)
-                        }
-                    },
-                    async cancel() {
-                        await iterator.return?.()
-                    }
-                })
-                response.headers.set("Content-Type", "text/event-stream")
-                return new Response(stream, response)
-            } else if ("fetch" in handler && handler.fetch) {
-                const context: TypedAPIContext = Object.assign(ctx, { response })
-                output = await handler.fetch(input, context)
-            } else {
-                throw new ProcedureNotImplemented(pathname, acceptsEventStream)
-            }
+            const context: TypedAPIContext = Object.assign(ctx, { response })
+            output = await handler.fetch(input, context)
         } catch (error) {
             if (error instanceof TypedAPIError) throw error
             const procedureFailed = new ProcedureFailed(error, pathname)

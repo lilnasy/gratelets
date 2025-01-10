@@ -33,8 +33,6 @@ export const proxyHandler: ProxyHandler<typeof proxyTarget> & { path: string[] }
         const method = path[path.length - 2]
         if (callType === "fetch") {
             return callFetch(path.slice(0, -2), method, argArray[0], argArray[1])
-        } else if (callType === "subscribe") {
-            return createEventSource(path.slice(0, -2), argArray[0], argArray[1])
         }
         throw new InvalidUsage("incorrect call", callType)
     },
@@ -96,72 +94,6 @@ async function callFetch(segments: string[], method_: string, input: any, option
         return await response.json()
     }
     throw new ResponseNotAcceptable("unknown format", response)
-}
-
-interface EventSourceOptions extends EventSourceInit, ParamOptions {}
-
-async function createEventSource(
-    segments: string[],
-    input: any,
-    options?: EventSourceOptions
-): Promise<AsyncIterableIterator<any>> {
-    const pathname = path(segments, options)
-    const url = new URL(pathname, location.origin)
-    if (input !== undefined) {
-        if (import.meta.env.TYPED_API_SERIALIZATION === "devalue") {
-            url.searchParams.set("input", stringify(input))
-        } else {
-            url.searchParams.set("input", JSON.stringify(input))
-        }
-    }
-    const es = new EventSource(url, options)
-    es.addEventListener("close",() => es.close())
-    await new Promise((resolve, reject) => {
-        es.onopen = resolve
-        es.onerror = reject
-    })
-    const iter = {
-        [Symbol.asyncIterator]() {
-            return this
-        },
-        next() {
-            return new Promise<{ value: any, done: boolean }>((resolve, reject) => {
-                const ac = new AbortController()
-                es.addEventListener(
-                    "message",
-                    event => {
-                        ac.abort()
-                        const value = import.meta.env.TYPED_API_SERIALIZATION === "devalue"
-                            ? parse(event.data)
-                            : JSON.parse(event.data)
-                        resolve({ done: false, value })
-                    },
-                    { once: true, signal: ac.signal }
-                )
-                es.addEventListener(
-                    "close",
-                    _ => {
-                        ac.abort()
-                        resolve({ done: true, value: undefined })
-                    },
-                    { once: true, signal: ac.signal }
-                )
-                es.addEventListener(
-                    "error",
-                    event => {
-                        ac.abort()
-                        reject(event)
-                    },
-                    { once: true, signal: ac.signal }
-                )
-            })
-        },
-        async return() {
-            es.close()
-            return { value: undefined, done: true }
-        }
-    }
-    return iter
 }
 
 function path(segments: string[], options?: ParamOptions) {

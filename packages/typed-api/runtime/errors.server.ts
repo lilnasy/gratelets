@@ -88,17 +88,6 @@ export class ProcedureFailed extends TypedAPIError {
     }
 }
 
-export class ProcedureNotImplemented extends TypedAPIError {
-    name = "TypedAPIError.ProcedureNotImplemented" as const
-    constructor(url: string, acceptsEventStream: boolean) {
-        super(
-            url,
-            `A \`.fetch()\` handler is not implemented for the API route at ${url}.` +
-            (acceptsEventStream ? `\n\nHint: The request has an \`Accept\` header value of  "text/event-stream", indicating that the browser expects a server-sent events. However, the API route does not implement a \`.subscribe()\` handler.` : "")
-        )
-    }
-}
-
 export class OutputNotSerializable extends TypedAPIError {
     name = "TypedAPIError.OutputNotSerializable" as const
     constructor(cause: unknown, url: string) {

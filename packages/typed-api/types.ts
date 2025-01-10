@@ -26,7 +26,7 @@ type ModuleProxy<EndpointModule, Params extends string> = {
 
 type MethodProxy<MethodExport, Params extends string, Method extends string> =
     MethodExport extends TypedAPIHandler<infer Input, infer Output>
-        ? ClientFunctions<MethodExport, Input, Output, Params, Method>
+        ? Fetcher<Input, Output, Params, Method>
         : TypedAPITypeError<"This export from the API Route is not a typed handler. Please make sure it is created using either `defineApiRoute` or `defineEndpoint`, which are exported by the module `\"astro-typed-api/server\"`.">
 
 type EndpointToObject<Endpoint extends string, ModuleProxy> =
@@ -48,8 +48,7 @@ type RequireParam<MP, Param extends string> =
 
 /***** CALLABLE FUNCTIONS *****/
 
-export type ClientFunctions<
-    MethodExport extends TypedAPIHandler<unknown, unknown>,
+export type Fetcher<
     Input,
     Output,
     Params extends string,
@@ -57,37 +56,17 @@ export type ClientFunctions<
 > = 
     IsEmptyUnion<Params> extends true
         ? Method extends "ALL"
-            ? 
-                (MethodExport extends { fetch: unknown } ? Fetchable.RequiresMethod<Input, Output> : {}) &
-                (MethodExport extends { subscribe: unknown }
-                    // Input may not be used by the server side. For this case,
-                    // Fetchable.InputOptional and Subscribable.InputOptional are
-                    // the types not requiring any arguments.
-                    // Fetchable.InputOptional is not used above because passing
-                    // the method in arguments is still required. 
-                    ? unknown extends Input
-                        ? Subscribable.InputOptional<Input, Output>
-                        : Subscribable<Input, Output>
-                    : {}
-                )
+            ? Fetchable.RequiresMethod<Input, Output>
             : unknown extends Input
-                ?
-                    (MethodExport extends { fetch: unknown } ? Fetchable.InputOptional<Input, Output> : {}) &
-                    (MethodExport extends { subscribe: unknown } ? MapGET<Method, Subscribable.InputOptional<Input, Output>> : {})
-                :
-                    (MethodExport extends { fetch: unknown } ? Fetchable<Input, Output> : {}) &
-                    (MethodExport extends { subscribe: unknown } ? MapGET<Method, Subscribable<Input, Output>> : {})
+                ? Fetchable.InputOptional<Input, Output>
+                : Fetchable<Input, Output>
         // When there is a dynamic segment in the path
         // (pages/api/[x].ts -> client.api._x.GET) the
         // options should become required and they must
         // have the params field.
         : Method extends "ALL"
-            ?
-                (MethodExport extends { fetch: unknown } ? Fetchable.RequiresMethodAndParams<Input, Output, Params> : {}) &
-                (MethodExport extends { subscribe: unknown } ? Subscribable.RequiresParams<Input, Output, Params> : {})
-            :
-                (MethodExport extends { fetch: unknown } ? Fetchable.RequiresParams<Input, Output, Params> : {}) &
-                (MethodExport extends { subscribe: unknown } ? MapGET<Method, Subscribable.RequiresParams<Input, Output, Params>> : {})
+            ? Fetchable.RequiresMethodAndParams<Input, Output, Params>
+            : Fetchable.RequiresParams<Input, Output, Params>
 
 
 /***** FETCH FUNCTION *****/
@@ -124,44 +103,7 @@ interface FetchOptionsWithMethodAndParams<Params extends string>
         FetchOptionsWithMethod,
         FetchOptionsWithParams<Params> {}
 
-
-/***** SUBSCRIBE FUNCTION *****/
-
-interface Subscribable<Input, Output> {
-    subscribe(input: Input, options?: SubscribeOptions): Promise<AsyncIterableIterator<Output>>
-}
-
-namespace Subscribable {
-    export interface RequiresParams<Input, Output, Params extends string> {
-        subscribe(input: Input, options: SubscribeOptionsWithParams<Params>): Promise<AsyncIterableIterator<Output>>
-    }
-    export interface InputOptional<Input, Output> {
-        subscribe(input?: Input, options?: SubscribeOptions): Promise<AsyncIterableIterator<Output>>
-    }
-}
-
-interface SubscribeOptions extends EventSourceInit {}
-
-interface SubscribeOptionsWithParams<Params extends string> extends SubscribeOptions {
-    params: Record<Params, string>
-}
-
-interface InvalidSubscribeUsage<Method extends string> {
-    subscribe: TypedAPITypeError<`Server sent events can only be subscribed to using the GET method. The ${Method} handler cannot be used.`>
-}
-
-
 /***** UTLITY FUNCTIONS *****/
-
-/**
- * EventSource is GET-only. `MapGET` reports invalid usage as a 
- * type error if the subscription request method (first parameter)
- * is not GET, and returns the second parameter otherwise.
- */
-type MapGET<Method extends string, IfGET> =
-    Method extends "GET"
-        ? IfGET
-        : InvalidSubscribeUsage<Method>
 
 type DeepMerge<A, B> = {
     [Key in keyof A | keyof B]:

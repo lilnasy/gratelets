@@ -4,30 +4,10 @@ import type { infer as ZodInfer, ZodTypeAny } from "zod"
 
 export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
 
-export interface TypedAPISubscriptionContext extends TypedAPIContext {
-    /**
-     * When the browser loses connection to the stream of server-sent events,
-     * it will automatically try to reconnect with a new request.
-     * 
-     * In this new request, the browser includes a `Last-Event-ID` header,
-     * which contains the ID of the last event it received before 
-     * disconnection.
-     * 
-     * This field provides a convenient shorthand to access that header.
-     */
-    lastEventId: string | null
-}
-
 export interface TypedAPIHandler<Input, Output> {
-    fetch?(input: Input, context: TypedAPIContext):
+    fetch(input: Input, context: TypedAPIContext):
         | Promise<Output>
         | Output
-
-    subscribe?(input: Input, context: TypedAPISubscriptionContext):
-        | Promise<Iterator<Output>
-        | AsyncIterator<Output>>
-        | Iterator<Output>
-        | AsyncIterator<Output>
 }
 
 export interface ZodAPIHandler<Schema extends ZodTypeAny, Output> extends TypedAPIHandler<ZodInfer<Schema>, Output> {
