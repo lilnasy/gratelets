@@ -3,7 +3,7 @@ export interface ErrorDetails<Type extends string> {
     message?: string
 }
 
-export class ErrorResponse<Type extends String> extends Response {
+export class ErrorResponse<Type extends string> extends Response {
     constructor(details: { type: Type, message?: string }, init?: ResponseInit) {
         const headers = new Headers(init?.headers)
         /**
@@ -12,7 +12,7 @@ export class ErrorResponse<Type extends String> extends Response {
          * code responses, and the response body may be thrown
          * away every new moon.
          */
-        headers.set("X-Typed-Error", String(details.type))
+        headers.set("X-Typed-Error", details.type)
         if (details.message) {
             headers.set("X-Typed-Message", details.message)
         }

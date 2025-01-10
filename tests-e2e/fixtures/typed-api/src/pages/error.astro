@@ -7,7 +7,7 @@
         const { value } = input
         output.textContent = await api.error.GET.fetch(value).catch(e => {
             if (e instanceof CustomError) {
-                return `Received the custom error (${e.code}) successfully`
+                return `Received the custom error (${e.type}) successfully`
             }
             return `unknown error: ${e.message}`
         })

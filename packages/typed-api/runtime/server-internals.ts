@@ -123,7 +123,12 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             response.headers.set("Content-Type", "application/json")
         }
 
-        return new Response(outputBody, response)
+        /**
+         * statusText is intentionally ignored. It is not part
+         * of HTTP/2 and HTTP/3. It will work in development,
+         * but not in production.
+         */
+        return new Response(outputBody, { status: response.status, headers: response.headers })
     }
 }
 

@@ -95,7 +95,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
 
     const error = response.headers.get("X-Typed-Error")
     if (error) {
-        const message = response.headers.get("X-Typed-Message")!
+        const message = response.headers.get("X-Typed-Message") ?? undefined
         throw new CustomError(error, message)
     }
 

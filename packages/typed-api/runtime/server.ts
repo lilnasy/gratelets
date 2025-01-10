@@ -27,7 +27,7 @@ export function defineApiRoute<Schema extends ZodTypeAny, Handler extends ZodAPI
 export function defineApiRoute<Handler extends TypedAPIHandler<unknown, unknown>>(handler: Handler): APIRoute & Handler
 export function defineApiRoute<SimpleRoute extends APIRoute>(handler: SimpleRoute): SimpleRoute
 export function defineApiRoute(handler: any) {
-    if ("fetch" in handler || "subscribe" in handler) {
+    if ("fetch" in handler) {
         return Object.assign(createApiRoute(handler), handler)
     } else {
         return handler
