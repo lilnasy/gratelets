@@ -1,4 +1,6 @@
 import type { TypedAPIHandler } from "./runtime/server.ts"
+import type { CustomError } from "./runtime/user-error.ts"
+import type * as ClientErrors from "./runtime/errors.client.ts"
 
 /***** ROUTER *****/
 
@@ -20,14 +22,14 @@ type ModuleProxy<EndpointModule, Params extends string> = {
         Method extends string
             ? Method extends Uppercase<Method>
                 ? MethodProxy<EndpointModule[Method], Params, Method extends string ? Method : never>
-            : TypedAPITypeError<"The method of an API Route must be exported as uppercase.">
-        : TypedAPITypeError<"The method of an API Route must be exported as uppercase.">
+            : InvalidUsage<"The method of an API Route must be exported as uppercase.">
+        : InvalidUsage<"The method of an API Route must be exported as uppercase.">
 }
 
 type MethodProxy<MethodExport, Params extends string, Method extends string> =
     MethodExport extends TypedAPIHandler<infer Input, infer Output>
         ? Fetcher<Input, Output, Params, Method>
-        : TypedAPITypeError<"This export from the API Route is not a typed handler. Please make sure it is created using either `defineApiRoute` or `defineEndpoint`, which are exported by the module `\"astro-typed-api/server\"`.">
+        : InvalidUsage<"This export from the API Route is not a typed handler. Please make sure it is created using either `defineApiRoute` or `defineEndpoint`, which are exported by the module `\"astro-typed-api/server\"`.">
 
 type EndpointToObject<Endpoint extends string, ModuleProxy> =
     Endpoint extends `[...${infer Param}]`
@@ -43,7 +45,7 @@ type EndpointToObject<Endpoint extends string, ModuleProxy> =
 type RequireParam<MP, Param extends string> = 
     MP extends ModuleProxy<infer EP, infer Params>
         ? ModuleProxy<EP, MapString<Params, never> | Param>
-        : TypedAPITypeError<"Types for this route with params could not be generated. This is probably a bug. Please open an issue with the minimal reproduction steps.">
+        : "Types for this route with params could not be generated. This is probably a bug. Please open an issue with the minimal reproduction steps."
 
 
 /***** CALLABLE FUNCTIONS *****/
@@ -72,22 +74,31 @@ export type Fetcher<
 /***** FETCH FUNCTION *****/
 
 interface Fetchable<Input, Output> {
-    fetch(input: Input, options?: FetchOptions): Promise<Output>
+    fetch(input: Input, options?: FetchOptions): Result<Output>
 }
 
 namespace Fetchable {
     export interface InputOptional<Input, Output> {
-        fetch(input?: Input, options?: FetchOptions): Promise<Output>
+        fetch(input?: Input, options?: FetchOptions): Result<Output>
     }
     export interface RequiresMethod<Input, Output> {
-        fetch(input: Input, options: FetchOptionsWithMethod): Promise<Output>
+        fetch(input: Input, options: FetchOptionsWithMethod): Result<Output>
     }
     export interface RequiresParams<Input, Output, Params extends string> {
-        fetch(input: Input, options: FetchOptionsWithParams<Params>): Promise<Output>
+        fetch(input: Input, options: FetchOptionsWithParams<Params>): Result<Output>
     }
     export interface RequiresMethodAndParams<Input, Output, Params extends string> {
-        fetch(input: Input, options: FetchOptionsWithMethodAndParams<Params>): Promise<Output>
+        fetch(input: Input, options: FetchOptionsWithMethodAndParams<Params>): Result<Output>
     }
+}
+
+interface Result<L> extends Omit<Promise<Exclude<L, CustomError<any, any>>>, "catch"> {
+    catch<R>(on_rejection:
+        (error:
+            | ClientErrors.InvalidUsage
+            | ClientErrors.CustomError<string, string>
+        ) => R | PromiseLike<R>
+    ): Promise<L | R>
 }
 
 interface FetchOptions extends Omit<RequestInit, "body" | "method"> {}
@@ -116,8 +127,8 @@ type DeepMerge<A, B> = {
                 : never
 }
 
-export interface TypedAPITypeError<Message> {
-    error: Message
+export interface InvalidUsage<Message> {
+    reason: Message
 }
 
 export type MapAny<T, IfAny> = (T extends never ? true : false) extends false ? T : IfAny

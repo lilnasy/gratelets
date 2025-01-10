@@ -1,22 +1,14 @@
 import { TypedAPIError } from "./errors.ts"
 
-export class ResponseNotAcceptable extends TypedAPIError<Response> {
-    name = "TypedAPIError.ResponseNotAcceptable" as const
-    constructor(readonly type: "not ok" | "unknown format", response: Response) {
-        const message =
-            type === "not ok" ? `The API call was unsuccessful: ${response.statusText ?? response.status}.` :
-            type === "unknown format" ? `The API call to ${response.url} was successful with a status code of ${response.status}, but the server responded with an unexpected format: ${response.headers.get("Content-Type")}.`
-            : ""
-        super(
-            response,
-            message,
-            "See `error.cause` for the full response.",
-        )
+export class CustomError<Code extends string, Message extends string> extends Error {
+    name = "TypedAPI.CustomError" as const
+    constructor(readonly code: Code, readonly message: Message) {
+        super(message)
     }
 }
 
 export class InvalidUsage extends TypedAPIError<undefined> {
-    name = "TypedAPIError.InvalidUsage" as const
+    name = "TypedAPI.InvalidUsageError" as const
     constructor(type: "incorrect call", callType: string)
     constructor(type: "missing method", endpoint: string)
     constructor(type: "invalid method", endpoint: string, method: string)
@@ -29,5 +21,24 @@ export class InvalidUsage extends TypedAPIError<undefined> {
     }
 }
 
-const x = new InvalidUsage("incorrect call", "fetch")
-x.type
+export class NetworkError extends TypedAPIError<Error> {
+    name = "TypedAPI.NetworkError" as const
+    constructor(readonly error: Error) {
+        super(error, "There was a network failure when requesting data from the server. Is the device connected to the internet?")
+    }
+}
+
+export class ResponseNotUsable extends TypedAPIError<Response> {
+    name = "TypedAPI.ResponseNotUsableError" as const
+    constructor(readonly reason: "not ok" | "unknown format", response: Response) {
+        const message =
+            reason === "not ok" ? `The API call was unsuccessful: ${response.statusText ?? response.status}.` :
+            reason === "unknown format" ? `The API call to ${response.url} was successful with a status code of ${response.status}, but the server responded with an unexpected format: ${response.headers.get("Content-Type")}.`
+            : ""
+        super(
+            response,
+            message,
+            "See `error.cause` for the full response.",
+        )
+    }
+}

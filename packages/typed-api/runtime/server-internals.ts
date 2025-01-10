@@ -1,4 +1,4 @@
-import type { APIRoute } from "astro"
+import type { APIContext, APIRoute } from "astro"
 import { TypedAPIError } from "./errors.ts"
 import {
     AcceptHeaderMissing,
@@ -10,6 +10,7 @@ import {
     InvalidSchema,
     ValidationFailed,
 } from "./errors.server.ts"
+import { CustomError } from "./user-error.ts"
 import { stringify, parse } from "devalue"
 import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
 
@@ -86,9 +87,15 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             writable: false
         })
 
+        const context: TypedAPIContext = Object.assign(ctx, {
+            response,
+            error(details) {
+                return new CustomError(details.code, details.message)
+            }
+        } satisfies Omit<TypedAPIContext, keyof APIContext>)
+
         let output: any
         try {
-            const context: TypedAPIContext = Object.assign(ctx, { response })
             output = await handler.fetch(input, context)
         } catch (error) {
             if (error instanceof TypedAPIError) throw error
@@ -103,6 +110,18 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             else {
                 throw procedureFailed
             }
+        }
+
+        if (typeof output === "object" && output !== null && output instanceof CustomError) {
+            const { headers } = response
+            /**
+             * The error details are stored in the headers because astro
+             * has a spaghetti code handling of error code responses,
+             * and the response body may be thrown away every new moon.
+             */
+            headers.set("X-Typed-Error", output.code)
+            headers.set("X-Typed-Message", output.message)
+            return new Response(null, response)
         }
 
         let outputBody: string | undefined = undefined
@@ -121,7 +140,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             }
             response.headers.set("Content-Type", "application/json")
         }
-        
+
         return new Response(outputBody, response)
     }
 }

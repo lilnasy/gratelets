@@ -1,13 +1,17 @@
 import { createApiRoute } from "./server-internals.ts"
-import type { APIRoute, APIContext, AstroGlobal } from "astro"
+import type { APIRoute, APIContext } from "astro"
 import type { infer as ZodInfer, ZodTypeAny } from "zod"
+import type { CustomError } from "./user-error.ts"
 
-export interface TypedAPIContext extends APIContext, Pick<AstroGlobal, "response"> {}
+export interface TypedAPIContext extends APIContext {
+    response: ResponseInit
+    error<Code extends String, Message extends string>(
+        details: { code: Code, message: Message }
+    ): CustomError<Code, Message>
+}
 
 export interface TypedAPIHandler<Input, Output> {
-    fetch(input: Input, context: TypedAPIContext):
-        | Promise<Output>
-        | Output
+    fetch(input: Input, context: TypedAPIContext): Promise<Output> | Output
 }
 
 export interface ZodAPIHandler<Schema extends ZodTypeAny, Output> extends TypedAPIHandler<ZodInfer<Schema>, Output> {

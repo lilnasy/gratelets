@@ -1,7 +1,7 @@
 import { TypedAPIError } from "./errors.ts"
 
 export class InvalidSchema extends TypedAPIError<unknown> {
-    name = "TypedAPIError.InvalidSchema" as const
+    name = "TypedAPI.InvalidSchema" as const
     constructor(invalidSchema: unknown) {
         super(
             invalidSchema,
@@ -12,7 +12,7 @@ export class InvalidSchema extends TypedAPIError<unknown> {
 }
 
 export class ValidationFailed extends TypedAPIError {
-    name = "TypedAPIError.ValidationFailed" as const
+    name = "TypedAPI.ValidationFailed" as const
     constructor(cause: unknown, url: string, readonly input: unknown) {
         super(
             cause,
@@ -25,7 +25,7 @@ export class ValidationFailed extends TypedAPIError {
 }
 
 export class AcceptHeaderMissing extends TypedAPIError<Request> {
-    name = "TypedAPIError.AcceptHeaderMissing" as const
+    name = "TypedAPI.AcceptHeaderMissing" as const
     constructor(request: Request) {
         super(
             request,
@@ -64,7 +64,7 @@ export class UnknownRequestFormat extends TypedAPIError<Request> {
 }
 
 export class InputNotDeserializable extends TypedAPIError {
-    name = "TypedAPIError.InputNotDeserializable" as const
+    name = "TypedAPI.InputNotDeserializableError" as const
     constructor(cause: unknown, url: string) {
         super(
             cause,
@@ -77,7 +77,7 @@ export class InputNotDeserializable extends TypedAPIError {
 }
 
 export class ProcedureFailed extends TypedAPIError {
-    name = "TypedAPIError.ProcedureFailed" as const
+    name = "TypedAPI.ProcedureFailedError" as const
     constructor(cause: unknown, url: string) {
         super(
             cause,
@@ -89,7 +89,7 @@ export class ProcedureFailed extends TypedAPIError {
 }
 
 export class OutputNotSerializable extends TypedAPIError {
-    name = "TypedAPIError.OutputNotSerializable" as const
+    name = "TypedAPI.OutputNotSerializableError" as const
     constructor(cause: unknown, url: string) {
         super(
             cause,

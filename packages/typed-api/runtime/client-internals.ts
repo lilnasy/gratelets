@@ -1,7 +1,9 @@
 import { parse, stringify } from "devalue"
 import {
-    ResponseNotAcceptable,
-    InvalidUsage
+    CustomError,
+    InvalidUsage,
+    NetworkError,
+    ResponseNotUsable,
 } from "./errors.client.ts"
 
 export function proxyTarget() {
@@ -59,7 +61,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
         import.meta.env.TYPED_API_SERIALIZATION === "devalue"
             ? "application/devalue+json, application/json"
             : "application/json"
-        )
+    )
 
     let body: BodyInit | null = null
     if (input !== undefined) {
@@ -82,10 +84,21 @@ async function callFetch(segments: string[], method_: string, input: any, option
         }
     }
 
-    const response = await fetch(url, { ...options, method, body, headers })
+    let response: Response
+    try {
+        response = await fetch(url, { ...options, method, body, headers })
+    } catch (error: unknown) {
+        throw new NetworkError(error as TypeError)
+    }
+
+    const error = response.headers.get("X-Typed-Error")
+    if (error) {
+        const message = response.headers.get("X-Typed-Message")!
+        throw new CustomError(error, message)
+    }
 
     if (response.ok === false) {
-        throw new ResponseNotAcceptable("not ok", response)
+        throw new ResponseNotUsable("not ok", response)
     }
     const contentType = response.headers.get("Content-Type")
     if (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && contentType === "application/devalue+json") {
@@ -93,7 +106,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
     } else if (contentType === "application/json") {
         return await response.json()
     }
-    throw new ResponseNotAcceptable("unknown format", response)
+    throw new ResponseNotUsable("unknown format", response)
 }
 
 function path(segments: string[], options?: ParamOptions) {
