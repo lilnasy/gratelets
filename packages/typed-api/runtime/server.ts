@@ -1,7 +1,7 @@
 import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext } from "astro"
 import type { infer as ZodInfer, ZodTypeAny } from "zod"
-import type { ErrorDetails, ErrorResponse } from "./user-error.ts"
+import type { ErrorDetails, ErrorResponse } from "./error-response.ts"
 
 export interface TypedAPIContext extends APIContext {
     response: ResponseInit

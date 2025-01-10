@@ -1,5 +1,5 @@
 import type { TypedAPIHandler } from "./runtime/server.ts"
-import type { ErrorResponse } from "./runtime/user-error.ts"
+import type { ErrorResponse } from "./runtime/error-response.ts"
 import type * as ClientErrors from "./runtime/errors.client.ts"
 
 /***** ROUTER *****/

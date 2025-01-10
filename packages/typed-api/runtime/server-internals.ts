@@ -10,7 +10,7 @@ import {
     InvalidSchema,
     ValidationFailed,
 } from "./errors.server.ts"
-import { ErrorResponse } from "./user-error.ts"
+import { ErrorResponse } from "./error-response.ts"
 import { stringify, parse } from "devalue"
 import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
 
