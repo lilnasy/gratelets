@@ -29,19 +29,11 @@ export default function (options?: Partial<Options>): AstroIntegration {
     return {
         name: "astro-typed-api",
         hooks: {
-            "astro:config:setup" ({ updateConfig, config }) {
-                updateConfig({ vite: { plugins: [{
-                    name: "astro-typed-api/typegen",
-                    enforce: "post",
-                    // the .astro directory is generated during astro sync command
-                    // sync loads vite plugins but runs no astro hooks, config is
-                    // the only hook available to generate types at the same time
-                    // as sync
-                    async configResolved() {
-                        const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
-                        generateAndWriteDeclaration(filenames, apiDir, declarationFileUrl)
-                    }
-                }] } })
+            "astro:config:setup" ({ config, addMiddleware, updateConfig }) {
+                addMiddleware({
+                    order: "pre",
+                    entrypoint: new URL("runtime/middleware.ts", import.meta.url)
+                })
                 updateConfig({
                     vite: {
                         define: {
@@ -51,7 +43,19 @@ export default function (options?: Partial<Options>): AstroIntegration {
                         ssr: {
                             // this package is published as uncompiled typescript, which we need vite to process
                             noExternal: ["astro-typed-api"]
-                        }
+                        },
+                        plugins: [{
+                            name: "astro-typed-api/typegen",
+                            enforce: "post",
+                            // the .astro directory is generated during astro sync command
+                            // sync loads vite plugins but runs no astro hooks, config is
+                            // the only hook available to generate types at the same time
+                            // as sync
+                            async configResolved() {
+                                const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
+                                generateAndWriteDeclaration(filenames, apiDir, declarationFileUrl)
+                            }
+                        }]
                     }
                 })
             },

@@ -99,17 +99,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             output = await handler.fetch(input, context)
         } catch (error) {
             if (error instanceof TypedAPIError) throw error
-            const procedureFailed = new ProcedureFailed(error, pathname)
-            if (import.meta.env.DEV) {
-                // some errors are thrown intentionally
-                // until a full error handling api is implemented, manually return 500 responses
-                // to avoid dev overlay taking over the browser
-                console.error(procedureFailed)
-                return new Response(null, { status: 500 })
-            }
-            else {
-                throw procedureFailed
-            }
+            throw new ProcedureFailed(error, pathname)
         }
 
         if (typeof output === "object" && output !== null && output instanceof CustomError) {

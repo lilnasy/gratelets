@@ -1,0 +1,18 @@
+<script>
+    import { api, CustomError } from "astro-typed-api/client"
+    const input = document.querySelector("input")!
+    const button = document.querySelector("button")!
+    const output = document.querySelector("output")!
+    button.addEventListener("click", async () => {
+        const { value } = input
+        output.textContent = await api.error.GET.fetch(value).catch(e => {
+            if (e instanceof CustomError) {
+                return `Received the custom error (${e.code}) successfully`
+            }
+            return `unknown error: ${e.message}`
+        })
+    })
+</script>
+<input type="text">
+<button>Click me</button>
+<output>The result of the action should appear here</output>

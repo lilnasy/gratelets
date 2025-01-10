@@ -17,8 +17,7 @@ export class ValidationFailed extends TypedAPIError {
         super(
             cause,
             `The API Route failed to process the  request for ${url}.`,
-            "The input for the fetch handler failed to validate against the schema.",
-            `Zod error: ${cause}`,
+            "The input parsed from the request failed to validate against the schema.",
             "See `error.cause` for the error provided by zod."
         )
     }
@@ -42,8 +41,8 @@ export class UnsupportedClient extends TypedAPIError<Request> {
         super(
             request,
             `The API request to ${request.url} was made by an unsupported client.`,
-            "The request's `Accept` header must include either `application/json` or `application/escodec`.",
-            `${JSON.stringify(request.headers.get("Accept"))} included neither.`,
+            "The request's `Accept` header must include either `application/json` or `application/devalue`.",
+            `The request's header value ("${JSON.stringify(request.headers.get("Accept"))}") included neither.`,
             "See `error.cause` for the full request."
         )
     }
