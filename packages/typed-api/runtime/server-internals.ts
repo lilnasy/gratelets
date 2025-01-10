@@ -36,7 +36,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
 
         let input: any
         if (
-            contentType === "application/json-urlencoded" ||
+            contentType === "application/json-urlencoded" &&
             (import.meta.env.TYPED_API_SERIALIZATION !== "devalue")
         ) {
             input = searchParams.get("input")
@@ -46,7 +46,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
                 throw new InputNotDeserializable(error, pathname)
             }
         } else if (
-            contentType === "application/devalue-urlencoded" ||
+            contentType === "application/devalue-urlencoded" &&
             (import.meta.env.TYPED_API_SERIALIZATION === "devalue")
         ) {
             input = searchParams.get("input")
