@@ -17,9 +17,9 @@
  * It may make a malicious user privy to implementation
  * details.
  */
-export class CustomError<Code extends String, Message extends string> {
+export class CustomError<Code extends String> {
     constructor(
         readonly code: Code,
-        readonly message: Message,
+        readonly message: string,
     ) {}
 }

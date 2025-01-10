@@ -92,13 +92,17 @@ namespace Fetchable {
     }
 }
 
-interface Result<L> extends Omit<Promise<Exclude<L, CustomError<any, any>>>, "catch"> {
+interface Result<L> extends Omit<Promise<Exclude<L, CustomError<any>>>, "catch"> {
     catch<R>(on_rejection:
         (error:
+            | (L extends CustomError<infer Code extends string>
+                ? ClientErrors.CustomError<Code>
+                : never)
             | ClientErrors.InvalidUsage
-            | ClientErrors.CustomError<string, string>
+            | ClientErrors.NetworkError
+            | ClientErrors.UnusableResponse
         ) => R | PromiseLike<R>
-    ): Promise<L | R>
+    ): Promise<Exclude<L, CustomError<any>> | R>
 }
 
 interface FetchOptions extends Omit<RequestInit, "body" | "method"> {}

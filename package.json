@@ -11,7 +11,7 @@
     "workspaces": [
         "packages/*"
     ],
-    "packageManager": "pnpm@9.12.2",
+    "packageManager": "pnpm@10.0.0",
     "devDependencies": {
         "astro": "5",
         "@changesets/changelog-github": "0.5",

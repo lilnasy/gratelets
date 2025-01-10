@@ -24,7 +24,8 @@
         "./client": "./runtime/client.ts",
         "./server": "./runtime/server.ts",
         "./types": "./types.ts",
-        "./errors": "./errors.ts"
+        "./errors/client": "./runtime/errors.client.ts",
+        "./errors/server": "./runtime/errors.server.ts"
     },
     "scripts": {
         "test": "pnpm -w test:e2e typed-api.spec.ts"

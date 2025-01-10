@@ -1,8 +1,8 @@
 import { TypedAPIError } from "./errors.ts"
 
-export class CustomError<Code extends string, Message extends string> extends Error {
+export class CustomError<Code extends string> extends Error {
     name = "TypedAPI.CustomError" as const
-    constructor(readonly code: Code, readonly message: Message) {
+    constructor(readonly code: Code, readonly message: string) {
         super(message)
     }
 }
@@ -28,8 +28,8 @@ export class NetworkError extends TypedAPIError<Error> {
     }
 }
 
-export class ResponseNotUsable extends TypedAPIError<Response> {
-    name = "TypedAPI.ResponseNotUsableError" as const
+export class UnusableResponse extends TypedAPIError<Response> {
+    name = "TypedAPI.UnusableResponseError" as const
     constructor(readonly reason: "not ok" | "unknown format", response: Response) {
         const message =
             reason === "not ok" ? `The API call was unsuccessful: ${response.statusText ?? response.status}.` :

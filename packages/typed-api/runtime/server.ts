@@ -5,9 +5,9 @@ import type { CustomError } from "./user-error.ts"
 
 export interface TypedAPIContext extends APIContext {
     response: ResponseInit
-    error<Code extends String, Message extends string>(
+    error<Code extends string, Message extends string>(
         details: { code: Code, message: Message }
-    ): CustomError<Code, Message>
+    ): CustomError<Code>
 }
 
 export interface TypedAPIHandler<Input, Output> {

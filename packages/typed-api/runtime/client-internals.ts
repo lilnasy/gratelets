@@ -3,7 +3,7 @@ import {
     CustomError,
     InvalidUsage,
     NetworkError,
-    ResponseNotUsable,
+    UnusableResponse,
 } from "./errors.client.ts"
 
 export function proxyTarget() {
@@ -84,10 +84,12 @@ async function callFetch(segments: string[], method_: string, input: any, option
         }
     }
 
+    const request = new Request(url, { ...options, method, body, headers })
     let response: Response
     try {
-        response = await fetch(url, { ...options, method, body, headers })
-    } catch (error: unknown) {
+        response = await fetch(request)
+    } catch (error) {
+        // https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch#exceptions
         throw new NetworkError(error as TypeError)
     }
 
@@ -98,7 +100,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
     }
 
     if (response.ok === false) {
-        throw new ResponseNotUsable("not ok", response)
+        throw new UnusableResponse("not ok", response)
     }
     const contentType = response.headers.get("Content-Type")
     if (import.meta.env.TYPED_API_SERIALIZATION === "devalue" && contentType === "application/devalue+json") {
@@ -106,7 +108,7 @@ async function callFetch(segments: string[], method_: string, input: any, option
     } else if (contentType === "application/json") {
         return await response.json()
     }
-    throw new ResponseNotUsable("unknown format", response)
+    throw new UnusableResponse("unknown format", response)
 }
 
 function path(segments: string[], options?: ParamOptions) {
