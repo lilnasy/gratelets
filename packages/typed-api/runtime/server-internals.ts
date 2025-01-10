@@ -8,7 +8,6 @@ import {
     ProcedureFailed,
     ProcedureNotImplemented,
     OutputNotSerializable,
-    ZodNotInstalled,
     InvalidSchema,
     ValidationFailed,
 } from "./errors.server.ts"
@@ -158,13 +157,12 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
 }
 
 async function validateInput(input: unknown, schema: unknown, pathname: string) {
-    let zod: typeof import("zod") | undefined
-    try {
-        zod = await import("zod")
-    } catch {
-        throw new ZodNotInstalled
-    }
-    if (schema instanceof zod.ZodType === false) {
+    if (
+        typeof schema !== "object" ||
+        schema === null ||
+        "parse" in schema === false ||
+        typeof schema.parse !== "function"
+    ) {
         throw new InvalidSchema(schema)
     }
     try {

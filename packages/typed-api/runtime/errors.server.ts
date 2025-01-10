@@ -1,17 +1,5 @@
 import { TypedAPIError } from "./errors.ts"
 
-export class ZodNotInstalled extends TypedAPIError<undefined> {
-    name = "TypedAPIError.ZodNotInstalled" as const
-    constructor() {
-        super(
-            undefined,
-            "API Route defines a schema, but zod is not installed.",
-            "Schema validation is an optional feature that requires zod to be installed in your project",
-            "Please try again after running `npm install zod`."
-        )
-    }
-}
-
 export class InvalidSchema extends TypedAPIError<unknown> {
     name = "TypedAPIError.InvalidSchema" as const
     constructor(invalidSchema: unknown) {
