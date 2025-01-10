@@ -10,7 +10,7 @@ import {
     InvalidSchema,
     ValidationFailed,
 } from "./errors.server.ts"
-import { CustomError } from "./user-error.ts"
+import { ErrorResponse } from "./user-error.ts"
 import { stringify, parse } from "devalue"
 import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
 
@@ -89,8 +89,8 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
 
         const context: TypedAPIContext = Object.assign(ctx, {
             response,
-            error(details) {
-                return new CustomError(details.code, details.message)
+            error(details, response) {
+                return new ErrorResponse(details, response)
             }
         } satisfies Omit<TypedAPIContext, keyof APIContext>)
 
@@ -102,16 +102,8 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             throw new ProcedureFailed(error, pathname)
         }
 
-        if (typeof output === "object" && output !== null && output instanceof CustomError) {
-            const { headers } = response
-            /**
-             * The error details are stored in the headers because astro
-             * has a spaghetti code handling of error code responses,
-             * and the response body may be thrown away every new moon.
-             */
-            headers.set("X-Typed-Error", output.code)
-            headers.set("X-Typed-Message", output.message)
-            return new Response(null, response)
+        if (typeof output === "object" && output !== null && output instanceof ErrorResponse) {
+            return output
         }
 
         let outputBody: string | undefined = undefined

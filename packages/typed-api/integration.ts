@@ -23,8 +23,6 @@ export interface Options {
 
 export default function (options?: Partial<Options>): AstroIntegration {
     let apiDir: URL
-    let root: URL
-    let dotAstroDir: URL
     let declarationFileUrl: URL
     return {
         name: "astro-typed-api",
@@ -43,26 +41,12 @@ export default function (options?: Partial<Options>): AstroIntegration {
                         ssr: {
                             // this package is published as uncompiled typescript, which we need vite to process
                             noExternal: ["astro-typed-api"]
-                        },
-                        plugins: [{
-                            name: "astro-typed-api/typegen",
-                            enforce: "post",
-                            // the .astro directory is generated during astro sync command
-                            // sync loads vite plugins but runs no astro hooks, config is
-                            // the only hook available to generate types at the same time
-                            // as sync
-                            async configResolved() {
-                                const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
-                                generateAndWriteDeclaration(filenames, apiDir, declarationFileUrl)
-                            }
-                        }]
+                        }
                     }
                 })
             },
             async "astro:config:done"({ config, injectTypes }) {
                 apiDir = new URL("pages/api", config.srcDir)
-                root = config.root
-                dotAstroDir = new URL('.astro/', root)
 
                 const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
 

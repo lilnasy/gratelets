@@ -1,8 +1,8 @@
 import { TypedAPIError } from "./errors.ts"
 
-export class CustomError<Code extends string> extends Error {
+export class CustomError<Type extends string> extends Error {
     name = "TypedAPI.CustomError" as const
-    constructor(readonly code: Code, readonly message: string) {
+    constructor(readonly type: Type, readonly message: string) {
         super(message)
     }
 }

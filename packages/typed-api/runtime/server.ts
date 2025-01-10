@@ -1,13 +1,14 @@
 import { createApiRoute } from "./server-internals.ts"
 import type { APIRoute, APIContext } from "astro"
 import type { infer as ZodInfer, ZodTypeAny } from "zod"
-import type { CustomError } from "./user-error.ts"
+import type { ErrorDetails, ErrorResponse } from "./user-error.ts"
 
 export interface TypedAPIContext extends APIContext {
     response: ResponseInit
-    error<Code extends string, Message extends string>(
-        details: { code: Code, message: Message }
-    ): CustomError<Code>
+    error<Type extends string>(
+        details: ErrorDetails<Type>,
+        response?: ResponseInit
+    ): ErrorResponse<Type>
 }
 
 export interface TypedAPIHandler<Input, Output> {
@@ -17,6 +18,7 @@ export interface TypedAPIHandler<Input, Output> {
 export interface ZodAPIHandler<Schema extends ZodTypeAny, Output> extends TypedAPIHandler<ZodInfer<Schema>, Output> {
     schema: Schema
 }
+
 
 export const defineEndpoint = defineApiRoute
 

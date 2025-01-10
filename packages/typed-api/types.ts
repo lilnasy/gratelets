@@ -1,5 +1,5 @@
 import type { TypedAPIHandler } from "./runtime/server.ts"
-import type { CustomError } from "./runtime/user-error.ts"
+import type { ErrorResponse } from "./runtime/user-error.ts"
 import type * as ClientErrors from "./runtime/errors.client.ts"
 
 /***** ROUTER *****/
@@ -92,17 +92,17 @@ namespace Fetchable {
     }
 }
 
-interface Result<L> extends Omit<Promise<Exclude<L, CustomError<any>>>, "catch"> {
+interface Result<L> extends Omit<Promise<Exclude<L, ErrorResponse<any>>>, "catch"> {
     catch<R>(on_rejection:
         (error:
-            | (L extends CustomError<infer Code extends string>
-                ? ClientErrors.CustomError<Code>
+            | (L extends ErrorResponse<infer Type extends string>
+                ? ClientErrors.CustomError<Type>
                 : never)
             | ClientErrors.InvalidUsage
             | ClientErrors.NetworkError
             | ClientErrors.UnusableResponse
         ) => R | PromiseLike<R>
-    ): Promise<Exclude<L, CustomError<any>> | R>
+    ): Promise<Exclude<L, ErrorResponse<any>> | R>
 }
 
 interface FetchOptions extends Omit<RequestInit, "body" | "method"> {}
