@@ -25,7 +25,7 @@ On the client-side, the error details are available inside the `.catch` handler.
 ```ts
 import { api, CustomError } from "astro-typed-api/client"
 
-const { data, error } =
+const searchResults =
     await api.search.GET.fetch({ query: "science" })
         .catch(error => {
             if (error instance of CustomError) {
