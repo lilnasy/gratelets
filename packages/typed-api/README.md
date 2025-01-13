@@ -262,6 +262,22 @@ export const GET = defineApiRoute({
 })
 ```
 
+### Serialization
+
+By default, Typed API uses JSON to send data over the network. This keeps the client-side code minimal. However, JSON is limited in the types of values it can serialize and deserialize. Typed API can use `devalue` to serialize and deserialize more complex objects.
+
+To use `devalue` instead of JSON, set the `serialization` option to `"devalue"` in the `astro.config.js` file:
+
+```js
+// astro.config.js
+import { defineConfig } from "astro/config"
+import typedApi from "astro-typed-api"
+
+export default defineConfig({
+    integrations: [typedApi({ serialization: "devalue" })],
+})
+```
+
 ### Reference
 
 #### Modules
