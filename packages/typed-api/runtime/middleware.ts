@@ -1,13 +1,14 @@
-import type { MiddlewareNext } from "astro"
+import type { APIContext, MiddlewareNext } from "astro"
 import { ProcedureFailed, UnusableRequest, ValidationFailed } from "./errors.server.ts"
+import { apiContextStorage } from "./api-context-storage.ts"
 
 /**
  * This middleware handles errors that occured due to malformed
  * requests and returns an appropriate error response.
  */
-export async function onRequest(_: unknown, next: MiddlewareNext) {
+export async function onRequest(context: APIContext, next: MiddlewareNext) {
     try {
-        return await next()
+        return await apiContextStorage.run(context, next)
     } catch (error) {
         if (
             error instanceof UnusableRequest ||
