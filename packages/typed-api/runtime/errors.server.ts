@@ -1,21 +1,22 @@
+import type { ZodError } from "astro:schema"
 import { TypedAPIError } from "./errors.ts"
 
-export class InvalidSchema extends TypedAPIError<unknown> {
-    name = "TypedAPI.InvalidSchema" as const
-    constructor(invalidSchema: unknown) {
+export class InvalidUsage extends TypedAPIError<unknown> {
+    name = "TypedAPI.InvalidUsage" as const
+    constructor(readonly type: "invalid schema", schema: unknown) {
         super(
-            invalidSchema,
+            schema,
             "API Route defines a schema, but the schema is not a valid zod schema.",
             "The schema must be an instance of ZodType."
         )
     }
 }
 
-export class ValidationFailed extends TypedAPIError {
+export class ValidationFailed extends TypedAPIError<ZodError<any>> {
     name = "TypedAPI.ValidationFailed" as const
-    constructor(cause: unknown, url: string, readonly input: unknown) {
+    constructor(zodError: ZodError<any>, url: string, readonly input: unknown) {
         super(
-            cause,
+            zodError,
             `The API Route failed to process the  request for ${url}.`,
             "The input parsed from the request failed to validate against the schema.",
             "See `error.cause` for the error provided by zod."

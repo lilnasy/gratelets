@@ -4,12 +4,13 @@ import {
     UnusableRequest,
     ProcedureFailed,
     OutputNotSerializable,
-    InvalidSchema,
+    InvalidUsage,
     ValidationFailed,
 } from "./errors.server.ts"
 import { ErrorResponse } from "./error-response.ts"
 import { stringify, parse } from "devalue"
 import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
+import type { ZodTypeAny } from "astro:schema"
 
 export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
     return async function (ctx) {
@@ -133,14 +134,14 @@ async function validateInput(input: unknown, schema: unknown, pathname: string) 
     if (
         typeof schema !== "object" ||
         schema === null ||
-        "parse" in schema === false ||
-        typeof schema.parse !== "function"
+        "safeParse" in schema === false ||
+        typeof schema.safeParse !== "function"
     ) {
-        throw new InvalidSchema(schema)
+        throw new InvalidUsage("invalid schema", schema)
     }
-    try {
-        return schema.parse(input)
-    } catch (error) {
+    const { success, data, error } = (schema as ZodTypeAny).safeParse(input)
+    if (success === false) {
         throw new ValidationFailed(error, pathname, input)
     }
+    return data
 }
