@@ -1,5 +1,57 @@
 # astro-typed-api
 
+## 0.4.0
+
+### Minor Changes
+
+- [#129](https://github.com/lilnasy/gratelets/pull/129) [`dc95fdb`](https://github.com/lilnasy/gratelets/commit/dc95fdb6b6eec49ad4f21f3b6863dbf7f4436dc0) Thanks [@lilnasy](https://github.com/lilnasy)! - Adds support for type-safe custom error handling!
+
+  On the server-side, you now have access to the `error()` function in the `TypedAPIContext`.
+
+  ```ts
+  // src/api/search.ts
+  import { defineApiRoute } from "astro-typed-api/server";
+
+  export const GET = defineApiRoute({
+    fetch({ query }: { query: string }, { locals, error }) {
+      if (locals.loggedInInfo) {
+        return ["search result 1", "search result 2"];
+      } else {
+        return error("login required");
+      }
+    },
+  });
+  ```
+
+  On the client-side, the error details are available inside the `.catch` handler.
+
+  ```ts
+  import { api, CustomError } from "astro-typed-api/client"
+
+  const searchResults =
+      await api.search.GET.fetch({ query: "science" })
+          .catch(error => {
+              if (error instance of CustomError) {
+                  // error.reason is inferred from the server-side error() call
+                  const reason: "login required" = error.reason
+              }
+          })
+  ```
+
+- [#129](https://github.com/lilnasy/gratelets/pull/129) [`dc95fdb`](https://github.com/lilnasy/gratelets/commit/dc95fdb6b6eec49ad4f21f3b6863dbf7f4436dc0) Thanks [@lilnasy](https://github.com/lilnasy)! - Adds support for using `devalue` for sending complex objects over the network.
+
+  To use `devalue` instead of JSON, set the `serialization` option to `"devalue"` in the `astro.config.js` file:
+
+  ```js
+  // astro.config.js
+  import { defineConfig } from "astro/config";
+  import typedApi from "astro-typed-api";
+
+  export default defineConfig({
+    integrations: [typedApi({ serialization: "devalue" })],
+  });
+  ```
+
 ## 0.3.0
 
 ### Minor Changes
