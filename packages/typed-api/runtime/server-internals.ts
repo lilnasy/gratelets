@@ -1,97 +1,147 @@
-import type { APIRoute } from "astro"
-import { encode, decode } from "es-codec"
+import type { APIContext, APIRoute } from "astro"
+import { TypedAPIError } from "./errors.ts"
 import {
-    AcceptHeaderMissing,
-    UnsupportedClient,
-    UnknownRequestFormat,
-    InputNotDeserializable,
+    UnusableRequest,
     ProcedureFailed,
     OutputNotSerializable,
-    TypedAPIError
-} from "./errors.ts"
-import { paramsToData } from "./param-codec.ts"
-import type { TypedAPIContext } from "./server.ts"
+    InvalidUsage,
+    ValidationFailed,
+} from "./errors.server.ts"
+import { ErrorResponse } from "./error-response.ts"
+import { stringify, parse } from "devalue"
+import type { TypedAPIContext, TypedAPIHandler } from "./server.ts"
+import type { ZodTypeAny } from "astro:schema"
 
-export function createApiRoute(fetch: (input: unknown, content: TypedAPIContext) => unknown): APIRoute {
+export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
     return async function (ctx) {
-        const { request } = ctx
-        const { method, headers, url } = request
+        const { request, url: { pathname, searchParams } } = ctx
+        const { headers } = request
         const contentType = headers.get("Content-Type")
         const accept = headers.get("Accept")
-        if (accept === null) throw new AcceptHeaderMissing(request)
+        if (accept === null) {
+            throw new UnusableRequest("accept header missing", request)
+        }
+
+        const acceptsDevalue = accept.includes("application/devalue+json")
+        const acceptsJson = accept.includes("application/json")
+
         if (
-            accept.includes("application/escodec") === false &&
-            accept.includes("application/json") === false
-        ) throw new UnsupportedClient(request)
-        
+            acceptsDevalue === false &&
+            acceptsJson === false
+        ) {
+            throw new UnusableRequest("unsupported accept header", request)
+        }
+
         let input: any
-        if (method === "GET") {
-            const { searchParams } = new URL(url)
-            input = Object.fromEntries(searchParams.entries())
-            input = paramsToData(input)
+        if (
+            contentType === "application/json-urlencoded" &&
+            (import.meta.env.TYPED_API_SERIALIZATION !== "devalue")
+        ) {
+            input = searchParams.get("input")
+            if (input) try {
+                input = JSON.parse(input)
+            } catch (error) {
+                throw new UnusableRequest("deserialization failed", request, error as Error)
+            }
+        } else if (
+            contentType === "application/devalue-urlencoded" &&
+            (import.meta.env.TYPED_API_SERIALIZATION === "devalue")
+        ) {
+            input = searchParams.get("input")
+            if (input) try {
+                input = parse(input)
+            } catch (error) {
+                throw new UnusableRequest("deserialization failed", request, error as Error)
+            }
         } else if (contentType === "application/json") {
             try {
                 input = await request.json()
             } catch (error) {
-                throw new InputNotDeserializable(error, url)
+                throw new UnusableRequest("deserialization failed", request, error as Error)
             }
-        } else if (contentType === "application/escodec") {
+        } else if (contentType === "application/devalue+json") {
             try {
-                input = decode(await request.arrayBuffer())
+                input = parse(await request.text())
             } catch (error) {
-                throw new InputNotDeserializable(error, url)
+                throw new UnusableRequest("deserialization failed", request, error as Error)
             }
-        } else throw new UnknownRequestFormat(request)
-        
+        } else if (contentType !== null) {
+            throw new UnusableRequest("unsupported content type", request)
+        }
+
+        if ("schema" in handler && handler.schema) {
+            input = await validateInput(input, handler.schema, pathname)
+        }
+
         const response = {
             status: 200,
             statusText: "OK",
             headers: new Headers
         }
-        
+
         Object.defineProperty(response, "headers", {
             value: response.headers,
             enumerable: true,
             writable: false
         })
-        
-        const context: TypedAPIContext = Object.assign(ctx, { response })
-        
+
+        const context: TypedAPIContext = Object.assign(ctx, {
+            response,
+            error(details, response) {
+                return new ErrorResponse(details, response)
+            }
+        } satisfies Omit<TypedAPIContext, keyof APIContext>)
+
         let output: any
         try {
-            output = await fetch(input, context)
+            output = await handler.fetch(input, context)
         } catch (error) {
             if (error instanceof TypedAPIError) throw error
-            const procedureFailed = new ProcedureFailed(error, url)
-            if (import.meta.env.DEV) {
-                // some errors are thrown intentionally
-                // until a full error handling api is implemented, manually return 500 responses
-                // to avoid dev overlay taking over the browser
-                console.error(procedureFailed)
-                return new Response(null, { status: 500 })
-            }
-            else {
-                throw procedureFailed
-            }
+            throw new ProcedureFailed(error, pathname)
         }
-        
-        let outputBody
-        if (accept.includes("application/escodec")) {
+
+        if (typeof output === "object" && output !== null && output instanceof ErrorResponse) {
+            return output
+        }
+
+        let outputBody: string | undefined = undefined
+        if (acceptsDevalue) {
             try {
-                outputBody = encode(output)
+                outputBody = stringify(output)
             } catch (error) {
-                throw new OutputNotSerializable(error, url)
+                throw new OutputNotSerializable(error, pathname)
             }
-            response.headers.set("Content-Type", "application/escodec")
-        } else if (accept.includes("application/json")) {
+            response.headers.set("Content-Type", "application/devalue+json")
+        } else if (acceptsJson) {
             try {
                 outputBody = JSON.stringify(output)
             } catch (error) {
-                throw new OutputNotSerializable(error, url)
+                throw new OutputNotSerializable(error, pathname)
             }
             response.headers.set("Content-Type", "application/json")
         }
-        
-        return new Response(outputBody, response)
+
+        /**
+         * statusText is intentionally ignored. It is not part
+         * of HTTP/2 and HTTP/3. It will work in development,
+         * but not in production.
+         */
+        return new Response(outputBody, { status: response.status, headers: response.headers })
     }
+}
+
+async function validateInput(input: unknown, schema: unknown, pathname: string) {
+    if (
+        typeof schema !== "object" ||
+        schema === null ||
+        "safeParse" in schema === false ||
+        typeof schema.safeParse !== "function"
+    ) {
+        throw new InvalidUsage("invalid schema", schema)
+    }
+    const { success, data, error } = (schema as ZodTypeAny).safeParse(input)
+    if (success === false) {
+        throw new ValidationFailed(error, pathname, input)
+    }
+    return data
 }

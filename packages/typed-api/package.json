@@ -24,7 +24,8 @@
         "./client": "./runtime/client.ts",
         "./server": "./runtime/server.ts",
         "./types": "./types.ts",
-        "./errors": "./errors.ts"
+        "./errors/client": "./runtime/errors.client.ts",
+        "./errors/server": "./runtime/errors.server.ts"
     },
     "scripts": {
         "test": "pnpm -w test:e2e typed-api.spec.ts"
@@ -35,7 +36,7 @@
         "zod": "3"
     },
     "dependencies": {
-        "es-codec": "0.5",
+        "devalue": "5",
         "globby": "14"
     },
     "devDependencies": {

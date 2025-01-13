@@ -4,9 +4,8 @@ import { expect } from "playwright/test"
 import type { AstroInlineConfig as Config } from "astro"
 
 const setups: Record<string, Config> = {
-    // output: "server" is duplicated here, even though it is also present in astro.config.ts so that
-    // the bug workaround for withastro/astro#12248 can be applied by build()
-    "default config": { output: "server" },
+    "default config": {},
+    "devalue": {},
     // "with trailingSlash set to never": { trailingSlash: "never" },
     // "with trailingSlash set to always": { trailingSlash: "always" },
     // "with a base path configured": { base: "/some-base" },
@@ -16,8 +15,16 @@ const setups: Record<string, Config> = {
 for (const [description, config] of Object.entries(setups)) {
     
     const test = testFactory("./fixtures/typed-api", config)
-
+    
     test.describe(`${description} - dev`, () => {
+        if (description === "devalue") {
+            test.beforeAll(() => {
+                process.env.TYPED_API_SERIALIZATION = "devalue"
+            })
+            test.afterAll(() => {
+                delete process.env.TYPED_API_SERIALIZATION
+            })
+        }
         test("an action can be called", ({ dev, page }) => basics(page, resolve))
         test("the method can be POST", ({ dev, page }) => post(page, resolve))
         test("the ALL handler can be fetched", ({ dev, page }) => all(page, resolve))
@@ -25,12 +32,21 @@ for (const [description, config] of Object.entries(setups)) {
         test("path params can be used", ({ dev, page }) => params(page, resolve))
         test("multiple params can be used", ({ dev, page }) => multiParams(page, resolve))
         test("spread params can be used", ({ dev, page }) => spreadParams(page, resolve))
+        test("custom error handling with .catch()", ({ dev, page }) => error(page, resolve))
         // zod validation is last because the error overlay from the server error pops up in the next test
         test("the input can be validated with zod", ({ dev, page }) => zodValidation(page, resolve))
         test("stopping dev server", ({ dev }) => dev.stop())
     })
     
     test.describe(`${description} - build`, () => {
+        if (description === "devalue") {
+            test.beforeAll(() => {
+                process.env.TYPED_API_SERIALIZATION = "devalue"
+            })
+            test.afterAll(() => {
+                delete process.env.TYPED_API_SERIALIZATION
+            })
+        }
         test("an action can be called", ({ adapter, page }) => basics(page, resolve))
         test("the method can be POST", ({ adapter, page }) => post(page, resolve))
         test("the ALL handler can be fetched", ({ adapter, page }) => all(page, resolve))
@@ -38,6 +54,7 @@ for (const [description, config] of Object.entries(setups)) {
         test("path params can be used", ({ adapter, page }) => params(page, resolve))
         test("multiple params can be used", ({ adapter, page }) => multiParams(page, resolve))
         test("spread params can be used", ({ adapter, page }) => spreadParams(page, resolve))
+        test("custom error handling with .catch()", ({ adapter, page }) => error(page, resolve))
         test("the input can be validated with zod", ({ adapter, page }) => zodValidation(page, resolve))
         test("stopping adapter server", ({ adapter }) => adapter.server.stop())
     })
@@ -120,5 +137,12 @@ async function zodValidation(page: Page, resolve: (url: string) => string) {
     await expect(page.locator("output")).toHaveText("10")
     await page.fill("input", `{ "x": "hello" }`)
     await page.click("button")
-    await expect(page.locator("output")).toHaveText("The API call was unsuccessful: Internal Server Error.\nSee `error.cause` for the full response.")
+    await expect(page.locator("output")).toHaveText("The API call was unsuccessful: Bad Request.\nSee `error.cause` for the full response.")
+}
+
+async function error(page: Page, resolve: (url: string) => string) {
+    await page.goto(resolve("http://localhost:4321/error"))
+    await page.fill("input", "hello")
+    await page.click("button")
+    await expect(page.locator("output")).toHaveText("Received the custom error (error_code_500) successfully")
 }

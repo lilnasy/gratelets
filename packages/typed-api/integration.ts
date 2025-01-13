@@ -4,33 +4,39 @@ import path from "node:path"
 import { globby } from "globby"
 import type { AstroIntegration } from "astro"
 
-export interface Options {}
+export interface Options {
+    /**
+     * The serialization format to use for the API.
+     * The value can be `"JSON"`, or `"devalue"`
+     * 
+     * - `"JSON"`: messages will be serialized using
+     * the built-in `JSON.stringify()` and deserialized
+     * using `JSON.parse()`.
+     * 
+     * - `"devalue"`: messages will be serialized
+     * using the `stringify()` function and deserialized
+     * using the `parse()` function from the [`devalue` npm
+     * package](https://www.npmjs.com/package/devalue).
+     */
+    serialization?: "JSON" | "devalue"
+}
 
-export default function (_?: Partial<Options>): AstroIntegration {
+export default function (options?: Partial<Options>): AstroIntegration {
     let apiDir: URL
-    let root: URL
-    let dotAstroDir: URL
     let declarationFileUrl: URL
     return {
         name: "astro-typed-api",
         hooks: {
-            "astro:config:setup" ({ updateConfig, config }) {
-                updateConfig({ vite: { plugins: [{
-                    name: "astro-typed-api/typegen",
-                    enforce: "post",
-                    // the .astro directory is generated during astro sync command
-                    // sync loads vite plugins but runs no astro hooks, config is
-                    // the only hook available to generate types at the same time
-                    // as sync
-                    async configResolved() {
-                        const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
-                        generateAndWriteDeclaration(filenames, apiDir, declarationFileUrl)
-                    }
-                }] } })
+            "astro:config:setup" ({ config, addMiddleware, updateConfig }) {
+                addMiddleware({
+                    order: "pre",
+                    entrypoint: new URL("runtime/middleware.ts", import.meta.url)
+                })
                 updateConfig({
                     vite: {
                         define: {
-                            "import.meta.env._TRAILING_SLASH": JSON.stringify(config.trailingSlash)
+                            "import.meta.env._TRAILING_SLASH": JSON.stringify(config.trailingSlash),
+                            "import.meta.env.TYPED_API_SERIALIZATION": JSON.stringify(options?.serialization)
                         },
                         ssr: {
                             // this package is published as uncompiled typescript, which we need vite to process
@@ -41,8 +47,6 @@ export default function (_?: Partial<Options>): AstroIntegration {
             },
             async "astro:config:done"({ config, injectTypes }) {
                 apiDir = new URL("pages/api", config.srcDir)
-                root = config.root
-                dotAstroDir = new URL('.astro/', root)
 
                 const filenames = await globby("**/*.{ts,mts}", { cwd: apiDir })
 
@@ -72,7 +76,7 @@ export default function (_?: Partial<Options>): AstroIntegration {
     }
 }
 
-async function generateAndWriteDeclaration(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
+function generateAndWriteDeclaration(filenames: string[], apiDir: URL, declarationFileUrl: URL) {
     fs.mkdirSync(new URL(".", declarationFileUrl), { recursive: true })
     fs.writeFileSync(declarationFileUrl, generateDeclaration(filenames, apiDir, declarationFileUrl))
 }

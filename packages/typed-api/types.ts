@@ -1,4 +1,6 @@
 import type { TypedAPIHandler } from "./runtime/server.ts"
+import type { ErrorResponse } from "./runtime/error-response.ts"
+import type * as ClientErrors from "./runtime/errors.client.ts"
 
 /***** ROUTER *****/
 
@@ -20,14 +22,14 @@ type ModuleProxy<EndpointModule, Params extends string> = {
         Method extends string
             ? Method extends Uppercase<Method>
                 ? MethodProxy<EndpointModule[Method], Params, Method extends string ? Method : never>
-            : TypedAPITypeError<"The method of an API Route must be exported as uppercase.">
-        : TypedAPITypeError<"The method of an API Route must be exported as uppercase.">
+            : InvalidUsage<"The method of an API Route must be exported as uppercase.">
+        : InvalidUsage<"The method of an API Route must be exported as uppercase.">
 }
 
 type MethodProxy<MethodExport, Params extends string, Method extends string> =
     MethodExport extends TypedAPIHandler<infer Input, infer Output>
-        ? Fetch_<Input, Output, Params, Method>
-        : TypedAPITypeError<"This export from the API Route was not a typed handler. Please make sure it was created using `defineApiRoute`.">
+        ? Fetcher<Input, Output, Params, Method>
+        : InvalidUsage<"This export from the API Route is not a typed handler. Please make sure it is created using either `defineApiRoute` or `defineEndpoint`, which are exported by the module `\"astro-typed-api/server\"`.">
 
 type EndpointToObject<Endpoint extends string, ModuleProxy> =
     Endpoint extends `[...${infer Param}]`
@@ -43,46 +45,94 @@ type EndpointToObject<Endpoint extends string, ModuleProxy> =
 type RequireParam<MP, Param extends string> = 
     MP extends ModuleProxy<infer EP, infer Params>
         ? ModuleProxy<EP, MapString<Params, never> | Param>
-        : TypedAPITypeError<"Types for this route with params could not be generated. This is probably a bug. Please open an issue with the minimal reproduction steps.">
+        : "Types for this route with params could not be generated. This is probably a bug. Please open an issue with the minimal reproduction steps."
+
+
+/***** CALLABLE FUNCTIONS *****/
+
+export type Fetcher<
+    Input,
+    Output,
+    Params extends string,
+    Method extends string
+> = 
+    IsEmptyUnion<Params> extends true
+        ? Method extends "ALL"
+            ? Fetchable.RequiresMethod<Input, Output>
+            : unknown extends Input
+                ? Fetchable.InputOptional<Input, Output>
+                : Fetchable<Input, Output>
+        // When there is a dynamic segment in the path
+        // (pages/api/[x].ts -> client.api._x.GET) the
+        // options should become required and they must
+        // have the params field.
+        : Method extends "ALL"
+            ? Fetchable.RequiresMethodAndParams<Input, Output, Params>
+            : Fetchable.RequiresParams<Input, Output, Params>
+
 
 /***** FETCH FUNCTION *****/
 
-// when the path includes a param (pages/api/[x].ts -> client.api._x.GET)
-// typed API options should become required
-export type Fetch_<Input, Output, Params extends string, Method extends string> = 
-    IsNever<Params> extends true
-        ? Method extends "ALL" ? FetchM<Input, Output> : unknown extends Input ? FetchO<Input, Output> : Fetch<Input, Output>
-        : Method extends "ALL" ? FetchMP<Input, Output, Params> : FetchP<Input, Output, Params>
-
-interface Fetch<Input, Output> {
-    fetch(input: Input, options?: Options): Promise<Output>
+interface Fetchable<Input, Output> {
+    fetch(input: Input, options?: FetchOptions): Result<Output>
 }
 
-interface FetchO<Input, Output> {
-    fetch(input?: Input, options?: Options): Promise<Output>
+namespace Fetchable {
+    export interface InputOptional<Input, Output> {
+        fetch(input?: Input, options?: FetchOptions): Result<Output>
+    }
+    export interface RequiresMethod<Input, Output> {
+        fetch(input: Input, options: FetchOptionsWithMethod): Result<Output>
+    }
+    export interface RequiresParams<Input, Output, Params extends string> {
+        fetch(input: Input, options: FetchOptionsWithParams<Params>): Result<Output>
+    }
+    export interface RequiresMethodAndParams<Input, Output, Params extends string> {
+        fetch(input: Input, options: FetchOptionsWithMethodAndParams<Params>): Result<Output>
+    }
 }
 
-interface FetchM<Input, Output> {
-    fetch(input: Input, options: OptionsM): Promise<Output>
+interface Result<L> extends Pick<Promise<Exclude<L, ErrorResponse<any>>>, "finally"> {
+    
+    then<R>(
+        on_fulfillment: (value: Exclude<L, ErrorResponse<any>>) => R | PromiseLike<R>
+    ): Result<R>
+    
+    catch<R>(
+        on_rejection: (error:
+            // We are checking twice because the first time around, we are
+            // checking against a union (L), the answer maybe `boolean` (both
+            // true for some members and false for others).
+            // The first check is to determine whether we have a definite
+            // answer (there will be a definite false in case ErrorResponse is
+            // not in the union), and an indefinite answer is assumed to mean
+            // that ErrorResponse exists and we do a second check to get the
+            // inferred `Type`.
+            | ((L extends ErrorResponse<string> ? true : false) extends false
+                ? ClientErrors.CustomError<string>
+                : L extends ErrorResponse<infer Type extends string>
+                    ? ClientErrors.CustomError<Type>
+                    : never
+                )
+            | ClientErrors.InvalidUsage
+            | ClientErrors.NetworkError
+            | ClientErrors.UnusableResponse
+        ) => R | PromiseLike<R>
+    ): Promise<Exclude<L, ErrorResponse<any>> | R>
 }
 
-interface FetchP<Input, Output, Params extends string> {
-    fetch(input: Input, options: OptionsP<Params>): Promise<Output>
-}
+interface FetchOptions extends Omit<RequestInit, "body" | "method"> {}
 
-interface FetchMP<Input, Output, Params extends string> {
-    fetch(input: Input, options: OptionsMP<Params>): Promise<Output>
-}
+interface FetchOptionsWithMethod extends FetchOptions, Required<Pick<RequestInit, "method">> {}
 
-interface Options extends Omit<RequestInit, "body" | "method"> {}
-
-interface OptionsM extends Options, Required<Pick<RequestInit, "method">> {}
-
-interface OptionsP<Params extends string> extends Options {
+interface FetchOptionsWithParams<Params extends string> extends FetchOptions {
     params: Record<Params, string>
 }
 
-interface OptionsMP<Params extends string> extends OptionsM, OptionsP<Params> {}
+interface FetchOptionsWithMethodAndParams<Params extends string>
+    extends
+        FetchOptionsWithMethod,
+        FetchOptionsWithParams<Params> {}
 
 /***** UTLITY FUNCTIONS *****/
 
@@ -97,12 +147,12 @@ type DeepMerge<A, B> = {
                 : never
 }
 
-export interface TypedAPITypeError<Message> {
-    error: Message
+export interface InvalidUsage<Message> {
+    reason: Message
 }
 
 export type MapAny<T, IfAny> = (T extends never ? true : false) extends false ? T : IfAny
 
 type MapString<T, IfString> = T extends string ? string extends T ? IfString : T : T
 
-type IsNever<T> = (T extends never ? true : false) extends true ? true : false  
+type IsEmptyUnion<T> = (T extends never ? true : false) extends true ? true : false  
