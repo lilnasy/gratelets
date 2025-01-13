@@ -1,5 +1,23 @@
 # astro-typed-api
 
+## 0.5.0
+
+### Minor Changes
+
+- [#132](https://github.com/lilnasy/gratelets/pull/132) [`cf3311b`](https://github.com/lilnasy/gratelets/commit/cf3311b9fe194456999bae58a403beeb3790d68b) Thanks [@lilnasy](https://github.com/lilnasy)! - Typed API routes are now reusable throughout your project!
+
+  You can define your main application logic in API routes, and then use it for server-side rendering static HTML by calling it from the frontmatter of your pages.
+
+  ```astro
+  ---
+  import { api } from "astro-typed-api/client"
+  const results = await api.search.GET.fetch({ query: Astro.params.query })
+  ---
+  {results.map(result => <div>{result.title}</div>)}
+  ```
+
+  The `cookies`, `headers`, `locals`, and `request` objects are automatically populated with the current request's values.
+
 ## 0.4.0
 
 ### Minor Changes
