@@ -53,7 +53,7 @@ import { defineApiRoute } from "astro-typed-api/server"
 
 export const GET = defineApiRoute({
     fetch: (name: string) => `Hello, ${name}!`
-)
+})
 ```
 The `defineApiRoute()` function takes an object with a `fetch` method. The `fetch` method will be called when an HTTP request is routed to the current endpoint. Parsing the request for structured data and converting the returned value to a response is handled automatically. Once defined, the API route becomes available for browser-side code to use on the `api` object exported from `astro-typed-api/client`:
 ```ts
@@ -205,10 +205,7 @@ export const GET = defineApiRoute({
     fetch({ query, page }: { query: string, page?: number }, { locals, error }) {
         if (locals.loginInfo.expires < Date.now()) {
             // notice that the error is returned, not thrown
-            return error({ 
-                type: "session expired", 
-                message: "Your login session has expired. Please log in again." 
-            })
+            return error("session expired")
         }
 
         return [ "search result 1", "search result 2" ]
@@ -221,43 +218,74 @@ To mantain type-level information about the errors, custom errors must be return
 On the client-side, you will notice that the return type of the fetch call is unchanged. This is because the error details are only accessible as a `CustomError` within the `catch()` handler. This allows keeping the code responsible for normal behavior clean and simple by separating the error handling from the "happy path".
 
 ```ts
+import { api } from "astro-typed-api/client"
+
 const data = await api.search.GET.fetch({ query: "science" }).catch(error => {
-    if (error instanceof CustomError) {
+    if (error.name === "TypedAPI.CustomError") {
         console.log(error.type) // TypeScript knows this is "session expired"
-        console.log(error.message) // Optional user-friendly message
         if (error.type === "session expired") {
-            redirectToLogin()
+            toast.error({
+                message: "Your session has expired. Please log in again.",
+                action: () => redirectToLogin()
+            })
         }
     }
 })
 ```
 
-Under the hood, the error is serialized by using the headers `X-Typed-Error` and `X-Typed-Message` for the `type` and `message` fields respectively.
+In addition to the `reason`, you can send a user-readable message directly in the `error()` call by providing an object with `reason` and `message` fields:
+
+```ts
+import { defineApiRoute } from "astro-typed-api/server"
+
+export const GET = defineApiRoute({
+    fetch: (_, { error }) => {
+        return error({
+            reason: "session expired",
+            message: "Your session has expired. Please log in again."
+        })
+    }
+})
+```
+
+Under the hood, the error is serialized by using the headers `X-Typed-Error` and `X-Typed-Message` for the `reason` and `message` fields respectively.
+
+By default, the HTTP response sent as a result of the error has a `500` status code. However, if you are using a data fetching library, the status code maybe relevant to whether the request is retried. In this case, you can set the status code explicitly by passing it as the second argument to the `error()` function.
+
+```ts
+import { defineApiRoute } from "astro-typed-api/server"
+
+export const GET = defineApiRoute({
+    fetch: (_, { error }) => {
+        return error("try again", { status: 403 })
+    }
+})
+```
 
 ### Reference
 
-#### Exported modules
-- `astro-typed-api/client`: The client-side API.
-    - `api`: The client-side API object.
+#### Modules
+- [`astro-typed-api`](#manual-install): The integration to be added to `astro.config.js`.
+- [`astro-typed-api/client`](#astro-typed-apiclient-the-client-side-api): The client-side API.
+    - [`api`](#api-the-proxy-object-representing-your-api-routes): The client-side API object.
     - ... and the error constructors from `astro-typed-api/errors/client`.
-- `astro-typed-api/server`: The server-side functions and values.
-    - `defineApiRoute()`: The function for defining API routes.
-    - `defineEndpoint()`: An alias for `defineApiRoute()`.
-    - `type TypedAPIHandler`: The interface for a fetch handler used by `defineApiRoute()`.
-    - `type ZodAPIHandler`: The interface for a fetch handler that also validates the input using a zod schema.
-    - `type TypedAPIContext`: The interface for the context object passed to the fetch handler.
-- `astro-typed-api/errors/client`: The errors that may be thrown by the client-side API.
-    - `InvalidUsage`: Thrown when the client-side API is used incorrectly.
-    - `NetworkError`: Thrown when there's a network failure while making the request.
-    - `UnusableResponse`: Thrown when the server returns a response with a non-200 status code.
-    - `CustomError`: Thrown when the server returns a custom error.
-- `astro-typed-api/errors/server`: The server-side errors.
-    - `InvalidUsage`: Thrown when the server-side API route defines a schema, but the schema does not have a `parse` method.
-    - `ValidationFailed`: Thrown when the server-side API route defines a schema, and the data sent by a client does not match the schema.
-    - `UnusableRequest`: Thrown when the request does not include expected headers or is otherwise malformed.
-    - `ProcedureFailed`: Thrown when an error occurs inside fetch handler.
-    - `OutputNotSerializable`: Thrown when the fetch handler returns data that cannot be serialized using JSON or devalue.
-- `astro-typed-api/types`: Internally used generics.
+- [`astro-typed-api/server`](#astro-typed-apiserver-the-server-side-api): The server-side functions and values.
+    - [`defineApiRoute()`](#defineapiroute): The function for defining API routes.
+    - [`defineEndpoint()`](#defineendpoint): An alias for `defineApiRoute()`.
+    - [`type TypedAPIContext`](#typedapicontext): The interface for the context object passed to the fetch handler.
+    - [`type TypedAPIHandler`](#typedapihandler): The interface for a fetch handler used by `defineApiRoute()`.
+    - [`type ZodAPIHandler`](#zodapihandler): The interface for a fetch handler that also validates the input using a zod schema.
+- [`astro-typed-api/errors/client`](#astro-typed-apierrorsclient-client-side-errors): The errors that may be thrown by the client-side API.
+    - [`InvalidUsage`](#invalidusage): Thrown when the client-side API is used incorrectly.
+    - [`NetworkError`](#networkerror): Thrown when there's a network failure while making the request.
+    - [`UnusableResponse`](#unusableresponse): Thrown when the server returns a response with a non-200 status code.
+    - [`CustomError`](#custom-error-handling): Thrown when the server returns a custom error.
+- [`astro-typed-api/errors/server`](#astro-typed-apierrorsserver-server-side-errors): The server-side errors.
+    - [`InvalidUsage`](#invalidusage): Thrown when the server-side API route defines a schema, but the schema does not have a `parse` method.
+    - [`ValidationFailed`](#validationfailed): Thrown when the server-side API route defines a schema, and the data sent by a client does not match the schema.
+    - [`UnusableRequest`](#unusablerequest): Thrown when the request does not include expected headers or is otherwise malformed.
+    - [`ProcedureFailed`](#procedurefailed): Thrown when an error occurs inside fetch handler.
+    - [`OutputNotSerializable`](#outputnotserializable): Thrown when the fetch handler returns data that cannot be serialized using JSON or devalue.
 
 #### `astro-typed-api/client`: The client-side API
 
@@ -334,14 +362,16 @@ import { type APIContext } from "astro"
 
 interface TypedAPIContext extends APIContext {
     response: ResponseOptions
-    error(details: ErrorDetails, response?: Partial<ResponseOptions>): Response
+    error(details: string | ErrorDetails, response?: Partial<ResponseOptions>): Response
 }
 
 interface ErrorDetails {
-    type: string
+    reason: string
     message?: string
 }
-
+/**
+ * Custom status code and headers for the error response.
+ */
 interface ResponseOptions {
     status: number
     headers: Headers
