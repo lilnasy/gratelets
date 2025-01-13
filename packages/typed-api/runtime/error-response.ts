@@ -3,9 +3,20 @@ export interface ErrorDetails<Reason extends string> {
     message?: string
 }
 
+export interface ResponseOptions {
+    status?: number
+    headers?: HeadersInit
+}
+
 export class ErrorResponse<Reason extends string> extends Response {
-    constructor(details: Reason | ErrorDetails<Reason>, init?: ResponseInit) {
-        const headers = new Headers(init?.headers)
+    constructor(details: Reason | ErrorDetails<Reason>, response?: ResponseOptions) {
+        const status = 
+            // prevent ok response status on error responses
+            response?.status && response.status >= 400
+                ? response.status
+                : 500
+
+        const headers = new Headers(response?.headers)
         /**
          * Details of the custom error are stored in the headers
          * because astro has a spaghetti code handling of error
@@ -20,6 +31,6 @@ export class ErrorResponse<Reason extends string> extends Response {
         if (typeof details === "object" && "message" in details && typeof details.message === "string") {
             headers.set("X-Typed-Message", details.message)
         }
-        super(null, { status: init?.status ?? 500, headers })
+        super(null, { status: response?.status ?? 500, headers })
     }
 }
