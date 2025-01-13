@@ -7,6 +7,7 @@ Adds support for type-safe custom error handling!
 On the server-side, you now have access to the `error()` function in the `TypedAPIContext`.
 
 ```ts
+// src/api/search.ts
 import { defineApiRoute } from "astro-typed-api/server"
 
 export const GET = defineApiRoute({
