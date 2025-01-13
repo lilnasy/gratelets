@@ -5,6 +5,7 @@ This **[Astro integration][astro-integration]** offers a way to create type-safe
 - <strong>[Why astro-typed-api?](#why-astro-typed-api)</strong>
 - <strong>[Installation](#installation)</strong>
 - <strong>[Usage](#usage)</strong>
+- <strong>[Reference](#reference)</strong>
 - <strong>[Troubleshooting](#troubleshooting)</strong>
 - <strong>[Contributing](#contributing)</strong>
 - <strong>[Changelog](#changelog)</strong>
@@ -182,19 +183,56 @@ function Profile() {
 
 ### Errors
 
-Failures are everywhere and errors are a form of communication around them. As an application developer, you want to be able to understand the underlying reason and further communicate it to the user in terms that matter to them.
+Failures are everywhere and errors are a form of communication around them. As an application developer, you want to be able to understand the underlying reason. Further, you want to communicate it to the user in terms that matter to them.
 
-Accordingly, Typed API implements a usable and practical error handling system with two goals:
+With this motivation, Typed API implements a usable and practical error handling system with two goals:
 1. To provide a way for the developer to understand the cause.
 2. To provide a convenient way to inform the user about the relevant details.
 
-As an additional goal, Typed APIs aims to be secure by default. Errors intended to be read by developers (goal #1) are potentially exploitable when read by users (goal #2). As such, Typed API ensures that there is no ambiguity between the two. Information is never automatically sent to the clients; the details of the failure relevant to the user are explicitly provided by the developer.
+As an additional goal, Typed API aims to be secure by default. Errors intended to be read by developers (goal #1) are potentially exploitable when read by users (goal #2). As such, Typed API ensures that there is no ambiguity between the two. Information is never automatically sent to the clients; the details of the failure relevant to the user are explicitly provided by the developer.
 
 The library meets these goals by maintaining a small set of documented errors (see [Client-side errors](#client-side-errors) and [Server-side errors](#server-side-errors)), and by providing an opt-in type-safe bridge for errors between the server and the client (see [Custom error handling](#custom-error-handling).)
 
-#### Custom error handling
+#### Custom Error Handling
 
+You can send custom error messages to the client by calling [`context.error()`](#typedapicontext) and returning its value as the result of the handler.
 
+```ts
+// src/pages/api/search.ts
+import { defineApiRoute } from "astro-typed-api/server"
+
+export const GET = defineApiRoute({
+    fetch({ query, page }: { query: string, page?: number }, { locals, error }) {
+        if (locals.loginInfo.expires < Date.now()) {
+            // notice that the error is returned, not thrown
+            return error({ 
+                type: "session expired", 
+                message: "Your login session has expired. Please log in again." 
+            })
+        }
+
+        return [ "search result 1", "search result 2" ]
+    }
+})
+```
+
+To mantain type-level information about the errors, custom errors must be returned from the fetch handler, not thrown.
+
+On the client-side, you will notice that the return type of the fetch call is unchanged. This is because the error details are only accessible as a `CustomError` within the `catch()` handler. This allows keeping the code responsible for normal behavior clean and simple by separating the error handling from the "happy path".
+
+```ts
+const data = await api.search.GET.fetch({ query: "science" }).catch(error => {
+    if (error instanceof CustomError) {
+        console.log(error.type) // TypeScript knows this is "session expired"
+        console.log(error.message) // Optional user-friendly message
+        if (error.type === "session expired") {
+            redirectToLogin()
+        }
+    }
+})
+```
+
+Under the hood, the error is serialized by using the headers `X-Typed-Error` and `X-Typed-Message` for the `type` and `message` fields respectively.
 
 ### Reference
 
@@ -225,11 +263,25 @@ The library meets these goals by maintaining a small set of documented errors (s
 
 ##### `api`: The proxy object representing your API routes
 
+```ts
+import { api } from "astro-typed-api/client"
+```
+
 The `api` object enables "object API mapping" to your server-side API routes. It is a `Proxy` object that can be indexed into to attrive at a certain endpoint. For example, `api.user.posts` selects `/api/user/posts` as the endpoint. This is followed by the selection of the HTTP method, and the `fetch()` invocation. For example, `api.user.posts.GET.fetch()` selects `/api/user/posts` as the endpoint and `GET` as the HTTP method, and then makes the request to that endpoint using the `GET` method.
 
 This runtime behavior is combined with type generation to provide statically analysable usage. For example, if `src/api/user/posts.ts` does not export a `POST` method, then any code using `api.user.posts.POST` will error during type-checking.
 
 #### `astro-typed-api/server`: The server-side API
+
+```
+import {
+    defineApiRoute,
+    defineEndpoint,
+    type TypedAPIContext,
+    type TypedAPIHandler,
+    type ZodAPIHandler,
+} from "astro-typed-api/server"
+```
 
 ##### `defineApiRoute()`
 
@@ -254,6 +306,8 @@ const handler: TypedAPIHandler<{ name: string }, { username_available: boolean }
 export const GET = defineApiRoute(handler)
 ```
 
+Refer to [Usage](#usage) for detailed examples.
+
 ##### `defineEndpoint()`
 
 An alias for `defineApiRoute()`, because API Route is too many syllables, and it's the casing for it is not consistent in the ecosystem.
@@ -273,9 +327,11 @@ export const GET = defineEndpoint({
 
 ##### `TypedAPIContext`
 
-The interface represnting the object passed to the fetch handler as the second argument.
+The interface representing the object passed to the fetch handler as the second argument.
 
 ```ts
+import { type APIContext } from "astro"
+
 interface TypedAPIContext extends APIContext {
     response: ResponseOptions
     error(details: ErrorDetails, response?: Partial<ResponseOptions>): Response
@@ -294,7 +350,7 @@ interface ResponseOptions {
 
 The interface includes all fields from Astro's [APIContext](https://docs.astro.build/en/reference/api-reference/#endpoint-context), which is also used in normal API routes and in the middleware. Additionally, it includes two fields:
 - `response`: a mutable object that can be used to set the status code and headers of the response.
-- `error()`: a function that can be used to send a custom error message to the client.
+- `error()`: a function that can be used to send a custom error message to the client. Refer to [Custom Error Handling](#custom-error-handling) for more details.
 
 ##### `TypedAPIHandler`
 
