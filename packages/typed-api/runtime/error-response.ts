@@ -1,10 +1,10 @@
-export interface ErrorDetails<Type extends string> {
-    type: Type
+export interface ErrorDetails<Reason extends string> {
+    reason: Reason
     message?: string
 }
 
-export class ErrorResponse<Type extends string> extends Response {
-    constructor(details: { type: Type, message?: string }, init?: ResponseInit) {
+export class ErrorResponse<Reason extends string> extends Response {
+    constructor(details: Reason | ErrorDetails<Reason>, init?: ResponseInit) {
         const headers = new Headers(init?.headers)
         /**
          * Details of the custom error are stored in the headers
@@ -12,8 +12,12 @@ export class ErrorResponse<Type extends string> extends Response {
          * code responses, and the response body may be thrown
          * away every new moon.
          */
-        headers.set("X-Typed-Error", details.type)
-        if (details.message) {
+        if (typeof details === "string") {
+            headers.set("X-Typed-Error", details)
+        } else {
+            headers.set("X-Typed-Error", details.reason)
+        }
+        if (typeof details === "object" && "message" in details && typeof details.message === "string") {
             headers.set("X-Typed-Message", details.message)
         }
         super(null, { status: init?.status ?? 500, headers })

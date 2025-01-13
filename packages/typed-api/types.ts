@@ -92,12 +92,28 @@ namespace Fetchable {
     }
 }
 
-interface Result<L> extends Omit<Promise<Exclude<L, ErrorResponse<any>>>, "catch"> {
-    catch<R>(on_rejection:
-        (error:
-            | (L extends ErrorResponse<infer Type extends string>
-                ? ClientErrors.CustomError<Type>
-                : never)
+interface Result<L> extends Pick<Promise<Exclude<L, ErrorResponse<any>>>, "finally"> {
+    
+    then<R>(
+        on_fulfillment: (value: Exclude<L, ErrorResponse<any>>) => R | PromiseLike<R>
+    ): Result<R>
+    
+    catch<R>(
+        on_rejection: (error:
+            // We are checking twice because the first time around, we are
+            // checking against a union (L), the answer maybe `boolean` (both
+            // true for some members and false for others).
+            // The first check is to determine whether we have a definite
+            // answer (there will be a definite false in case ErrorResponse is
+            // not in the union), and an indefinite answer is assumed to mean
+            // that ErrorResponse exists and we do a second check to get the
+            // inferred `Type`.
+            | ((L extends ErrorResponse<string> ? true : false) extends false
+                ? ClientErrors.CustomError<string>
+                : L extends ErrorResponse<infer Type extends string>
+                    ? ClientErrors.CustomError<Type>
+                    : never
+                )
             | ClientErrors.InvalidUsage
             | ClientErrors.NetworkError
             | ClientErrors.UnusableResponse

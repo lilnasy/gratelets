@@ -5,9 +5,9 @@
     const output = document.querySelector("output")!
     button.addEventListener("click", async () => {
         const { value } = input
-        output.textContent = await api.error.GET.fetch(value).catch(e => {
-            if (e instanceof CustomError) {
-                return `Received the custom error (${e.type}) successfully`
+        output.textContent = await api.error.GET.fetch(value).then(v => v).catch(e => {
+            if (e.name === "TypedAPI.CustomError") {
+                return `Received the custom error (${e.reason}) successfully`
             }
             return `unknown error: ${e.message}`
         })

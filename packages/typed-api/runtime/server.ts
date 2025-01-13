@@ -5,10 +5,10 @@ import type { ErrorDetails, ErrorResponse } from "./error-response.ts"
 
 export interface TypedAPIContext extends APIContext {
     response: ResponseInit
-    error<Type extends string>(
-        details: ErrorDetails<Type>,
+    error<Reason extends string>(
+        details: Reason | ErrorDetails<Reason>,
         response?: ResponseInit
-    ): ErrorResponse<Type>
+    ): ErrorResponse<Reason>
 }
 
 export interface TypedAPIHandler<Input, Output> {
