@@ -1,5 +1,5 @@
 import type { MiddlewareNext } from "astro"
-import { AcceptHeaderMissing, InputNotDeserializable, ProcedureFailed, UnknownRequestFormat, UnsupportedClient, ValidationFailed } from "./errors.server.ts"
+import { ProcedureFailed, UnusableRequest, ValidationFailed } from "./errors.server.ts"
 
 /**
  * This middleware handles errors that occured due to malformed
@@ -10,10 +10,7 @@ export async function onRequest(_: unknown, next: MiddlewareNext) {
         return await next()
     } catch (error) {
         if (
-            error instanceof AcceptHeaderMissing ||
-            error instanceof InputNotDeserializable ||
-            error instanceof UnknownRequestFormat ||
-            error instanceof UnsupportedClient ||
+            error instanceof UnusableRequest ||
             error instanceof ValidationFailed
         ) {
             console.error(error)

@@ -23,55 +23,57 @@ export class ValidationFailed extends TypedAPIError {
     }
 }
 
-export class AcceptHeaderMissing extends TypedAPIError<Request> {
-    name = "TypedAPI.AcceptHeaderMissing" as const
-    constructor(request: Request) {
-        super(
-            request,
-            `The API call to ${request.url} was invalid.`,
-            "The request must include an `Accept` header.",
-            "See `error.cause` for the full request."
-        )
-    }
-}
+export class UnusableRequest<
+    Type extends
+        | "accept header missing"
+        | "unsupported accept header"
+        | "unsupported content type"
+        | "deserialization failed",
+> extends TypedAPIError<Request> {
 
-export class UnsupportedClient extends TypedAPIError<Request> {
-    name = "TypedAPI.UnsupportedClient" as const
-    constructor(request: Request) {
-        super(
-            request,
-            `The API request to ${request.url} was made by an unsupported client.`,
-            "The request's `Accept` header must include either `application/json` or `application/devalue`.",
-            `The request's header value ("${JSON.stringify(request.headers.get("Accept"))}") included neither.`,
-            "See `error.cause` for the full request."
-        )
-    }
-}
+    name = "TypedAPI.UnusableRequest" as const
 
-export class UnknownRequestFormat extends TypedAPIError<Request> {
-    name = "TypedAPI.UnknownRequestFormat" as const
-    constructor(request: Request) {
-        super(
-            request,
-            `The API request to ${request.url} was invalid.`,
-            "Request format was neither JSON nor es-codec.",
-            "`Content-Type` header must be either `application/json` or `application/escodec`.",
-            `Instead, it was ${JSON.stringify(request.headers.get("Content-Type"))}.`,
-            "See `error.cause` for the full request."
-        )
-    }
-}
+    // @ts-expect-error
+    deserializationError: Type extends "deserialization failed" ? Error : undefined = undefined
 
-export class InputNotDeserializable extends TypedAPIError {
-    name = "TypedAPI.InputNotDeserializableError" as const
-    constructor(cause: unknown, url: string) {
-        super(
-            cause,
-            `The API Route failed to process the  request for ${url}.`,
-            "The input for the fetch handler could not be parsed from the request.",
-            String(cause),
-            "See `error.cause` for more details."
-        )
+    constructor(type: "deserialization failed", request: Request, cause: Error)
+    constructor(type: Exclude<Type, "deserialization failed">, request: Request)
+    constructor(readonly type: Type, request: Request, arg_2?: Error) {
+        if (type === "accept header missing") {
+            super(
+                request,
+                `The API call to ${request.url} was invalid.`,
+                "A request to a typed API route must have the `Accept` header.",
+                `The received request only included the following headers: ${Array.from(request.headers.keys()).join(", ")}.`,
+                "See `error.cause` for the full request."
+            )
+        } else if (type === "unsupported accept header") {
+            super(
+                request,
+                `The API call to ${request.url} was invalid.`,
+                "A request to a typed API route must have the `Accept` header, and it should include either `application/json` or `application/devalue`.",
+                `The received request's \`Accept\` header value ("${JSON.stringify(request.headers.get("Accept"))}") included neither.`,
+                "See `error.cause` for the full request."
+            )
+        } else if (type === "unsupported content type") {
+            super(
+                request,
+                `The API request to ${request.url} was invalid.`,
+                "A request to a typed API route must have the `Content-Type` header, and it must be either `application/json` or `application/devalue`.",
+                `Instead, it was \`${JSON.stringify(request.headers.get("Content-Type"))}\`, which the route cannot decode.`,
+                "See `error.cause` for the full request."
+            )
+        } else {
+            super(
+                request,
+                `The API Route failed to process the  request for ${request.url}.`,
+                `The ${request.headers.get("Content-Type") === "application/json" ? "JSON" : "devalue"}-encoded data sent by the client could not be decoded from the request.`,
+                String(arg_2?.message),
+                "See `error.deserializationError` for more details."
+            )
+            // @ts-expect-error
+            this.deserializationError = arg_2
+        }
     }
 }
 

@@ -1,10 +1,7 @@
 import type { APIContext, APIRoute } from "astro"
 import { TypedAPIError } from "./errors.ts"
 import {
-    AcceptHeaderMissing,
-    UnsupportedClient,
-    UnknownRequestFormat,
-    InputNotDeserializable,
+    UnusableRequest,
     ProcedureFailed,
     OutputNotSerializable,
     InvalidSchema,
@@ -21,7 +18,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
         const contentType = headers.get("Content-Type")
         const accept = headers.get("Accept")
         if (accept === null) {
-            throw new AcceptHeaderMissing(request)
+            throw new UnusableRequest("accept header missing", request)
         }
 
         const acceptsDevalue = accept.includes("application/devalue+json")
@@ -31,7 +28,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             acceptsDevalue === false &&
             acceptsJson === false
         ) {
-            throw new UnsupportedClient(request)
+            throw new UnusableRequest("unsupported accept header", request)
         }
 
         let input: any
@@ -43,7 +40,7 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             if (input) try {
                 input = JSON.parse(input)
             } catch (error) {
-                throw new InputNotDeserializable(error, pathname)
+                throw new UnusableRequest("deserialization failed", request, error as Error)
             }
         } else if (
             contentType === "application/devalue-urlencoded" &&
@@ -53,22 +50,22 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             if (input) try {
                 input = parse(input)
             } catch (error) {
-                throw new InputNotDeserializable(error, pathname)
+                throw new UnusableRequest("deserialization failed", request, error as Error)
             }
         } else if (contentType === "application/json") {
             try {
                 input = await request.json()
             } catch (error) {
-                throw new InputNotDeserializable(error, pathname)
+                throw new UnusableRequest("deserialization failed", request, error as Error)
             }
         } else if (contentType === "application/devalue+json") {
             try {
                 input = parse(await request.text())
             } catch (error) {
-                throw new InputNotDeserializable(error, pathname)
+                throw new UnusableRequest("deserialization failed", request, error as Error)
             }
         } else if (contentType !== null) {
-            throw new UnknownRequestFormat(request)
+            throw new UnusableRequest("unsupported content type", request)
         }
 
         if ("schema" in handler && handler.schema) {
