@@ -36,12 +36,22 @@ export default function (options?: Partial<Options>): AstroIntegration {
                     vite: {
                         define: {
                             "import.meta.env._TRAILING_SLASH": JSON.stringify(config.trailingSlash),
-                            "import.meta.env.TYPED_API_SERIALIZATION": JSON.stringify(options?.serialization)
+                            "import.meta.env.TYPED_API_SERIALIZATION": JSON.stringify(options?.serialization),
+                            "import.meta.env._API_DIR": JSON.stringify(url.fileURLToPath(new URL("pages/api/", config.srcDir)))
                         },
                         ssr: {
                             // this package is published as uncompiled typescript, which we need vite to process
                             noExternal: ["astro-typed-api"]
-                        }
+                        },
+                        plugins: [{
+                            name: "astro-typed-api",
+                            enforce: "pre",
+                            resolveId(id) {
+                                if (id === "astro-typed-api/client" && this.environment.config.consumer === "server") {
+                                    return url.fileURLToPath(new URL("runtime/server-client.ts", import.meta.url))
+                                }
+                            }
+                        }]
                     }
                 })
             },

@@ -85,12 +85,15 @@ export function createApiRoute(handler: TypedAPIHandler<any, any>): APIRoute {
             writable: false
         })
 
-        const context: TypedAPIContext = Object.assign(ctx, {
-            response,
-            error(details, response) {
-                return new ErrorResponse(details, response)
-            }
-        } satisfies Omit<TypedAPIContext, keyof APIContext>)
+        const context: TypedAPIContext = Object.setPrototypeOf(
+            {
+                response,
+                error(details, response) {
+                    return new ErrorResponse(details, response)
+                }
+            } satisfies Omit<TypedAPIContext, keyof APIContext>,
+            ctx
+        )
 
         let output: any
         try {
