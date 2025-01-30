@@ -1,15 +1,15 @@
-From 2a6cbac46ca012c238f0af507b09f700e4c8da3b Mon Sep 17 00:00:00 2001
+From 4477c0a34a2bb9c4c797f751400399a1ffb5e3d8 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Sun, 22 Dec 2024 01:42:33 +0530
 Subject: [PATCH 2/3] use implementation
 
 ---
- packages/cloudflare/src/entrypoints/server.ts | 47 +++++++++++++-
- packages/cloudflare/src/index.ts              | 63 ++++++++++++++++++-
- 2 files changed, 108 insertions(+), 2 deletions(-)
+ packages/cloudflare/src/entrypoints/server.ts | 47 +++++++++++-
+ packages/cloudflare/src/index.ts              | 72 ++++++++++++++++++-
+ 2 files changed, 117 insertions(+), 2 deletions(-)
 
 diff --git a/packages/cloudflare/src/entrypoints/server.ts b/packages/cloudflare/src/entrypoints/server.ts
-index 0ccc39e2..2f591c92 100644
+index 4680b9e5..91b5b3eb 100644
 --- a/packages/cloudflare/src/entrypoints/server.ts
 +++ b/packages/cloudflare/src/entrypoints/server.ts
 @@ -7,6 +7,7 @@ import type { SSRManifest } from 'astro';
@@ -70,7 +70,7 @@ index 0ccc39e2..2f591c92 100644
  				ctx: {
  					waitUntil: (promise: Promise<any>) => context.waitUntil(promise),
  					// Currently not available: https://developers.cloudflare.com/pages/platform/known-issues/#pages-functions
-@@ -82,6 +113,20 @@ export function createExports(manifest: SSRManifest) {
+@@ -83,6 +114,20 @@ export function createExports(manifest: SSRManifest) {
  
  		const response = await app.render(request, { routeData, locals });
  
@@ -92,19 +92,19 @@ index 0ccc39e2..2f591c92 100644
  			for (const setCookieHeader of app.setCookieHeaders(response)) {
  				response.headers.append('Set-Cookie', setCookieHeader);
 diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
-index c69cfbc7..26af5003 100644
+index e66b2062..69b735d5 100644
 --- a/packages/cloudflare/src/index.ts
 +++ b/packages/cloudflare/src/index.ts
-@@ -5,7 +5,7 @@ import type {
+@@ -4,7 +4,7 @@ import type {
+ 	HookParameters,
  	IntegrationResolvedRoute,
- 	IntegrationRouteData,
  } from 'astro';
 -import type { PluginOption } from 'vite';
 +import type { PluginOption, ViteDevServer } from 'vite';
  
  import { createReadStream } from 'node:fs';
  import { appendFile, rename, stat } from 'node:fs/promises';
-@@ -26,6 +26,7 @@ import {
+@@ -25,6 +25,7 @@ import {
  import { createGetEnv } from './utils/env.js';
  import { createRoutesFile, getParts } from './utils/generate-routes-json.js';
  import { setImageConfig } from './utils/image-config.js';
@@ -112,7 +112,7 @@ index c69cfbc7..26af5003 100644
  
  export type { Runtime } from './entrypoints/server.js';
  
-@@ -74,6 +75,54 @@ export type Options = {
+@@ -73,6 +74,54 @@ export type Options = {
  	cloudflareModules?: boolean;
  };
  
@@ -167,7 +167,7 @@ index c69cfbc7..26af5003 100644
  function wrapWithSlashes(path: string): string {
  	return prependForwardSlash(appendForwardSlash(path));
  }
-@@ -122,6 +171,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -100,6 +149,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
  
  	let _routes: IntegrationResolvedRoute[];
  
@@ -176,7 +176,23 @@ index c69cfbc7..26af5003 100644
  	return {
  		name: '@astrojs/cloudflare',
  		hooks: {
-@@ -170,6 +221,12 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -134,6 +185,15 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 								},
+ 							},
+ 						],
++						esbuild: {
++							tsconfigRaw: {
++								compilerOptions: {
++									// make the compilation of classes
++									// compatable with standard ES6
++									useDefineForClassFields: true,
++								}
++							}
++						},
+ 					},
+ 					image: setImageConfig(args?.imageService ?? 'compile', config.image, command, logger),
+ 				});
+@@ -148,6 +208,12 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					entrypoint: '@astrojs/cloudflare/entrypoints/middleware.js',
  					order: 'pre',
  				});
@@ -189,7 +205,7 @@ index c69cfbc7..26af5003 100644
  			},
  			'astro:routes:resolved': ({ routes }) => {
  				_routes = routes;
-@@ -206,6 +263,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -185,6 +251,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  				});
  			},
  			'astro:server:setup': async ({ server }) => {
@@ -197,7 +213,7 @@ index c69cfbc7..26af5003 100644
  				if ((args?.platformProxy?.enabled ?? true) === true) {
  					const platformProxy = await getPlatformProxy(args?.platformProxy);
  
-@@ -234,6 +292,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -213,6 +280,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					});
  				}
  			},
@@ -208,5 +224,5 @@ index c69cfbc7..26af5003 100644
  				if (target === 'server') {
  					vite.resolve ||= {};
 -- 
-2.47.0.windows.2
+2.47.1
 
