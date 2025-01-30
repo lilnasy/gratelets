@@ -1,27 +1,21 @@
-From 4a6f466e56826d58341086d13bfd452bb762755c Mon Sep 17 00:00:00 2001
+From c634ffbe94e626fe30cb68f6805ce97e4c5c45a0 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 20 Dec 2024 03:36:55 +0530
 Subject: [PATCH 2/3] use implementation
 
 ---
- package/src/index.ts        | 88 +++++++++++++++++++++++++++++++++++--
- package/src/server/index.ts | 79 +++++++++++++++++++++++++++++++--
+ package/src/index.ts        | 89 +++++++++++++++++++++++++++++++++++--
+ package/src/server/index.ts | 80 ++++++++++++++++++++++++++++++---
  package/src/types.ts        |  2 +-
  package/tsconfig.json       |  2 +-
- 4 files changed, 161 insertions(+), 10 deletions(-)
+ 4 files changed, 162 insertions(+), 11 deletions(-)
 
 diff --git a/package/src/index.ts b/package/src/index.ts
-index 99bf106..2aa8167 100644
+index 7def9a0..1f9063b 100644
 --- a/package/src/index.ts
 +++ b/package/src/index.ts
-@@ -1,12 +1,60 @@
- import { defineIntegration } from 'astro-integration-kit';
- 
--import { name as packageName } from '~/package.json';
- import { CreateExportsEnum } from '~/types.ts';
- import { OptionsSchema } from '~/validators';
- 
- import type { AstroAdapter } from 'astro';
+@@ -7,6 +7,55 @@ import { OptionsSchema } from '~/validators';
+ import type { AstroAdapter, AstroIntegration } from 'astro';
  
  import type { Options } from '~/types.ts';
 +import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.ts"
@@ -76,10 +70,10 @@ index 99bf106..2aa8167 100644
  
  export function getAdapter(args: Options = {}): AstroAdapter {
    return {
-@@ -17,8 +65,8 @@ export function getAdapter(args: Options = {}): AstroAdapter {
-       CreateExportsEnum.START,
-       CreateExportsEnum.STOP,
-     ] satisfies Array<CreateExportsEnum>,
+@@ -17,8 +66,8 @@ export function getAdapter(args: Options = {}): AstroAdapter {
+       CreateExports.START,
+       CreateExports.STOP,
+     ] satisfies Array<(typeof CreateExports)[keyof typeof CreateExports]>,
 -    name: packageName,
 -    serverEntrypoint: `${packageName}/server.js`,
 +    name: "astro-bun-websocket",
@@ -87,18 +81,22 @@ index 99bf106..2aa8167 100644
      supportedAstroFeatures: {
        envGetSecret: 'experimental',
        hybridOutput: 'deprecated',
-@@ -30,11 +78,37 @@ export function getAdapter(args: Options = {}): AstroAdapter {
-   };
- }
+@@ -36,14 +85,40 @@ export default function integration(options?: Options): AstroIntegration {
+   const parsedOptions = OptionsSchema.optional().safeParse(options);
+   if (!parsedOptions.success)
+     throw new AstroError(
+-      `Invalid options passed to "${packageName}" integration\n`,
++      `Invalid options passed to "astro-bun-websocket" integration\n`,
+       parsedOptions.error.issues.map((i) => i.message).join('\n'),
+     );
  
-+let viteDevServer: ViteDevServer;
-+
- export default defineIntegration({
--  name: packageName,
-+  name: "astro-bun-websocket",
-   optionsSchema: OptionsSchema.optional(),
-   setup: (integration) => ({
++  let viteDevServer: ViteDevServer;
++  
+   return {
+-    name: packageName,
++    name: "astro-bun-websocket",
      hooks: {
+       // biome-ignore lint/nursery/useExplicitType: Parent inferred type.
 +      'astro:config:setup': ({ addMiddleware, command, updateConfig }) => {
 +        updateConfig({
 +          vite: {
@@ -126,7 +124,7 @@ index 99bf106..2aa8167 100644
        'astro:config:done': (params) => {
          params.setAdapter(
            getAdapter({
-@@ -47,6 +121,12 @@ export default defineIntegration({
+@@ -56,6 +131,12 @@ export default function integration(options?: Options): AstroIntegration {
            }),
          );
        },
@@ -137,15 +135,15 @@ index 99bf106..2aa8167 100644
 +        handleUpgradeRequests(viteDevServer)
 +      }
      },
-   }),
- });
+   };
+ }
 diff --git a/package/src/server/index.ts b/package/src/server/index.ts
-index 3ae53c8..8096456 100644
+index 60c780b..f506366 100644
 --- a/package/src/server/index.ts
 +++ b/package/src/server/index.ts
-@@ -4,10 +4,15 @@ import { App } from 'astro/app';
+@@ -7,10 +7,15 @@ import { App } from 'astro/app';
  
- import { extractHostname, serveStaticFile } from '~/server/utils.ts';
+ import { extractHostname, serveStaticFile } from '~/server/utils';
  
 +import { UpgradeResponse } from "../websocket/response.ts"
 +import { WebSocket } from "../websocket/bun-websocket.ts"
@@ -154,63 +152,63 @@ index 3ae53c8..8096456 100644
  import type { SSRManifest } from 'astro';
  import type { Server } from 'bun';
  
- import type { CreateExports, Options } from '~/types.ts';
+-import type { CreateExports, Options } from '~/types';
++import type { CreateExports, Options } from '~/types.ts';
 +import type { Locals } from "../index.ts"
  
  export function createExports(manifest: SSRManifest, options: Options): CreateExports {
    return {
-@@ -30,7 +35,7 @@ export function start(manifest: SSRManifest, options: Options) {
-   const hostname = process.env.HOST ?? extractHostname(options.host);
-   const port = process.env.PORT ? Number.parseInt(process.env.PORT) : options.port;
+@@ -45,7 +50,6 @@ export function start(manifest: SSRManifest, options: Options): void {
+   } else {
+     const app = new App(manifest);
+     const logger = app.getAdapterLogger();
+-
+     const tlsCertPath = env.TLS_CERT_PATH ?? options.tls?.certPath ?? null;
+     const tlsKeyPath = env.TLS_KEY_PATH ?? options.tls?.keyPath ?? null;
  
--  _server = Bun.serve({
-+  _server = Bun.serve<WebSocket>({
-     development: import.meta.env.DEV,
-     error: (error) =>
-       new Response(`<pre>${error}\n${error.stack}</pre>`, {
-@@ -39,6 +44,41 @@ export function start(manifest: SSRManifest, options: Options) {
-     fetch: handler(manifest, options),
-     hostname,
-     port,
-+    websocket: {
-+      open(sws) {
-+        if (sws.data.binaryType === "arraybuffer") {
-+          sws.binaryType = "arraybuffer"
-+        } else if (sws.data.binaryType === "blob") {
-+          /**
-+           * bun does not support "blob" binary type
-+           * https://github.com/oven-sh/bun/issues/8721
-+           */
-+          // sws.binaryType = "blob"
-+        } else if (sws.data.binaryType === "uint8array") {
-+          sws.binaryType = "uint8array"
-+        }
-+        attach(sws.data, sws)
-+        const event = new Event("open")
-+        sws.data.onopen?.(event)
-+        sws.data.dispatchEvent(event)
+@@ -62,6 +66,41 @@ export function start(manifest: SSRManifest, options: Options): void {
+         cert: tlsCertPath ? Bun.file(tlsCertPath) : undefined,
+         key: tlsKeyPath ? Bun.file(tlsKeyPath) : undefined,
+       },
++      websocket: {
++        open(sws) {
++          if (sws.data.binaryType === "arraybuffer") {
++            sws.binaryType = "arraybuffer"
++          } else if (sws.data.binaryType === "blob") {
++            /**
++             * bun does not support "blob" binary type
++             * https://github.com/oven-sh/bun/issues/8721
++             */
++            // sws.binaryType = "blob"
++          } else if (sws.data.binaryType === "uint8array") {
++            sws.binaryType = "uint8array"
++          }
++          attach(sws.data, sws)
++          const event = new Event("open")
++          sws.data.onopen?.(event)
++          sws.data.dispatchEvent(event)
++        },
++        message(sws, message) {
++          const event = new MessageEvent("message", {
++            data:
++              typeof message === "string" ? message :
++              sws.data.binaryType === "arraybuffer" && message instanceof ArrayBuffer === false ? message.buffer :
++              sws.data.binaryType === "blob" && message instanceof Blob === false ? new Blob([message]) :
++              message
++          })
++          sws.data.onmessage?.(event)
++          sws.data.dispatchEvent(event)
++        },
++        close(sws, code, reason) {
++          const event = new CloseEvent("close", { code, reason })
++          sws.data.onclose?.(event)
++          sws.data.dispatchEvent(event)
++        },
 +      },
-+      message(sws, message) {
-+        const event = new MessageEvent("message", {
-+          data:
-+            typeof message === "string" ? message :
-+            sws.data.binaryType === "arraybuffer" && message instanceof ArrayBuffer === false ? message.buffer :
-+            sws.data.binaryType === "blob" && message instanceof Blob === false ? new Blob([message]) :
-+            message
-+        })
-+        sws.data.onmessage?.(event)
-+        sws.data.dispatchEvent(event)
-+      },
-+      close(sws, code, reason) {
-+        const event = new CloseEvent("close", { code, reason })
-+        sws.data.onclose?.(event)
-+        sws.data.dispatchEvent(event)
-+      },
-+    }
-   });
+     });
  
-   function exit() {
-@@ -56,12 +96,12 @@ export function start(manifest: SSRManifest, options: Options) {
+     function exit(): void {
+@@ -80,12 +119,12 @@ export function start(manifest: SSRManifest, options: Options): void {
  function handler(
    manifest: SSRManifest,
    options: Options,
@@ -220,12 +218,12 @@ index 3ae53c8..8096456 100644
  
    const app = new App(manifest);
  
--  return (req: Request, server: Server) => {
-+  return async (req: Request, server: Server) => {
+-  return (req: Request, server: Server): Promise<Response> => {
++  return async (req: Request, server: Server): Promise<Response> => {
      const routeData = app.match(req);
      if (!routeData) {
        const url = new URL(req.url);
-@@ -85,10 +125,41 @@ function handler(
+@@ -109,10 +148,41 @@ function handler(
        }
      }
  
@@ -270,18 +268,18 @@ index 3ae53c8..8096456 100644
 +const responseToSocketMap = new WeakMap<Response, WebSocket>
 \ No newline at end of file
 diff --git a/package/src/types.ts b/package/src/types.ts
-index 9b39717..b5c3fb1 100644
+index bf697d3..6b69d09 100644
 --- a/package/src/types.ts
 +++ b/package/src/types.ts
-@@ -11,7 +11,7 @@ export enum CreateExportsEnum {
- }
+@@ -11,7 +11,7 @@ export const CreateExports = {
+ } as const;
  
  export type CreateExports = {
--  [CreateExportsEnum.HANDLE]: (req: Request, server: Server) => Promise<Response>;
-+  [CreateExportsEnum.HANDLE]: (req: Request, server: Server) => Promise<Response | undefined>;
-   [CreateExportsEnum.RUNNING]: () => boolean;
-   [CreateExportsEnum.START]: () => void;
-   [CreateExportsEnum.STOP]: () => void;
+-  [CreateExports.HANDLE]: (req: Request, server: Server) => Promise<Response>;
++  [CreateExports.HANDLE]: (req: Request, server: Server) => Promise<Response | undefined>;
+   [CreateExports.RUNNING]: () => boolean;
+   [CreateExports.START]: () => void;
+   [CreateExports.STOP]: () => void;
 diff --git a/package/tsconfig.json b/package/tsconfig.json
 index 68e7f88..1d504c9 100644
 --- a/package/tsconfig.json
@@ -296,5 +294,5 @@ index 68e7f88..1d504c9 100644
      "module": "ESNext",
      "moduleDetection": "force",
 -- 
-2.47.0.windows.2
+2.47.1
 

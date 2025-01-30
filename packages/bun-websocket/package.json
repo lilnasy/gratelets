@@ -31,10 +31,10 @@
     },
     "scripts": {
         "clone": "git submodule update --init .",
-        "create_patches": "cd NuroDev/astro-bun && git format-patch e2a789e -o ../..",
+        "create_patches": "cd NuroDev/astro-bun && git format-patch tags/2.0.5 -o ../..",
         "load_patches": "git submodule update --init . && cd NuroDev/astro-bun && git am ../../*.patch",
-        "delete_all_changes_and_unload_patches": "cd NuroDev/astro-bun && git reset --hard e2a789e",
-        "delete_all_changes_and_reload_patches": "cd NuroDev/astro-bun && git reset --hard e2a789e && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd NuroDev/astro-bun && git reset --hard tags/2.0.5",
+        "delete_all_changes_and_reload_patches": "cd NuroDev/astro-bun && git reset --hard tags/2.0.5 && git am ../../*.patch",
         "test": "pnpm -w test bun-websocket.test.ts"
     }
 }

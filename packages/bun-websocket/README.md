@@ -160,6 +160,34 @@ Now, you can commit these patch files to the gratelets repository, and push.
 ../gratelets/packages/bun-websocket/ $ git push
 ```
 
+### Updating the upstream repository
+Steps to bring the package up-to-date with features and fixes added in the `@nurodev/astro-bun` package:
+
+If there have been changes made to package, ensure no work is lost by commiting the changes:
+```bash
+../bun-websocket/NuroDev/astro-bun $ git commit -am "changes"
+```
+Fetch the latest tags from the upstream repository...
+```bash
+../bun-websocket/NuroDev/astro-bun $ git fetch --tags
+```
+Make note of the hashes of the patch commits made on top of the upstream repository:
+```bash
+../bun-websocket/NuroDev/astro-bun $ git log --oneline -n3
+```
+Checkout the tag corresponding to the latest release of `@nurodev/astro-bun` from the upstream repository:
+```bash
+../bun-websocket/NuroDev/astro-bun $ git checkout tags/2.<minor>.<patch>
+```
+Cherry pick the commits we made note of earlier:
+```bash
+../bun-websocket/NuroDev/astro-bun $ git cherry-pick <hash1> <hash2> <hash3>
+```
+Now, we can save the changes as patch files:
+```bash
+../bun-websocket/NuroDev/astro-bun $ git format-patch tags/2.<minor>.<patch>  -o ../..
+```
+
 ## Changelog
 
 See [CHANGELOG.md](https://github.com/lilnasy/gratelets/blob/main/packages/bun-websocket/CHANGELOG.md) for a history of changes to this integration.
