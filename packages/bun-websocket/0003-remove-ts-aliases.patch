@@ -1,31 +1,32 @@
-From 2ebdca3eebcbe9f98ec23cdf6ac84dd5e2466a06 Mon Sep 17 00:00:00 2001
+From b222b3b23e43060f3c78e276a420af90de6b8685 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 20 Dec 2024 03:43:36 +0530
 Subject: [PATCH 3/3] remove ts aliases
 
 ---
- package/src/index.ts        | 6 +++---
+ package/src/index.ts        | 7 +++----
  package/src/server/index.ts | 4 ++--
  package/src/server/utils.ts | 2 +-
  package/src/types.ts        | 5 +++--
  package/src/validators.ts   | 2 +-
  package/tsconfig.json       | 4 ----
  playground/astro.config.ts  | 2 +-
- 7 files changed, 11 insertions(+), 14 deletions(-)
+ 7 files changed, 11 insertions(+), 15 deletions(-)
 
 diff --git a/package/src/index.ts b/package/src/index.ts
-index 2aa8167..6f89084 100644
+index 1f9063b..686b83d 100644
 --- a/package/src/index.ts
 +++ b/package/src/index.ts
-@@ -1,11 +1,11 @@
- import { defineIntegration } from 'astro-integration-kit';
+@@ -1,12 +1,11 @@
+ import { AstroError } from 'astro/errors';
  
--import { CreateExportsEnum } from '~/types.ts';
+-import { name as packageName } from '~/package.json';
+-import { CreateExports } from '~/types';
 -import { OptionsSchema } from '~/validators';
-+import { CreateExportsEnum } from './types.ts';
++import { CreateExports } from './types.ts';
 +import { OptionsSchema } from './validators.ts';
  
- import type { AstroAdapter } from 'astro';
+ import type { AstroAdapter, AstroIntegration } from 'astro';
  
 -import type { Options } from '~/types.ts';
 +import type { Options } from './types.ts';
@@ -33,19 +34,19 @@ index 2aa8167..6f89084 100644
  
  export interface Locals {
 diff --git a/package/src/server/index.ts b/package/src/server/index.ts
-index 8096456..a189070 100644
+index f506366..3c2b609 100644
 --- a/package/src/server/index.ts
 +++ b/package/src/server/index.ts
-@@ -2,7 +2,7 @@
+@@ -5,7 +5,7 @@ import os from 'node:os';
  
  import { App } from 'astro/app';
  
--import { extractHostname, serveStaticFile } from '~/server/utils.ts';
+-import { extractHostname, serveStaticFile } from '~/server/utils';
 +import { extractHostname, serveStaticFile } from '../server/utils.ts';
  
  import { UpgradeResponse } from "../websocket/response.ts"
  import { WebSocket } from "../websocket/bun-websocket.ts"
-@@ -11,7 +11,7 @@ import { attach } from "../websocket/bun-attach.ts"
+@@ -14,7 +14,7 @@ import { attach } from "../websocket/bun-attach.ts"
  import type { SSRManifest } from 'astro';
  import type { Server } from 'bun';
  
@@ -65,7 +66,7 @@ index c4ad9cb..0d68bd3 100644
  /**
   * Extract the hostname from a provided string.
 diff --git a/package/src/types.ts b/package/src/types.ts
-index b5c3fb1..31b331c 100644
+index 6b69d09..1026dbe 100644
 --- a/package/src/types.ts
 +++ b/package/src/types.ts
 @@ -1,7 +1,8 @@
@@ -77,10 +78,10 @@ index b5c3fb1..31b331c 100644
 -import type { OptionsSchema } from '~/validators';
 +import type { OptionsSchema } from './validators.ts';
  
- export enum CreateExportsEnum {
-   HANDLE = 'handle',
+ export const CreateExports = {
+   HANDLE: 'handle',
 diff --git a/package/src/validators.ts b/package/src/validators.ts
-index 033c51f..b87c12c 100644
+index a90c190..982f7fe 100644
 --- a/package/src/validators.ts
 +++ b/package/src/validators.ts
 @@ -1,4 +1,4 @@
@@ -117,5 +118,5 @@ index ca08fda..629b391 100644
  // https://astro.build/config
  export default defineConfig({
 -- 
-2.47.0.windows.2
+2.47.1
 

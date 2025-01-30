@@ -134,6 +134,10 @@ To introduce a change, make sure you're in `packages/cloudflare-websocket` direc
 ```bash
 ../gratelets/ $ cd packages/cloudflare-websocket
 ```
+If the folder is empty, it means that the submodule needs to be cloned from github:
+```bash
+../gratelets/packages/cloudflare-websocket/ $ git submodule update --init .
+```
 Then, run the `load_patches` script using `pnpm` to clone the upstream repository and apply the patches:
 ```bash
 ../gratelets/packages/cloudflare-websocket/ $ pnpm run load_patches
@@ -142,10 +146,6 @@ Now, you can browse around the code by going into the `withastro/adapters` submo
 ```bash
 ../gratelets/packages/cloudflare-websocket/ $ cd withastro/adapters/packages/cloudflare
 ../withastro/adapters/packages/cloudflare/ $ code .
-```
-Note that dependencies may need to separately be installed in the `withastro/adapters` submodule.
-```bash
-../withastro/adapters/packages/cloudflare/ $ pnpm install
 ```
 After you've made the changes you want, you can commit them as normal. However, instead of pushing the changes, you would update the patches by running `create_patches` script using `pnpm`:
 ```bash
@@ -158,6 +158,34 @@ Now, you can commit these patch files to the gratelets repository, and push.
 ../withastro/adapters/packages/cloudflare/ $ cd ../../../..
 ../gratelets/packages/cloudflare-websocket/ $ git commit -m "fix bug"
 ../gratelets/packages/cloudflare-websocket/ $ git push
+```
+
+### Updating the upstream repository
+Steps to bring the package up-to-date with features and fixes added in the official `@astrojs/cloudflare` package:
+
+If there have been changes made to package, ensure no work is lost by commiting the changes:
+```bash
+../cloudflare-websocket/withastro/adapters $ git commit -am "changes"
+```
+Fetch the latest tags from the upstream repository...
+```bash
+../cloudflare-websocket/withastro/adapters $ git fetch --tags
+```
+Make note of the hashes of the patch commits made on top of the upstream repository:
+```bash
+../cloudflare-websocket/withastro/adapters $ git log --oneline -n3
+```
+Checkout the tag corresponding to the latest release of `@astrojs/cloudflare` from the upstream repository:
+```bash
+../cloudflare-websocket/withastro/adapters $ git checkout tags/@astrojs/cloudflare@12.<minor>.<patch>
+```
+Cherry pick the commits we made note of earlier:
+```bash
+../cloudflare-websocket/withastro/adapters $ git cherry-pick <hash1> <hash2> <hash3>
+```
+Now, we can save the changes as patch files:
+```bash
+../cloudflare-websocket/withastro/adapters $ git format-patch tags/@astrojs/cloudflare@12.<minor>.<patch>  -o ../..
 ```
 
 ## Changelog

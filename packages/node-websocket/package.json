@@ -32,10 +32,10 @@
     },
     "scripts": {
         "clone": "git submodule update --init .",
-        "create_patches": "cd withastro/adapters && git format-patch d9eed7e -o ../..",
+        "create_patches": "cd withastro/adapters && git format-patch tags/@astrojs/node@9.0.2 -o ../..",
         "load_patches": "git submodule update --init . && cd withastro/adapters && git am ../../*.patch",
-        "delete_all_changes_and_unload_patches": "cd withastro/adapters && git reset --hard d9eed7e",
-        "delete_all_changes_and_reload_patches": "cd withastro/adapters && git reset --hard d9eed7e && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd withastro/adapters && git reset --hard tags/@astrojs/node@9.0.2",
+        "delete_all_changes_and_reload_patches": "cd withastro/adapters && git reset --hard tags/@astrojs/node@9.0.2 && git am ../../*.patch",
         "test": "pnpm -w test node-websocket.test.ts"
     }
 }
