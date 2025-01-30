@@ -1,7 +1,7 @@
-From 27ab63829d48fc396a78a399f475e60fe20a115b Mon Sep 17 00:00:00 2001
+From cb7563589cfd21d0272529957462a70b9da6cec9 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:43 +0530
-Subject: [PATCH 2/5] use implementation
+Subject: [PATCH 2/3] use implementation
 
 ---
  packages/node/src/index.ts      | 77 ++++++++++++++++++++++++++++++---
@@ -11,7 +11,7 @@ Subject: [PATCH 2/5] use implementation
  4 files changed, 85 insertions(+), 9 deletions(-)
 
 diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
-index e91ed17..0b1575b 100644
+index e91ed171..0b1575bb 100644
 --- a/packages/node/src/index.ts
 +++ b/packages/node/src/index.ts
 @@ -1,12 +1,55 @@
@@ -127,7 +127,7 @@ index e91ed17..0b1575b 100644
  	};
  }
 diff --git a/packages/node/src/serve-app.ts b/packages/node/src/serve-app.ts
-index 2934a01..635ded2 100644
+index 2934a01a..635ded25 100644
 --- a/packages/node/src/serve-app.ts
 +++ b/packages/node/src/serve-app.ts
 @@ -20,7 +20,7 @@ export function createAppHandler(app: NodeApp): RequestHandler {
@@ -158,7 +158,7 @@ index 2934a01..635ded2 100644
  		if (routeData) {
  			const response = await als.run(request.url, () =>
 diff --git a/packages/node/src/standalone.ts b/packages/node/src/standalone.ts
-index c7c8033..7653536 100644
+index fadcc37b..0317544c 100644
 --- a/packages/node/src/standalone.ts
 +++ b/packages/node/src/standalone.ts
 @@ -7,6 +7,7 @@ import enableDestroy from 'server-destroy';
@@ -176,9 +176,9 @@ index c7c8033..7653536 100644
 +	server.server.on("upgrade", createWebsocketHandler(app))
  	server.server.listen(port, host);
  	if (process.env.ASTRO_NODE_LOGGING !== 'disabled') {
- 		logListeningOn(app.getAdapterLogger(), server.server, options);
+ 		logListeningOn(app.getAdapterLogger(), server.server, host);
 diff --git a/packages/node/src/types.ts b/packages/node/src/types.ts
-index 010053d..8b50a20 100644
+index 010053de..8b50a20c 100644
 --- a/packages/node/src/types.ts
 +++ b/packages/node/src/types.ts
 @@ -35,5 +35,5 @@ export type RequestHandlerParams = [
@@ -189,5 +189,5 @@ index 010053d..8b50a20 100644
 +	locals?: { [key: string]: any },
  ];
 -- 
-2.47.0.windows.2
+2.47.1
 
