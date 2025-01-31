@@ -26,7 +26,6 @@
     },
     "dependencies": {
         "@types/ws": "^8.5.13",
-        "astro-integration-kit": "^0.17.0",
         "ws": "^8.18.0"
     },
     "scripts": {
