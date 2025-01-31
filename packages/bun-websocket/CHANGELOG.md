@@ -1,5 +1,11 @@
 # astro-bun-websocket
 
+## 1.0.3
+
+### Patch Changes
+
+- [#136](https://github.com/lilnasy/gratelets/pull/136) [`462bfa9`](https://github.com/lilnasy/gratelets/commit/462bfa9e27447f839d752d13af5cdb77f587dc48) Thanks [@lilnasy](https://github.com/lilnasy)! - Removed an unused dependency from the package's dependency list.
+
 ## 1.0.2
 
 ### Patch Changes
