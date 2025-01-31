@@ -1,12 +1,12 @@
-From 4477c0a34a2bb9c4c797f751400399a1ffb5e3d8 Mon Sep 17 00:00:00 2001
+From cfad02bd5671f9cb551f9733398ca9fb524de80e Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Sun, 22 Dec 2024 01:42:33 +0530
 Subject: [PATCH 2/3] use implementation
 
 ---
- packages/cloudflare/src/entrypoints/server.ts | 47 +++++++++++-
- packages/cloudflare/src/index.ts              | 72 ++++++++++++++++++-
- 2 files changed, 117 insertions(+), 2 deletions(-)
+ packages/cloudflare/src/entrypoints/server.ts | 47 ++++++++++-
+ packages/cloudflare/src/index.ts              | 77 ++++++++++++++++++-
+ 2 files changed, 120 insertions(+), 4 deletions(-)
 
 diff --git a/packages/cloudflare/src/entrypoints/server.ts b/packages/cloudflare/src/entrypoints/server.ts
 index 4680b9e5..91b5b3eb 100644
@@ -92,7 +92,7 @@ index 4680b9e5..91b5b3eb 100644
  			for (const setCookieHeader of app.setCookieHeaders(response)) {
  				response.headers.append('Set-Cookie', setCookieHeader);
 diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
-index e66b2062..69b735d5 100644
+index e66b2062..b6794d6e 100644
 --- a/packages/cloudflare/src/index.ts
 +++ b/packages/cloudflare/src/index.ts
 @@ -4,7 +4,7 @@ import type {
@@ -104,6 +104,15 @@ index e66b2062..69b735d5 100644
  
  import { createReadStream } from 'node:fs';
  import { appendFile, rename, stat } from 'node:fs/promises';
+@@ -17,7 +17,7 @@ import {
+ import { createRedirectsFromAstroRoutes } from '@astrojs/underscore-redirects';
+ import { AstroError } from 'astro/errors';
+ import { defaultClientConditions } from 'vite';
+-import { type GetPlatformProxyOptions, getPlatformProxy } from 'wrangler';
++import { type GetPlatformProxyOptions, type PlatformProxy, getPlatformProxy } from 'wrangler';
+ import {
+ 	type CloudflareModulePluginExtra,
+ 	cloudflareModuleLoader,
 @@ -25,6 +25,7 @@ import {
  import { createGetEnv } from './utils/env.js';
  import { createRoutesFile, getParts } from './utils/generate-routes-json.js';
@@ -167,16 +176,17 @@ index e66b2062..69b735d5 100644
  function wrapWithSlashes(path: string): string {
  	return prependForwardSlash(appendForwardSlash(path));
  }
-@@ -100,6 +149,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -100,6 +149,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
  
  	let _routes: IntegrationResolvedRoute[];
  
 +	let viteDevServer: ViteDevServer;
++	let platformProxy: PlatformProxy;
 +
  	return {
  		name: '@astrojs/cloudflare',
  		hooks: {
-@@ -134,6 +185,15 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -134,6 +186,15 @@ export default function createIntegration(args?: Options): AstroIntegration {
  								},
  							},
  						],
@@ -192,7 +202,7 @@ index e66b2062..69b735d5 100644
  					},
  					image: setImageConfig(args?.imageService ?? 'compile', config.image, command, logger),
  				});
-@@ -148,6 +208,12 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -148,6 +209,12 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					entrypoint: '@astrojs/cloudflare/entrypoints/middleware.js',
  					order: 'pre',
  				});
@@ -205,20 +215,23 @@ index e66b2062..69b735d5 100644
  			},
  			'astro:routes:resolved': ({ routes }) => {
  				_routes = routes;
-@@ -185,6 +251,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -185,8 +252,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
  				});
  			},
  			'astro:server:setup': async ({ server }) => {
 +				viteDevServer = server;
  				if ((args?.platformProxy?.enabled ?? true) === true) {
- 					const platformProxy = await getPlatformProxy(args?.platformProxy);
+-					const platformProxy = await getPlatformProxy(args?.platformProxy);
++					platformProxy = await getPlatformProxy(args?.platformProxy);
  
-@@ -213,6 +280,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 					setProcessEnv(_config, platformProxy.env);
+ 
+@@ -213,6 +281,9 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					});
  				}
  			},
 +			"astro:server:start" () {
-+				handleUpgradeRequests(viteDevServer)
++				handleUpgradeRequests(viteDevServer, platformProxy)
 +			},
  			'astro:build:setup': ({ vite, target }) => {
  				if (target === 'server') {
