@@ -29,7 +29,6 @@
         "@astrojs/underscore-redirects": "^0.6.0",
         "@cloudflare/workers-types": "^4.20250109.0",
         "@types/ws": "^8.5.14",
-        "esbuild": "^0.24.2",
         "estree-walker": "^3.0.3",
         "magic-string": "^0.30.17",
         "miniflare": "^3.20241230.1",

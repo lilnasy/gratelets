@@ -1,4 +1,4 @@
-From 5a74eb299a3f536846019a8209a5aa60390ec233 Mon Sep 17 00:00:00 2001
+From 5e64df12e15bd36196f4511483a700f3c295658e Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Sun, 22 Dec 2024 01:52:33 +0530
 Subject: [PATCH 3/3] adjust package
@@ -9,11 +9,11 @@ Subject: [PATCH 3/3] adjust package
  2 files changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
-index 69b735d5..02ac0b8c 100644
+index b6794d6e..eadeabdb 100644
 --- a/packages/cloudflare/src/index.ts
 +++ b/packages/cloudflare/src/index.ts
-@@ -152,7 +152,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
- 	let viteDevServer: ViteDevServer;
+@@ -153,7 +153,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 	let platformProxy: PlatformProxy;
  
  	return {
 -		name: '@astrojs/cloudflare',
@@ -21,7 +21,7 @@ index 69b735d5..02ac0b8c 100644
  		hooks: {
  			'astro:config:setup': ({
  				command,
-@@ -205,7 +205,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -206,7 +206,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					addWatchFile(new URL('./wrangler.jsonc', config.root));
  				}
  				addMiddleware({
@@ -30,7 +30,7 @@ index 69b735d5..02ac0b8c 100644
  					order: 'pre',
  				});
  				if (command === "dev") {
-@@ -221,7 +221,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -222,7 +222,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  			'astro:config:done': ({ setAdapter, config, buildOutput, logger }) => {
  				if (buildOutput === 'static') {
  					logger.warn(
@@ -39,7 +39,7 @@ index 69b735d5..02ac0b8c 100644
  					);
  				}
  
-@@ -229,8 +229,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -230,8 +230,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
  				finalBuildOutput = buildOutput;
  
  				setAdapter({
