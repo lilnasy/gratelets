@@ -11,11 +11,11 @@
     "workspaces": [
         "packages/*"
     ],
-    "packageManager": "pnpm@10.0.0",
+    "packageManager": "pnpm@10.3.0",
     "devDependencies": {
-        "astro": "5",
         "@changesets/changelog-github": "0.5",
         "@changesets/cli": "2",
-        "typescript": "5.6"
+        "astro": "5",
+        "typescript": "5.7"
     }
 }
