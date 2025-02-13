@@ -9,17 +9,17 @@ importers:
   .:
     devDependencies:
       '@changesets/changelog-github':
-        specifier: ~0.5.0
+        specifier: '0.5'
         version: 0.5.0
       '@changesets/cli':
-        specifier: ^2.27.12
+        specifier: '2'
         version: 2.27.12
       astro:
-        specifier: ^5.3.0
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        specifier: '5'
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       typescript:
-        specifier: ~5.6.3
-        version: 5.6.3
+        specifier: '5.7'
+        version: 5.7.3
 
   packages/adds-to-head:
     devDependencies:
@@ -28,7 +28,7 @@ importers:
         version: 20.17.16
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
 
   packages/bun-websocket:
     dependencies:
@@ -43,7 +43,7 @@ importers:
     dependencies:
       astro:
         specifier: 4 || 5
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
     devDependencies:
       '@types/node':
         specifier: '20'
@@ -111,7 +111,7 @@ importers:
     dependencies:
       astro:
         specifier: 4 || 5
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
     devDependencies:
       '@types/node':
         specifier: '20'
@@ -134,7 +134,7 @@ importers:
         version: 20.17.16
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       vite:
         specifier: '6'
         version: 6.1.0(@types/node@20.17.16)
@@ -146,7 +146,7 @@ importers:
         version: 20.17.16
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-global:
         specifier: workspace:*
         version: 'link:'
@@ -183,7 +183,7 @@ importers:
         version: 20.17.16
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
 
   packages/scope:
     devDependencies:
@@ -192,7 +192,7 @@ importers:
         version: 20.17.16
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       vite:
         specifier: '6'
         version: 6.1.0(@types/node@20.17.16)
@@ -204,7 +204,7 @@ importers:
         version: 20.17.16
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
 
   packages/stylex:
     dependencies:
@@ -226,7 +226,7 @@ importers:
         version: 20.17.16
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
 
   packages/typed-api:
     dependencies:
@@ -242,16 +242,16 @@ importers:
     devDependencies:
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
 
   tests:
     devDependencies:
       '@astrojs/node':
         specifier: '9'
-        version: 9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))
+        version: 9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-bun-websocket:
         specifier: workspace:*
         version: link:../packages/bun-websocket
@@ -268,8 +268,8 @@ importers:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
       typescript:
-        specifier: '5.6'
-        version: 5.6.3
+        specifier: '5.7'
+        version: 5.7.3
       vitest:
         specifier: '2'
         version: 2.1.8(@types/node@20.17.16)
@@ -278,7 +278,7 @@ importers:
     devDependencies:
       '@astrojs/node':
         specifier: '9'
-        version: 9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))
+        version: 9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))
       playwright:
         specifier: 1.40.1
         version: 1.40.1
@@ -287,13 +287,13 @@ importers:
     dependencies:
       '@astrojs/mdx':
         specifier: '4'
-        version: 4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))
+        version: 4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))
       '@astrojs/preact':
         specifier: '4'
         version: 4.0.3(@babel/core@7.26.7)(@types/node@20.17.16)(preact@10.25.4)
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-client-interaction:
         specifier: workspace:*
         version: link:../../../packages/client-interaction
@@ -305,10 +305,10 @@ importers:
     dependencies:
       '@astrojs/node':
         specifier: '9'
-        version: 9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))
+        version: 9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-typed-api:
         specifier: workspace:*
         version: link:../../../packages/typed-api
@@ -320,10 +320,10 @@ importers:
     dependencies:
       '@astrojs/mdx':
         specifier: '4'
-        version: 4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))
+        version: 4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-adds-to-head:
         specifier: workspace:*
         version: link:../../../packages/adds-to-head
@@ -332,7 +332,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-dynamic-import:
         specifier: workspace:*
         version: link:../../../packages/dynamic-import
@@ -350,7 +350,7 @@ importers:
         version: 5.0.4(@types/node@20.17.16)(solid-js@1.9.4)
       '@astrojs/svelte':
         specifier: '7'
-        version: 7.0.4(@types/node@20.17.16)(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))(svelte@5.19.6)(typescript@5.6.3)
+        version: 7.0.4(@types/node@20.17.16)(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))(svelte@5.19.6)(typescript@5.7.3)
       '@preact/signals':
         specifier: '1'
         version: 1.3.2(preact@10.25.4)
@@ -362,7 +362,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-emotion:
         specifier: workspace:*
         version: link:../../../packages/emotion
@@ -386,13 +386,13 @@ importers:
     dependencies:
       '@astrojs/mdx':
         specifier: '4'
-        version: 4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))
+        version: 4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))
       '@astrojs/preact':
         specifier: '3'
         version: 3.5.4(@babel/core@7.26.7)(@types/node@20.17.16)(preact@10.25.4)
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-global:
         specifier: workspace:*
         version: link:../../../packages/global
@@ -404,7 +404,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-prerender-patterns:
         specifier: workspace:*
         version: link:../../../packages/prerender-patterns
@@ -413,7 +413,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-scope:
         specifier: workspace:*
         version: link:../../../packages/scope
@@ -422,7 +422,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-server-only-modules:
         specifier: workspace:*
         version: link:../../../packages/server-only-modules
@@ -440,7 +440,7 @@ importers:
         version: 5.0.4(@types/node@20.17.16)(solid-js@1.9.4)
       '@astrojs/svelte':
         specifier: '7'
-        version: 7.0.4(@types/node@20.17.16)(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))(svelte@5.19.6)(typescript@5.6.3)
+        version: 7.0.4(@types/node@20.17.16)(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))(svelte@5.19.6)(typescript@5.7.3)
       '@preact/signals':
         specifier: '1'
         version: 1.3.2(preact@10.25.4)
@@ -455,7 +455,7 @@ importers:
         version: 18.3.5(@types/react@18.3.18)
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-stylex:
         specifier: workspace:*
         version: link:../../../packages/stylex
@@ -479,7 +479,7 @@ importers:
     dependencies:
       astro:
         specifier: '5'
-        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+        version: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       astro-node-websocket:
         specifier: workspace:*
         version: link:../../../packages/node-websocket
@@ -3535,8 +3535,8 @@ packages:
     resolution: {integrity: sha512-6kSc32kT0rbwxD6QL1CYe8IqdzN/J/ILMrNK+HMQCKH3insCDRY/3ITb0vcBss0a3t72fzh2YSzj8ko1HgwT3g==}
     engines: {node: '>=16'}
 
-  typescript@5.6.3:
-    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
+  typescript@5.7.3:
+    resolution: {integrity: sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -3950,12 +3950,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))':
+  '@astrojs/mdx@4.0.8(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.1.0
       '@mdx-js/mdx': 3.1.0(acorn@8.14.0)
       acorn: 8.14.0
-      astro: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+      astro: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       es-module-lexer: 1.6.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.4
@@ -3969,9 +3969,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/node@9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))':
+  '@astrojs/node@9.0.2(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))':
     dependencies:
-      astro: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+      astro: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       send: 1.1.0
       server-destroy: 1.0.1
     transitivePeerDependencies:
@@ -4071,13 +4071,13 @@ snapshots:
       - tsx
       - yaml
 
-  '@astrojs/svelte@7.0.4(@types/node@20.17.16)(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3))(svelte@5.19.6)(typescript@5.6.3)':
+  '@astrojs/svelte@7.0.4(@types/node@20.17.16)(astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3))(svelte@5.19.6)(typescript@5.7.3)':
     dependencies:
       '@sveltejs/vite-plugin-svelte': 5.0.3(svelte@5.19.6)(vite@6.1.0(@types/node@20.17.16))
-      astro: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3)
+      astro: 5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3)
       svelte: 5.19.6
-      svelte2tsx: 0.7.34(svelte@5.19.6)(typescript@5.6.3)
-      typescript: 5.6.3
+      svelte2tsx: 0.7.34(svelte@5.19.6)(typescript@5.7.3)
+      typescript: 5.7.3
       vite: 6.1.0(@types/node@20.17.16)
     transitivePeerDependencies:
       - '@types/node'
@@ -5375,7 +5375,7 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.6.3):
+  astro@5.3.0(@types/node@20.17.16)(rollup@4.34.6)(typescript@5.7.3):
     dependencies:
       '@astrojs/compiler': 2.10.4
       '@astrojs/internal-helpers': 0.5.1
@@ -5422,7 +5422,7 @@ snapshots:
       semver: 7.7.1
       shiki: 1.29.2
       tinyexec: 0.3.2
-      tsconfck: 3.1.5(typescript@5.6.3)
+      tsconfck: 3.1.5(typescript@5.7.3)
       ultrahtml: 1.5.3
       unist-util-visit: 5.0.0
       unstorage: 1.14.4
@@ -5435,7 +5435,7 @@ snapshots:
       yocto-spinner: 0.2.0
       zod: 3.24.2
       zod-to-json-schema: 3.24.1(zod@3.24.2)
-      zod-to-ts: 1.2.0(typescript@5.6.3)(zod@3.24.2)
+      zod-to-ts: 1.2.0(typescript@5.7.3)(zod@3.24.2)
     optionalDependencies:
       sharp: 0.33.5
     transitivePeerDependencies:
@@ -7509,12 +7509,12 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte2tsx@0.7.34(svelte@5.19.6)(typescript@5.6.3):
+  svelte2tsx@0.7.34(svelte@5.19.6)(typescript@5.7.3):
     dependencies:
       dedent-js: 1.0.1
       pascal-case: 3.1.2
       svelte: 5.19.6
-      typescript: 5.6.3
+      typescript: 5.7.3
 
   svelte@5.19.6:
     dependencies:
@@ -7566,15 +7566,15 @@ snapshots:
 
   trough@2.2.0: {}
 
-  tsconfck@3.1.5(typescript@5.6.3):
+  tsconfck@3.1.5(typescript@5.7.3):
     optionalDependencies:
-      typescript: 5.6.3
+      typescript: 5.7.3
 
   tslib@2.8.1: {}
 
   type-fest@4.34.1: {}
 
-  typescript@5.6.3: {}
+  typescript@5.7.3: {}
 
   ufo@1.5.4: {}
 
@@ -7873,9 +7873,9 @@ snapshots:
     dependencies:
       zod: 3.24.2
 
-  zod-to-ts@1.2.0(typescript@5.6.3)(zod@3.24.2):
+  zod-to-ts@1.2.0(typescript@5.7.3)(zod@3.24.2):
     dependencies:
-      typescript: 5.6.3
+      typescript: 5.7.3
       zod: 3.24.2
 
   zod@3.24.2: {}
