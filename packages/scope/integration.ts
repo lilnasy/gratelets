@@ -45,7 +45,7 @@ export default function (_: Partial<Options> = {}): AstroIntegration {
                                     viteConfig,
                                     filename,
                                     source: fs.readFileSync(filename, "utf-8"),
-                                    preferences: {} as any
+                                    preferences: { get() {} } as any
                                 })
                                 
                                 return `export default ${JSON.stringify(result.scope)}`
