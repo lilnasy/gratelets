@@ -1,5 +1,11 @@
 # astro-scope
 
+## 3.0.1
+
+### Patch Changes
+
+- [`5dc5f8c`](https://github.com/lilnasy/gratelets/commit/5dc5f8c5536b0467f2cf4922e68d82a0e3277770) Thanks [@lilnasy](https://github.com/lilnasy)! - Fixes a bug that resulted in a compilation error in dev mode.
+
 ## 3.0.0
 
 ### Major Changes
