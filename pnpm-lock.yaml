@@ -206,28 +206,6 @@ importers:
         specifier: '5'
         version: 5.5.2(@types/node@20.17.24)(rollup@4.35.0)(typescript@5.7.3)
 
-  packages/stylex:
-    dependencies:
-      '@babel/core':
-        specifier: '7'
-        version: 7.26.10
-      '@stylexjs/babel-plugin':
-        specifier: '0.3'
-        version: 0.3.0(@babel/core@7.26.10)(@babel/traverse@7.26.10)(@babel/types@7.26.10)
-      '@stylexjs/stylex':
-        specifier: 0.5.1
-        version: 0.5.1
-    devDependencies:
-      '@types/babel__core':
-        specifier: '7'
-        version: 7.20.5
-      '@types/node':
-        specifier: '20'
-        version: 20.17.24
-      astro:
-        specifier: '5'
-        version: 5.5.2(@types/node@20.17.24)(rollup@4.35.0)(typescript@5.7.3)
-
   packages/typed-api:
     dependencies:
       devalue:
@@ -426,54 +404,6 @@ importers:
       astro-server-only-modules:
         specifier: workspace:*
         version: link:../../../packages/server-only-modules
-
-  tests/fixtures/stylex:
-    dependencies:
-      '@astrojs/preact':
-        specifier: '4'
-        version: 4.0.5(@babel/core@7.26.10)(@types/node@20.17.24)(preact@10.26.4)
-      '@astrojs/react':
-        specifier: '4'
-        version: 4.2.1(@types/node@20.17.24)(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@astrojs/solid-js':
-        specifier: '5'
-        version: 5.0.5(@types/node@20.17.24)(solid-js@1.9.5)
-      '@astrojs/svelte':
-        specifier: '7'
-        version: 7.0.6(@types/node@20.17.24)(astro@5.5.2(@types/node@20.17.24)(rollup@4.35.0)(typescript@5.7.3))(svelte@5.23.0)(typescript@5.7.3)
-      '@preact/signals':
-        specifier: '1'
-        version: 1.3.2(preact@10.26.4)
-      '@stylexjs/stylex':
-        specifier: '*'
-        version: 0.11.1
-      '@types/react':
-        specifier: '18'
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: '18'
-        version: 18.3.5(@types/react@18.3.18)
-      astro:
-        specifier: '5'
-        version: 5.5.2(@types/node@20.17.24)(rollup@4.35.0)(typescript@5.7.3)
-      astro-stylex:
-        specifier: workspace:*
-        version: link:../../../packages/stylex
-      preact:
-        specifier: '10'
-        version: 10.26.4
-      react:
-        specifier: '18'
-        version: 18.3.1
-      react-dom:
-        specifier: '18'
-        version: 18.3.1(react@18.3.1)
-      solid-js:
-        specifier: '1'
-        version: 1.9.5
-      svelte:
-        specifier: '5'
-        version: 5.23.0
 
   tests/fixtures/websocket:
     dependencies:
@@ -1713,22 +1643,6 @@ packages:
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
 
-  '@stylexjs/babel-plugin@0.3.0':
-    resolution: {integrity: sha512-OwViUP78aOMt3zJ9Uhrk2UMveMocyuZ/9Lhru+4j71aarimi2syIas20NpBeNUgzjzcmQXzLkSxVQizUGkGGbA==}
-    peerDependencies:
-      '@babel/core': ^7.19.6
-      '@babel/traverse': ^7.0.0-0
-      '@babel/types': ^7.15.6
-
-  '@stylexjs/shared@0.3.0':
-    resolution: {integrity: sha512-Pw47Nm0SB9baLmbR5LvWnH+9WEGXWaMf0QDsNAGUJuC0JAD5oK7pSwQFhM06QHZIxGMh10CjGhSsQgmvPCYQ0Q==}
-
-  '@stylexjs/stylex@0.11.1':
-    resolution: {integrity: sha512-1OofsiCP2DYV+Cw/iIuHYTAJRy34TtxQt0FDuQGTnNH915hb6NkPmX6iPa++9t4KP3HWR9oVRmAHkpP58BIYbw==}
-
-  '@stylexjs/stylex@0.5.1':
-    resolution: {integrity: sha512-KO55dRB1+LhUo9OxfHqH5FwO2F0HdTe4g6fyRJb7JT5FiWEA/vYJ9MY7W8NdMSprW/7FeQKnSg6u5WlHU2ji2g==}
-
   '@sveltejs/acorn-typescript@1.0.5':
     resolution: {integrity: sha512-IwQk4yfwLdibDlrXVE04jTZYlLnwsTT2PIOQQGNLWfjavGifnk1JD1LcZjZaBTRcxZu2FfPfNLOE04DSu9lqtQ==}
     peerDependencies:
@@ -2127,9 +2041,6 @@ packages:
 
   crossws@0.3.4:
     resolution: {integrity: sha512-uj0O1ETYX1Bh6uSgktfPvwDiPYGQ3aI4qVsaC/LWpkIzGj1nUYm5FK3K+t11oOlpN01lGbprFCH4wBlKdJjVgw==}
-
-  css-mediaquery@0.1.2:
-    resolution: {integrity: sha512-COtn4EROW5dBGlE/4PiKnh6rZpAPxDeFLaEEwt4i10jpDMFt2EhQGS79QmmrO+iKCHv0PU/HrOWEhijFd1x99Q==}
 
   css-select@5.1.0:
     resolution: {integrity: sha512-nwoRF1rvRRnnCqqY7updORDsuqKzqYJ28+oSMaJMMgOauh3fvwHqMS7EZpIPqK8GL+g9mKxF1vP/ZjSeNjEVHg==}
@@ -2574,9 +2485,6 @@ packages:
 
   inline-style-parser@0.2.4:
     resolution: {integrity: sha512-0aO8FkhNZlj/ZIbNi7Lxxr12obT7cL1moPfE4tg1LkX7LlLfC6DeX4l2ZEud1ukP9jNQyNnfzQVqwbwmAATY4Q==}
-
-  invariant@2.2.4:
-    resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
 
   iron-webcrypto@1.2.1:
     resolution: {integrity: sha512-feOM6FaSr6rEABp/eDfVseKyTMDt+KGpeB35SkVn9Tyn0CqvVsY3EwI0v5i8nMHyJnzCIQf7nsy3p41TPkJZhg==}
@@ -3134,9 +3042,6 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  postcss-value-parser@4.2.0:
-    resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
-
   postcss@8.5.3:
     resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
     engines: {node: ^10 || ^12 || >=14}
@@ -3475,12 +3380,6 @@ packages:
   style-to-object@1.0.8:
     resolution: {integrity: sha512-xT47I/Eo0rwJmaXC4oilDGDWLohVhR6o/xAQcPQN8q6QBuZVL8qMYL85kLmST5cPjAorwvqIA4qXTRQoYHaL6g==}
 
-  styleq@0.1.3:
-    resolution: {integrity: sha512-3ZUifmCDCQanjeej1f6kyl/BeP/Vae5EYkQ9iJfUm/QwZvlgnZzyflqAsAWYURdtea8Vkvswu2GrC57h3qffcA==}
-
-  styleq@0.2.1:
-    resolution: {integrity: sha512-L0TR0NQb+X4/ktDEKmjWyp27gla+LUYi/by5k5SjKXf6/pvZP7wbwEB5J+tqxdFVPgzbsuz+d4RTScO/QZquBw==}
-
   stylis@4.2.0:
     resolution: {integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw==}
 
@@ -3694,10 +3593,6 @@ packages:
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
-
-  utility-types@3.11.0:
-    resolution: {integrity: sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==}
-    engines: {node: '>= 4'}
 
   validate-html-nesting@1.2.2:
     resolution: {integrity: sha512-hGdgQozCsQJMyfK5urgFcWEqsSSrK63Awe0t/IMR0bZ0QMtnuaiHzThW81guu3qx9abLi99NEuiaN6P9gVYsNg==}
@@ -5179,30 +5074,6 @@ snapshots:
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
-  '@stylexjs/babel-plugin@0.3.0(@babel/core@7.26.10)(@babel/traverse@7.26.10)(@babel/types@7.26.10)':
-    dependencies:
-      '@babel/core': 7.26.10
-      '@babel/traverse': 7.26.10
-      '@babel/types': 7.26.10
-      '@stylexjs/shared': 0.3.0
-
-  '@stylexjs/shared@0.3.0':
-    dependencies:
-      postcss-value-parser: 4.2.0
-
-  '@stylexjs/stylex@0.11.1':
-    dependencies:
-      css-mediaquery: 0.1.2
-      invariant: 2.2.4
-      styleq: 0.2.1
-
-  '@stylexjs/stylex@0.5.1':
-    dependencies:
-      css-mediaquery: 0.1.2
-      invariant: 2.2.4
-      styleq: 0.1.3
-      utility-types: 3.11.0
-
   '@sveltejs/acorn-typescript@1.0.5(acorn@8.14.1)':
     dependencies:
       acorn: 8.14.1
@@ -5703,8 +5574,6 @@ snapshots:
   crossws@0.3.4:
     dependencies:
       uncrypto: 0.1.3
-
-  css-mediaquery@0.1.2: {}
 
   css-select@5.1.0:
     dependencies:
@@ -6293,10 +6162,6 @@ snapshots:
   inherits@2.0.4: {}
 
   inline-style-parser@0.2.4: {}
-
-  invariant@2.2.4:
-    dependencies:
-      loose-envify: 1.4.0
 
   iron-webcrypto@1.2.1: {}
 
@@ -7083,8 +6948,6 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.2
 
-  postcss-value-parser@4.2.0: {}
-
   postcss@8.5.3:
     dependencies:
       nanoid: 3.3.10
@@ -7531,10 +7394,6 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styleq@0.1.3: {}
-
-  styleq@0.2.1: {}
-
   stylis@4.2.0: {}
 
   supports-preserve-symlinks-flag@1.0.0: {}
@@ -7707,8 +7566,6 @@ snapshots:
       browserslist: 4.24.4
       escalade: 3.2.0
       picocolors: 1.1.1
-
-  utility-types@3.11.0: {}
 
   validate-html-nesting@1.2.2: {}
 
