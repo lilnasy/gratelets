@@ -9,5 +9,4 @@ A collection of purpose-built, small, third-party integrations for Astro.
 - **astro-prerender-patterns** - control rendering modes for all pages and endpoints right from the configuration. [README](https://github.com/lilnasy/gratelets/tree/main/packages/prerender-patterns) | [NPM](https://www.npmjs.com/package/astro-prerender-patterns)
 - **astro-scope** - get the hash used by the astro compiler to scope css rules. [README](https://github.com/lilnasy/gratelets/tree/main/packages/scope) | [NPM](https://www.npmjs.com/package/astro-scope)
 - **astro-server-only-modules** - prevent certain modules from being imported into client-side code. [README](https://github.com/lilnasy/gratelets/tree/main/packages/server-only-modules) | [NPM](https://www.npmjs.com/package/astro-server-only-modules)
-- **astro-stylex** - CSS-in-Zero-JS using [StyleX](https://stylexjs.com/). [README](https://github.com/lilnasy/gratelets/tree/main/packages/stylex) | [NPM](https://www.npmjs.com/package/astro-stylex)
 - **astro-typed-api** - type-safe API routes. [README](https://github.com/lilnasy/gratelets/tree/main/packages/typed-api) | [NPM](https://www.npmjs.com/package/astro-typed-api)
