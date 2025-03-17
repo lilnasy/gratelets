@@ -1,5 +1,11 @@
 # astro-bun-websocket
 
+## 1.0.4
+
+### Patch Changes
+
+- [#143](https://github.com/lilnasy/gratelets/pull/143) [`c8af2a6`](https://github.com/lilnasy/gratelets/commit/c8af2a683790240dd48e412f52cf64224a921b64) Thanks [@lilnasy](https://github.com/lilnasy)! - Fixed an issue where binary messages weren't properly converted to `Blob` objects.
+
 ## 1.0.3
 
 ### Patch Changes
