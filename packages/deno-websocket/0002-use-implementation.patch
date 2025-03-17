@@ -1,12 +1,12 @@
-From b08b779eb349a98ec287dbcdca73d762c0ce4f5d Mon Sep 17 00:00:00 2001
+From 61c3c18efcd3caff601f1ab8e3b5d1aef7592cb6 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
-Date: Sat, 21 Dec 2024 16:24:01 +0530
-Subject: [PATCH 2/4] use implementation
+Date: Sun, 16 Mar 2025 21:27:32 -0400
+Subject: [PATCH 2/3] use implementation
 
 ---
  src/index.ts  | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
- src/server.ts | 14 +++++++++-
- 2 files changed, 90 insertions(+), 1 deletion(-)
+ src/server.ts | 17 +++++++++++-
+ 2 files changed, 93 insertions(+), 1 deletion(-)
 
 diff --git a/src/index.ts b/src/index.ts
 index cd7273c..726b03f 100644
@@ -118,7 +118,7 @@ index cd7273c..726b03f 100644
          if (target === "server") {
            _vite = vite;
 diff --git a/src/server.ts b/src/server.ts
-index 430198b..90bfdab 100644
+index 430198b..a6d559c 100644
 --- a/src/server.ts
 +++ b/src/server.ts
 @@ -6,6 +6,7 @@ import type { Options } from "./types";
@@ -129,7 +129,7 @@ index 430198b..90bfdab 100644
  let _server: Server | undefined = undefined;
  let _startPromise: Promise<void> | undefined = undefined;
  
-@@ -35,7 +36,17 @@ export function start(manifest: SSRManifest, options: Options) {
+@@ -35,7 +36,20 @@ export function start(manifest: SSRManifest, options: Options) {
      if (app.match(request)) {
        const hostname = handlerInfo.remoteAddr?.hostname;
        Reflect.set(request, Symbol.for("astro.clientAddress"), hostname);
@@ -141,14 +141,17 @@ index 430198b..90bfdab 100644
 +          },
 +          upgradeWebSocket() {
 +            // @ts-ignore
-+            return Deno.upgradeWebSocket(request);
++            const { socket, response } = Deno.upgradeWebSocket(request);
++            // match the browser's default binaryType
++            socket.binaryType = "blob";
++            return { socket, response };
 +          }
 +        }
 +      });
        if (app.setCookieHeaders) {
          for (const setCookieHeader of app.setCookieHeaders(response)) {
            response.headers.append("Set-Cookie", setCookieHeader);
-@@ -86,6 +97,7 @@ export function start(manifest: SSRManifest, options: Options) {
+@@ -86,6 +100,7 @@ export function start(manifest: SSRManifest, options: Options) {
  
    const port = options.port ?? 8085;
    const hostname = options.hostname ?? "0.0.0.0";
