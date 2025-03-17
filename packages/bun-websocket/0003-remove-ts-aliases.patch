@@ -1,4 +1,4 @@
-From b222b3b23e43060f3c78e276a420af90de6b8685 Mon Sep 17 00:00:00 2001
+From 7fc5dac4d559f10c2c46231a6ea57561cec3df49 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 20 Dec 2024 03:43:36 +0530
 Subject: [PATCH 3/3] remove ts aliases
@@ -34,7 +34,7 @@ index 1f9063b..686b83d 100644
  
  export interface Locals {
 diff --git a/package/src/server/index.ts b/package/src/server/index.ts
-index f506366..3c2b609 100644
+index 6001366..da65603 100644
 --- a/package/src/server/index.ts
 +++ b/package/src/server/index.ts
 @@ -5,7 +5,7 @@ import os from 'node:os';
@@ -118,5 +118,5 @@ index ca08fda..629b391 100644
  // https://astro.build/config
  export default defineConfig({
 -- 
-2.47.1
+2.47.0.windows.2
 
