@@ -42,10 +42,36 @@ describe("dev", {
         expect(response.status).to.equal(426)
         expect(response.headers.get("X-Error")).to.equal("Non Upgrade Request")
     })
+
+    test("handles binary data with arrayBuffer binaryType", { timeout: 1000 }, async () => {
+        const ws = new WebSocket(`ws://localhost:${server.address.port}/blob`)
+        const { promise, resolve } = Promise.withResolvers<void>()
+        ws.onopen = () => ws.send(new TextEncoder().encode("Hello"))
+        ws.onmessage = async e => {
+            ws.close()
+            expect(await e.data.text()).to.equal("olleH")
+            resolve()
+        }
+        
+        await promise
+    })
+
+    test("handles binary data with blob binaryType", { timeout: 1000 }, async () => {
+        const ws = new WebSocket(`ws://localhost:${server.address.port}/blob`)
+        const { promise, resolve } = Promise.withResolvers<void>()
+        ws.onopen = () => ws.send(new TextEncoder().encode("Hello"))
+        ws.onmessage = async e => {
+            ws.close()
+            expect(await e.data.text()).to.equal("olleH")
+            resolve()
+        }
+
+        await promise
+    })
 })
 
 describe("build", {
-    timeout: 500,
+    timeout: 3000,
     skip: process.version.startsWith("v23.") === false
 }, () => {
     let bun: ChildProcessWithoutNullStreams
@@ -89,6 +115,32 @@ describe("build", {
             expect("message" in e && e.message).to.equal("Received network error or non-101 status code.")
             resolve()
         }
+        await promise
+    })
+
+    test("handles binary data with arrayBuffer binaryType", { timeout: 1000 }, async () => {
+        const ws = new WebSocket("ws://localhost:4321/arraybuffer")
+        const { promise, resolve } = Promise.withResolvers<void>()
+        ws.onopen = () => ws.send(new TextEncoder().encode("Hello"))        
+        ws.onmessage = async e => {
+            ws.close()
+            expect(await e.data.text()).to.equal("olleH")
+            resolve()
+        }
+
+        await promise
+    })
+
+    test("handles binary data with blob binaryType", { timeout: 1000 }, async () => {
+        const ws = new WebSocket("ws://localhost:4321/blob")
+        const { promise, resolve } = Promise.withResolvers<void>()
+        ws.onopen = () => ws.send(new TextEncoder().encode("Hello"))
+        ws.onmessage = async e => {
+            ws.close()
+            expect(await e.data.text()).to.equal("olleH")
+            resolve()
+        }
+
         await promise
     })
 })

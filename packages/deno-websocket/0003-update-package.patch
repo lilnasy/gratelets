@@ -1,7 +1,7 @@
-From ee20f3b822cbeed690c6169506d30f1c10fdcb6e Mon Sep 17 00:00:00 2001
+From ab6db3ef1ccfee610f5f6f962238e3617e81d278 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
-Date: Sat, 21 Dec 2024 16:25:37 +0530
-Subject: [PATCH 3/4] update package
+Date: Sun, 16 Mar 2025 21:26:59 -0400
+Subject: [PATCH 3/3] update package
 
 ---
  src/index.ts  | 8 ++++----
@@ -41,7 +41,7 @@ index 726b03f..bfad58b 100644
        "astro:config:setup": ({ addMiddleware, command, updateConfig }) => {
          updateConfig({
 diff --git a/src/server.ts b/src/server.ts
-index 90bfdab..336893a 100644
+index a6d559c..4757fb7 100644
 --- a/src/server.ts
 +++ b/src/server.ts
 @@ -4,7 +4,7 @@ import { App } from "astro/app";

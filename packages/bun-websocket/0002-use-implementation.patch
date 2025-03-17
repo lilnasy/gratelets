@@ -1,14 +1,14 @@
-From c634ffbe94e626fe30cb68f6805ce97e4c5c45a0 Mon Sep 17 00:00:00 2001
+From c254a7018d5d40893f3a5b22d72b054a9aa797dc Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 20 Dec 2024 03:36:55 +0530
 Subject: [PATCH 2/3] use implementation
 
 ---
- package/src/index.ts        | 89 +++++++++++++++++++++++++++++++++++--
- package/src/server/index.ts | 80 ++++++++++++++++++++++++++++++---
- package/src/types.ts        |  2 +-
- package/tsconfig.json       |  2 +-
- 4 files changed, 162 insertions(+), 11 deletions(-)
+ package/src/index.ts        |  89 +++++++++++++++++++++++++++++--
+ package/src/server/index.ts | 101 ++++++++++++++++++++++++++++++++++--
+ package/src/types.ts        |   2 +-
+ package/tsconfig.json       |   2 +-
+ 4 files changed, 183 insertions(+), 11 deletions(-)
 
 diff --git a/package/src/index.ts b/package/src/index.ts
 index 7def9a0..1f9063b 100644
@@ -138,7 +138,7 @@ index 7def9a0..1f9063b 100644
    };
  }
 diff --git a/package/src/server/index.ts b/package/src/server/index.ts
-index 60c780b..f506366 100644
+index 60c780b..6001366 100644
 --- a/package/src/server/index.ts
 +++ b/package/src/server/index.ts
 @@ -7,10 +7,15 @@ import { App } from 'astro/app';
@@ -166,7 +166,7 @@ index 60c780b..f506366 100644
      const tlsCertPath = env.TLS_CERT_PATH ?? options.tls?.certPath ?? null;
      const tlsKeyPath = env.TLS_KEY_PATH ?? options.tls?.keyPath ?? null;
  
-@@ -62,6 +66,41 @@ export function start(manifest: SSRManifest, options: Options): void {
+@@ -62,6 +66,62 @@ export function start(manifest: SSRManifest, options: Options): void {
          cert: tlsCertPath ? Bun.file(tlsCertPath) : undefined,
          key: tlsKeyPath ? Bun.file(tlsKeyPath) : undefined,
        },
@@ -178,6 +178,10 @@ index 60c780b..f506366 100644
 +            /**
 +             * bun does not support "blob" binary type
 +             * https://github.com/oven-sh/bun/issues/8721
++             * 
++             * Instead, it can provide either arraybuffer or
++             * nodebuffer objects, which we will manually
++             * convert into blobs.
 +             */
 +            // sws.binaryType = "blob"
 +          } else if (sws.data.binaryType === "uint8array") {
@@ -189,13 +193,30 @@ index 60c780b..f506366 100644
 +          sws.data.dispatchEvent(event)
 +        },
 +        message(sws, message) {
-+          const event = new MessageEvent("message", {
-+            data:
-+              typeof message === "string" ? message :
-+              sws.data.binaryType === "arraybuffer" && message instanceof ArrayBuffer === false ? message.buffer :
-+              sws.data.binaryType === "blob" && message instanceof Blob === false ? new Blob([message]) :
-+              message
-+          })
++          const wantedType =
++            sws.data.binaryType === "blob" ? "blob"
++            : sws.data.binaryType === "nodebuffer" ? "nodebuffer"
++            : "arraybuffer"
++
++          let data
++
++          if (typeof message === "string") {
++            data = message
++          } else if (wantedType === "arraybuffer") {
++            if (message instanceof ArrayBuffer) {
++              data = message
++            } else {
++              data = (message as import("node:buffer").Buffer).buffer
++            }
++          } else if (wantedType === "blob") {
++            if (message instanceof Blob) {
++              data = message
++            } else {
++              data = new Blob([ message as ArrayBuffer | import("node:buffer").Buffer ])
++            }
++          }
++
++          const event = new MessageEvent("message", { data })
 +          sws.data.onmessage?.(event)
 +          sws.data.dispatchEvent(event)
 +        },
@@ -208,7 +229,7 @@ index 60c780b..f506366 100644
      });
  
      function exit(): void {
-@@ -80,12 +119,12 @@ export function start(manifest: SSRManifest, options: Options): void {
+@@ -80,12 +140,12 @@ export function start(manifest: SSRManifest, options: Options): void {
  function handler(
    manifest: SSRManifest,
    options: Options,
@@ -223,7 +244,7 @@ index 60c780b..f506366 100644
      const routeData = app.match(req);
      if (!routeData) {
        const url = new URL(req.url);
-@@ -109,10 +148,41 @@ function handler(
+@@ -109,10 +169,41 @@ function handler(
        }
      }
  
@@ -294,5 +315,5 @@ index 68e7f88..1d504c9 100644
      "module": "ESNext",
      "moduleDetection": "force",
 -- 
-2.47.1
+2.47.0.windows.2
 
