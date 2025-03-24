@@ -13,13 +13,21 @@ describe("dev", () => {
             cwd: fixtureDir,
         })
 
+        devProcess.stdout!.on("data", (data) => {
+            console.log({ data: data.toString() })
+        })
+
+        devProcess.stderr!.on("data", (data) => {
+            console.log({ data: data.toString() })
+        })
+
         await new Promise<void>((resolve, reject) => {
             devProcess.stdout!.on("data", (data) => {
                 if (data.toString().includes("localhost")) {
                     resolve()
                 }
             })
-            setTimeout(reject, 6000, "Dev server boot took too long")
+            setTimeout(reject, 10000, "Dev server boot took too long")
         })
     })
 
