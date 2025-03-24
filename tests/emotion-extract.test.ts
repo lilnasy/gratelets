@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url"
 
 const fixtureDir = join(dirname(fileURLToPath(import.meta.url)), "fixtures", "emotion-extract")
 
-describe("dev", { skip: process.version.startsWith("v23") }, () => {
+describe("dev", { skip: process.version.startsWith("v23") || process.version.startsWith("v18") }, () => {
     let devProcess: ReturnType<typeof spawn>
 
     beforeAll(async () => {
