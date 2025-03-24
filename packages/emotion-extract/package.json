@@ -21,7 +21,8 @@
         "types.d.ts"
     ],
     "exports": {
-        ".": "./vite.ts"
+        ".": "./dist/vite.js",
+        "./env": "./env.d.ts"
     },
     "scripts": {
         "test": "pnpm -w test emotion.dev.test.ts emotion.build.test.ts"

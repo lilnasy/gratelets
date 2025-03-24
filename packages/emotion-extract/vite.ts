@@ -4,9 +4,8 @@ import createEmotion, { type Options as EmotionOptions } from "@emotion/css/crea
 import MagicString from "magic-string"
 import { visitors, type State } from "./ast-scanner.ts"
 import type { ModuleGraph, Plugin, TransformResult } from "vite"
-import "./types.d.ts"
 
-interface Options extends EmotionOptions {}
+export interface Options extends EmotionOptions {}
 
 export default function createVitePlugins(options: Partial<Options> = {}): Plugin[] {
 
