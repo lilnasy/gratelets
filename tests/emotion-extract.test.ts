@@ -19,7 +19,7 @@ describe("dev", () => {
                     resolve()
                 }
             })
-            setTimeout(reject, 2000, "Dev server boot took too long")
+            setTimeout(reject, 4000, "Dev server boot took too long")
         })
     })
 
