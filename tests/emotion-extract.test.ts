@@ -15,6 +15,7 @@ describe("dev", () => {
 
         await new Promise<void>((resolve, reject) => {
             devProcess.stdout!.on("data", (data) => {
+                console.log({ data: data.toString()})
                 if (data.toString().includes("localhost")) {
                     resolve()
                 }
