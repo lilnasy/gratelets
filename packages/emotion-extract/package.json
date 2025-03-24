@@ -22,7 +22,10 @@
     ],
     "exports": {
         ".": "./dist/vite.js",
-        "./env": "./env.d.ts"
+        "./env": {
+            "types": "./env.d.ts",
+            "import": "./env.js"
+        }
     },
     "scripts": {
         "test": "pnpm -w test emotion-extract.test.ts",
