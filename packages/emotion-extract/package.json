@@ -1,6 +1,6 @@
 {
     "name": "@emotion-extract/vite",
-    "version": "1.13.2",
+    "version": "1.13.3",
     "description": "Use Emotion CSS with the performance of handwritten stylesheets.",
     "author": "Arsh",
     "license": "Public Domain",
@@ -11,7 +11,7 @@
     ],
     "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/emotion-extract",
     "repository": {
-        "type": "git",  
+        "type": "git",
         "url": "https://github.com/lilnasy/gratelets",
         "directory": "packages/emotion-extract"
     },
