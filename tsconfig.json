@@ -5,6 +5,7 @@
         "packages/cloudflare-websocket",
         "packages/deno-websocket",
         "packages/node-websocket",
+        "tests/fixtures"
     ],
     "compilerOptions": {
         "jsx": "preserve"
