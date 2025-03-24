@@ -38,9 +38,7 @@ export default function createVitePlugins(options: Partial<Options> = {}): Plugi
         },
         transform(code, id) {
             if (code.includes("emotion:extract") === false) return
-            const hash = crypto.hash
-                ? crypto.hash("md5", id, "hex").slice(0, 8)
-                : crypto.createHash("md5").update(id).digest("hex").slice(0, 8)
+            const hash = crypto.hash("md5", id, "hex").slice(0, 8)
             const cssId = `/emotion_extract_internal_${hash}.css`
             const seen = transformCache.get(code)
             if (seen) {
