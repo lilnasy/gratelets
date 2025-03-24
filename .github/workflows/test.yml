@@ -81,7 +81,7 @@ jobs:
         run: sh .github/workflows/init-submodules.sh
 
       - name: Build
-        run: pnpm -r build
+        run: pnpm --filter @emotion-extract/vite build
 
       - name: Check
         if: ${{ inputs.check }}

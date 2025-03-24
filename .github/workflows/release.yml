@@ -35,7 +35,7 @@ jobs:
         run: sh .github/workflows/init-submodules.sh
 
       - name: Build
-        run: pnpm -r build
+        run: pnpm --filter @emotion-extract/vite build
 
       - name: Create Release Pull Request or Publish
         id: changesets
