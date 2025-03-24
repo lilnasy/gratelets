@@ -23,8 +23,6 @@ Emotion is also a great choice to add styles to React, Preact, or Solid componen
 
 ## Installation
 
-### Manual Install
-
 First, install the `@emotion-extract/vite` package using your package manager. If you're using npm or aren't sure, run this in the terminal:
 
 ```sh
@@ -46,6 +44,22 @@ export default defineConfig({
   plugins: [react(), emotion()],
   // ...             ^^^^^^^^^
 })
+```
+To enable autocomplete and type-safety hints, add an import statement for `@emotion-extract/vite/env`:
+```diff lang="js" "emotion()"
+// vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
++ import '@emotion-extract/vite/env';
+
+// https://vite.dev/config/
+export default defineConfig({
+  // ...
+})
+```
+If this step is skipped, you might see the following error message in your IDE:
+```
+Cannot find module 'emotion:extract' or its corresponding type declarations.ts(2307)
 ```
 
 ## Usage
