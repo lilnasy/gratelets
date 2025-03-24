@@ -1,5 +1,6 @@
 {
     "name": "tests-e2e",
+    "private": true,
     "type": "module",
     "devDependencies": {
         "@astrojs/node": "9",

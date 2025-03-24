@@ -1,0 +1,10 @@
+{
+    "extends": "../../tsconfig.json",
+    "exclude": [ "dist" ],
+    "compilerOptions": {
+        "noEmit": false,
+        "rewriteRelativeImportExtensions": true,
+        "declaration": true,
+        "outDir": "./dist"
+    }
+}
