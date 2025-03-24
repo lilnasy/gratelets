@@ -5,7 +5,7 @@
         "packages/cloudflare-websocket",
         "packages/deno-websocket",
         "packages/node-websocket",
-        "tests/fixtures"
+        "tests/fixtures/emotion-extract"
     ],
     "compilerOptions": {
         "jsx": "preserve"
