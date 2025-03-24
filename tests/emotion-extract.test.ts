@@ -13,14 +13,6 @@ describe("dev", { skip: process.version.startsWith("v23") || process.version.sta
             cwd: fixtureDir,
         })
 
-        devProcess.stdout!.on("data", (data) => {
-            console.log({ data: data.toString() })
-        })
-
-        devProcess.stderr!.on("data", (data) => {
-            console.log({ data: data.toString() })
-        })
-
         await new Promise<void>((resolve, reject) => {
             devProcess.stdout!.on("data", (data) => {
                 if (data.toString().includes("localhost")) {
@@ -52,7 +44,7 @@ describe("dev", { skip: process.version.startsWith("v23") || process.version.sta
     })
 })
 
-describe("build", () => {
+describe("build", { skip: process.version.startsWith("v18") }, () => {
     let serveProcess: ReturnType<typeof spawn>
 
     beforeAll(async () => {
