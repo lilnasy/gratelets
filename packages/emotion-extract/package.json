@@ -16,9 +16,9 @@
         "directory": "packages/emotion-extract"
     },
     "files": [
-        "vite.ts",
-        "ast-scanner.ts",
-        "types.d.ts"
+        "dist",
+        "env.js",
+        "env.d.ts"
     ],
     "exports": {
         ".": "./dist/vite.js",
