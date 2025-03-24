@@ -25,7 +25,8 @@
         "./env": "./env.d.ts"
     },
     "scripts": {
-        "test": "pnpm -w test emotion.dev.test.ts emotion.build.test.ts"
+        "test": "pnpm -w test emotion-extract.test.ts",
+        "build": "tsc"
     },
     "type": "module",
     "dependencies": {
