@@ -20,6 +20,7 @@
         "./websocket": "./withastro/astro/packages/integrations/node/src/runtime/websocket.ts"
     },
     "dependencies": {
+        "@astrojs/internal-helpers": "~0.6.1",
         "@types/ws": "^8.5.12",
         "bufferutil": "^4.0.8",
         "send": "^1.1.0",
