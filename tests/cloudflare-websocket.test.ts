@@ -86,8 +86,8 @@ describe("build", {
         wrangler.stdout.on("data", function onData(data) {
             const output = data.toString()
             if(
-                output === "[wrangler:inf] Ready on http://127.0.0.1:8788\n" ||
-                output === "[wrangler:inf] Ready on http://localhost:8788\n"
+                output === "[wrangler:info] Ready on http://127.0.0.1:8788\n" ||
+                output === "[wrangler:info] Ready on http://localhost:8788\n"
             ) {
                 resolve()
             }
