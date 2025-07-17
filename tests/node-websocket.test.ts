@@ -5,7 +5,7 @@ import nodeWsAdapter from "astro-node-websocket"
 
 describe("dev", {
     timeout: 1000,
-    skip: process.version.startsWith("v23.") === false
+    skip: typeof WebSocket === "undefined"
 }, () => {
     let server: DevServer
 
@@ -72,13 +72,16 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    skip: process.version.startsWith("v23.") === false
+    skip: typeof WebSocket === "undefined"
 }, () => {
     let fixture: BuildFixture
-    let exports: ReturnType<typeof import("../packages/node-websocket/withastro/adapters/packages/node/src/server.js").createExports>
+    let exports: ReturnType<typeof import("../packages/node-websocket/withastro/astro/packages/integrations/node/src/server.js").createExports>
     let server: ReturnType<typeof exports.startServer>
 
+    let NODE_ENV
+
     beforeAll(async () => {
+        NODE_ENV = process.env.NODE_ENV
         process.env.NODE_ENV = "production"
         process.env.ASTRO_NODE_AUTOSTART = "disabled"
         fixture = await build("./fixtures/websocket", {
@@ -88,7 +91,10 @@ describe("build", {
         server = exports.startServer()
     })
 
-    afterAll(() => server.server.stop())
+    afterAll(() => {
+        server.server.stop()
+        process.env.NODE_ENV = NODE_ENV
+    })
 
     test("performs upgrade", async () => {
         const ws = new WebSocket(`ws://localhost:${server.server.port}/ws`)

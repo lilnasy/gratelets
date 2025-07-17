@@ -32,7 +32,7 @@
     },
     "devDependencies": {
         "astro": "5",
-        "@types/node": "20",
+        "@types/node": "22",
         "astro-global": "workspace:*"
     }
 }

@@ -14,6 +14,9 @@ describe("dev", { skip: process.version.startsWith("v23") || process.version.sta
         })
 
         await new Promise<void>((resolve, reject) => {
+            devProcess.on("exit", () => {
+                reject(new Error("Dev server exited unexpectedly"))
+            })
             devProcess.stdout!.on("data", (data) => {
                 if (data.toString().includes("localhost")) {
                     resolve()
@@ -64,6 +67,9 @@ describe("build", { skip: process.version.startsWith("v18") }, () => {
         })
 
         await new Promise<void>((resolve, reject) => {
+            serveProcess.on("exit", () => {
+                reject(new Error("Serve process exited unexpectedly"))
+            })
             serveProcess.stdout!.on("data", (data) => {
                 if (data.toString().includes("[react-router-serve]")) {
                     resolve()

@@ -1,3 +1,4 @@
+import { platform } from "node:os"
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build } from "./utils.ts"
@@ -5,7 +6,7 @@ import cloudflareAdapter from "astro-cloudflare-websocket"
 
 describe("dev", {
     timeout: 1000,
-    skip: process.version.startsWith("v23.") === false
+    skip: typeof WebSocket === "undefined"
 }, () => {
     let server: DevServer
 
@@ -72,7 +73,7 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    skip: process.version.startsWith("v23.") === false
+    skip: typeof WebSocket === "undefined" || platform() === "win32"
 }, () => {
     let wrangler: ChildProcessWithoutNullStreams
 
@@ -86,8 +87,8 @@ describe("build", {
         wrangler.stdout.on("data", function onData(data) {
             const output = data.toString()
             if(
-                output === "[wrangler:inf] Ready on http://127.0.0.1:8788\n" ||
-                output === "[wrangler:inf] Ready on http://localhost:8788\n"
+                output === "[wrangler:info] Ready on http://127.0.0.1:8788\n" ||
+                output === "[wrangler:info] Ready on http://localhost:8788\n"
             ) {
                 resolve()
             }

@@ -1,6 +1,6 @@
 git submodule update --init
 
-cd packages/node-websocket/withastro/adapters
+cd packages/node-websocket/withastro/astro
 git config user.email "ci@c.i"
 git config user.name "CI"
 git am ../../*.patch

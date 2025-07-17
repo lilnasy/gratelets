@@ -25,7 +25,7 @@
     },
     "type": "module",
     "devDependencies": {
-        "@types/node": "20",
+        "@types/node": "22",
         "astro": "5"
     }
 }

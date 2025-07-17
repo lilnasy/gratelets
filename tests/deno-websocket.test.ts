@@ -5,7 +5,7 @@ import denoAdapter from "astro-deno-websocket"
 
 describe("dev", {
     timeout: 1000,
-    skip: process.version.startsWith("v23.") === false
+    skip: typeof WebSocket === "undefined"
 }, () => {
     let server: DevServer
 
@@ -72,7 +72,7 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    skip: process.version.startsWith("v23.") === false
+    skip: typeof WebSocket === "undefined"
 }, () => {
     let deno: ChildProcessWithoutNullStreams
 

@@ -99,6 +99,31 @@ export default {
         if (ctx === undefined) throw new NoRequestError("isPrerendered")
         return ctx.isPrerendered
     },
+    get insertDirective() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("insertDirective")
+        return ctx.insertDirective
+    },
+    get insertStyleResource() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("insertStyleResource")
+        return ctx.insertStyleResource
+    },
+    get insertStyleHash() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("insertStyleHash")
+        return ctx.insertStyleHash
+    },
+    get insertScriptResource() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("insertScriptResource")
+        return ctx.insertScriptResource
+    },
+    get insertScriptHash() {
+        const ctx = storage.getStore()
+        if (ctx === undefined) throw new NoRequestError("insertScriptHash")
+        return ctx.insertScriptHash
+    },
 } satisfies AstroGlobal
 
 export class NoRequestError extends Error {

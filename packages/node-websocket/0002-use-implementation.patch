@@ -1,22 +1,22 @@
-From cb7563589cfd21d0272529957462a70b9da6cec9 Mon Sep 17 00:00:00 2001
+From 190a374ca37c09bd00bafc3f02fa7912e4c53037 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:43 +0530
 Subject: [PATCH 2/3] use implementation
 
 ---
- packages/node/src/index.ts      | 77 ++++++++++++++++++++++++++++++---
- packages/node/src/serve-app.ts  | 13 +++++-
- packages/node/src/standalone.ts |  2 +
- packages/node/src/types.ts      |  2 +-
+ packages/integrations/node/src/index.ts      | 77 ++++++++++++++++++--
+ packages/integrations/node/src/serve-app.ts  | 13 +++-
+ packages/integrations/node/src/standalone.ts |  2 +
+ packages/integrations/node/src/types.ts      |  2 +-
  4 files changed, 85 insertions(+), 9 deletions(-)
 
-diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
-index e91ed171..0b1575bb 100644
---- a/packages/node/src/index.ts
-+++ b/packages/node/src/index.ts
-@@ -1,12 +1,55 @@
- import type { AstroAdapter, AstroIntegration } from 'astro';
+diff --git a/packages/integrations/node/src/index.ts b/packages/integrations/node/src/index.ts
+index f6a142e11..adc3f21ca 100644
+--- a/packages/integrations/node/src/index.ts
++++ b/packages/integrations/node/src/index.ts
+@@ -10,12 +10,55 @@ import type {
  import { AstroError } from 'astro/errors';
+ import { STATIC_HEADERS_FILE } from './shared.js';
  import type { Options, UserOptions } from './types.js';
 +import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.js"
 +
@@ -73,21 +73,22 @@ index e91ed171..0b1575bb 100644
  		exports: ['handler', 'startServer', 'options'],
  		args: options,
  		adapterFeatures: {
-@@ -30,20 +73,36 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
- 	}
- 
+@@ -42,10 +85,11 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
  	let _options: Options;
+ 	let _config: AstroConfig | undefined = undefined;
+ 	let _routeToHeaders: RouteToHeaders | undefined = undefined;
 +	let viteDevServer: ViteDevServer;
  	return {
 -		name: '@astrojs/node',
 +		name: "astro-node-websocket",
  		hooks: {
--			'astro:config:setup': async ({ updateConfig, config }) => {
-+			'astro:config:setup': async ({ addMiddleware, command, updateConfig, config }) => {
- 				updateConfig({
- 					image: {
- 						endpoint: config.image.endpoint ?? 'astro/assets/endpoint/node',
- 					},
+-			'astro:config:setup': async ({ updateConfig, config, logger }) => {
++			'astro:config:setup': async ({ addMiddleware, command, updateConfig, config, logger }) => {
+ 				let session = config.session;
+ 				_config = config;
+ 				if (!session?.driver) {
+@@ -69,10 +113,25 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+ 					session,
  					vite: {
  						ssr: {
 -							noExternal: ['@astrojs/node'],
@@ -111,9 +112,9 @@ index e91ed171..0b1575bb 100644
 +					})
 +				}
  			},
- 			'astro:config:done': ({ setAdapter, config }) => {
- 				_options = {
-@@ -56,6 +115,12 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+ 			'astro:build:generated': ({ experimentalRouteToHeaders }) => {
+ 				_routeToHeaders = experimentalRouteToHeaders;
+@@ -89,6 +148,12 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
  				};
  				setAdapter(getAdapter(_options));
  			},
@@ -122,14 +123,14 @@ index e91ed171..0b1575bb 100644
 +			},
 +			'astro:server:start' () {
 +				handleUpgradeRequests(viteDevServer)
-+			}
- 		},
- 	};
- }
-diff --git a/packages/node/src/serve-app.ts b/packages/node/src/serve-app.ts
-index 2934a01a..635ded25 100644
---- a/packages/node/src/serve-app.ts
-+++ b/packages/node/src/serve-app.ts
++			},
+ 			'astro:build:done': async () => {
+ 				if (!_config) {
+ 					return;
+diff --git a/packages/integrations/node/src/serve-app.ts b/packages/integrations/node/src/serve-app.ts
+index 72b4e0fd6..7f89e5df3 100644
+--- a/packages/integrations/node/src/serve-app.ts
++++ b/packages/integrations/node/src/serve-app.ts
 @@ -20,7 +20,7 @@ export function createAppHandler(app: NodeApp): RequestHandler {
  		console.error(reason);
  	});
@@ -157,10 +158,10 @@ index 2934a01a..635ded25 100644
  		const routeData = app.match(request);
  		if (routeData) {
  			const response = await als.run(request.url, () =>
-diff --git a/packages/node/src/standalone.ts b/packages/node/src/standalone.ts
-index fadcc37b..0317544c 100644
---- a/packages/node/src/standalone.ts
-+++ b/packages/node/src/standalone.ts
+diff --git a/packages/integrations/node/src/standalone.ts b/packages/integrations/node/src/standalone.ts
+index 8ef4227a1..ad869ecb0 100644
+--- a/packages/integrations/node/src/standalone.ts
++++ b/packages/integrations/node/src/standalone.ts
 @@ -7,6 +7,7 @@ import enableDestroy from 'server-destroy';
  import { logListeningOn } from './log-listening-on.js';
  import { createAppHandler } from './serve-app.js';
@@ -177,11 +178,11 @@ index fadcc37b..0317544c 100644
  	server.server.listen(port, host);
  	if (process.env.ASTRO_NODE_LOGGING !== 'disabled') {
  		logListeningOn(app.getAdapterLogger(), server.server, host);
-diff --git a/packages/node/src/types.ts b/packages/node/src/types.ts
-index 010053de..8b50a20c 100644
---- a/packages/node/src/types.ts
-+++ b/packages/node/src/types.ts
-@@ -35,5 +35,5 @@ export type RequestHandlerParams = [
+diff --git a/packages/integrations/node/src/types.ts b/packages/integrations/node/src/types.ts
+index 4dae92243..69678722a 100644
+--- a/packages/integrations/node/src/types.ts
++++ b/packages/integrations/node/src/types.ts
+@@ -38,5 +38,5 @@ type RequestHandlerParams = [
  	req: IncomingMessage,
  	res: ServerResponse,
  	next?: (err?: unknown) => void,
@@ -189,5 +190,5 @@ index 010053de..8b50a20c 100644
 +	locals?: { [key: string]: any },
  ];
 -- 
-2.47.1
+2.49.0
 

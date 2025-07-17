@@ -30,6 +30,6 @@
         "astro": "4 || 5"
     },
     "devDependencies": {
-        "@types/node": "20"
+        "@types/node": "22"
     }
 }
