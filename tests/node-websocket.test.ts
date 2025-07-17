@@ -75,11 +75,10 @@ describe("build", {
     skip: typeof WebSocket === "undefined"
 }, () => {
     let fixture: BuildFixture
-    let exports: ReturnType<typeof import("../packages/node-websocket/withastro/adapters/packages/integrations/node/src/server.js").createExports>
+    let exports: ReturnType<typeof import("../packages/node-websocket/withastro/astro/packages/integrations/node/src/server.js").createExports>
     let server: ReturnType<typeof exports.startServer>
 
     beforeAll(async () => {
-        process.env.NODE_ENV = "production"
         process.env.ASTRO_NODE_AUTOSTART = "disabled"
         fixture = await build("./fixtures/websocket", {
             adapter: nodeWsAdapter({ mode: "standalone" })
