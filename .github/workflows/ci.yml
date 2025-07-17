@@ -35,7 +35,7 @@ jobs:
       os: ubuntu-latest
     strategy:
       matrix:
-        NODE_VERSION: [18, 20, 23]
+        NODE_VERSION: [20, 24]
       fail-fast: false
   Windows:
     name: "Windows - Node 22"
@@ -50,8 +50,8 @@ jobs:
     uses: ./.github/workflows/test.yml
     with:
       node: 22
-      os: macos-14
-  Chrome:
+      os: macos-latest
+  E2E:
     name: E2E Tests
     needs: prelim
     runs-on: ubuntu-latest
@@ -62,10 +62,10 @@ jobs:
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
       
-      - name: Setup Node 20
+      - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
       
       - name: Install dependencies
