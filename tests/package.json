@@ -1,7 +1,6 @@
 {
     "name": "tests",
     "private": true,
-
     "scripts": {
         "test": "vitest --run --api.port 51204 --pool=threads --poolOptions.threads.singleThread --bail 1"
     },

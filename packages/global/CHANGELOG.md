@@ -1,5 +1,11 @@
 # astro-global
 
+## 2.1.0
+
+### Minor Changes
+
+- [#149](https://github.com/lilnasy/gratelets/pull/149) [`6b108f3`](https://github.com/lilnasy/gratelets/commit/6b108f36bf7207ccc53035efc0ec9f1e6c044b3a) Thanks [@lilnasy](https://github.com/lilnasy)! - The package has been updated to allow access to more properties: `Astro.insertDirective`, `Astro.insertStyleResource`, `Astro.insertStyleHash`, `Astro.insertScriptResource`, and `Astro.insertScriptHash`.
+
 ## 2.0.0
 
 ### Major Changes
