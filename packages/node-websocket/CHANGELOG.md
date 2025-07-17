@@ -1,5 +1,11 @@
 # astro-node-websocket
 
+## 1.2.0
+
+### Minor Changes
+
+- [#149](https://github.com/lilnasy/gratelets/pull/149) [`6b108f3`](https://github.com/lilnasy/gratelets/commit/6b108f36bf7207ccc53035efc0ec9f1e6c044b3a) Thanks [@lilnasy](https://github.com/lilnasy)! - The package has been updated to bring in features and improvements from `@astrojs/node@9.3.0`.
+
 ## 1.1.3
 
 ### Patch Changes
