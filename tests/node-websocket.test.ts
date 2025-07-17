@@ -75,7 +75,7 @@ describe("build", {
     skip: process.version.startsWith("v23.") === false
 }, () => {
     let fixture: BuildFixture
-    let exports: ReturnType<typeof import("../packages/node-websocket/withastro/adapters/packages/node/src/server.js").createExports>
+    let exports: ReturnType<typeof import("../packages/node-websocket/withastro/adapters/packages/integrations/node/src/server.js").createExports>
     let server: ReturnType<typeof exports.startServer>
 
     beforeAll(async () => {

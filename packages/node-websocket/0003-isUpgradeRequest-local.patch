@@ -1,20 +1,20 @@
-From 31cbc182ad8d50924e1707f46dd27b1564fde649 Mon Sep 17 00:00:00 2001
+From 78cb4d17ef29ffe6b2c12cee9f09d6ab6a24ed64 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 13 Dec 2024 22:43:16 +0530
 Subject: [PATCH 3/3] isUpgradeRequest local
 
 ---
- packages/node/src/index.ts                     |  7 ++++++-
- packages/node/src/serve-app.ts                 |  9 ++++++---
- packages/node/src/websocket/dev-middleware.ts  | 10 +++++++---
- packages/node/src/websocket/serve-websocket.ts |  1 +
+ packages/integrations/node/src/index.ts                |  7 ++++++-
+ packages/integrations/node/src/serve-app.ts            |  9 ++++++---
+ .../integrations/node/src/websocket/dev-middleware.ts  | 10 +++++++---
+ .../integrations/node/src/websocket/serve-websocket.ts |  1 +
  4 files changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/packages/node/src/index.ts b/packages/node/src/index.ts
-index 0b1575bb..2f0963b2 100644
---- a/packages/node/src/index.ts
-+++ b/packages/node/src/index.ts
-@@ -4,6 +4,11 @@ import type { Options, UserOptions } from './types.js';
+diff --git a/packages/integrations/node/src/index.ts b/packages/integrations/node/src/index.ts
+index adc3f21ca..45c452b5d 100644
+--- a/packages/integrations/node/src/index.ts
++++ b/packages/integrations/node/src/index.ts
+@@ -13,6 +13,11 @@ import type { Options, UserOptions } from './types.js';
  import { handleUpgradeRequests, type ViteDevServer } from "./websocket/dev-middleware.js"
  
  export interface Locals {
@@ -26,7 +26,7 @@ index 0b1575bb..2f0963b2 100644
      /**
       * Upgrade an incoming HTTP request to a bidirectional WebSocket
       * connection.
-@@ -15,7 +20,7 @@ export interface Locals {
+@@ -24,7 +29,7 @@ export interface Locals {
       *
       * ```ts
       * export const GET: APIRoute = ctx => {
@@ -35,10 +35,10 @@ index 0b1575bb..2f0963b2 100644
       *         const { response, socket } = ctx.locals.upgradeWebSocket()
       *         socket.onmessage = event => {
       *             if (event.data === "ping") {
-diff --git a/packages/node/src/serve-app.ts b/packages/node/src/serve-app.ts
-index 635ded25..0b9b3382 100644
---- a/packages/node/src/serve-app.ts
-+++ b/packages/node/src/serve-app.ts
+diff --git a/packages/integrations/node/src/serve-app.ts b/packages/integrations/node/src/serve-app.ts
+index 7f89e5df3..7c397de6b 100644
+--- a/packages/integrations/node/src/serve-app.ts
++++ b/packages/integrations/node/src/serve-app.ts
 @@ -38,9 +38,12 @@ export function createAppHandler(app: NodeApp): RequestHandler {
  		 * The fact that a request is being handled by this function, a listener for the
  		 * `request` event, means that the request was not an upgrade request.
@@ -55,10 +55,10 @@ index 635ded25..0b9b3382 100644
  		const routeData = app.match(request);
  		if (routeData) {
  			const response = await als.run(request.url, () =>
-diff --git a/packages/node/src/websocket/dev-middleware.ts b/packages/node/src/websocket/dev-middleware.ts
-index d7909411..21061c5a 100644
---- a/packages/node/src/websocket/dev-middleware.ts
-+++ b/packages/node/src/websocket/dev-middleware.ts
+diff --git a/packages/integrations/node/src/websocket/dev-middleware.ts b/packages/integrations/node/src/websocket/dev-middleware.ts
+index d7909411f..21061c5a4 100644
+--- a/packages/integrations/node/src/websocket/dev-middleware.ts
++++ b/packages/integrations/node/src/websocket/dev-middleware.ts
 @@ -96,9 +96,12 @@ export const onRequest = async function websocketDevMiddleware(context: APIConte
      const upgradeRequest = upgradeRequestStorage.getStore()
  
@@ -83,10 +83,10 @@ index d7909411..21061c5a 100644
      upgradeWebSocket() {
          const response = newUpgradeResponse()
          const socket = newWebSocket()
-diff --git a/packages/node/src/websocket/serve-websocket.ts b/packages/node/src/websocket/serve-websocket.ts
-index ea9ed9b3..9421c64e 100644
---- a/packages/node/src/websocket/serve-websocket.ts
-+++ b/packages/node/src/websocket/serve-websocket.ts
+diff --git a/packages/integrations/node/src/websocket/serve-websocket.ts b/packages/integrations/node/src/websocket/serve-websocket.ts
+index ea9ed9b3b..9421c64e5 100644
+--- a/packages/integrations/node/src/websocket/serve-websocket.ts
++++ b/packages/integrations/node/src/websocket/serve-websocket.ts
 @@ -26,6 +26,7 @@ export function createWebsocketHandler(app: NodeApp): UpgradeHandler {
          const response = await app.render(NodeApp.createRequest(req), {
              addCookieHeader: true,
@@ -96,5 +96,5 @@ index ea9ed9b3..9421c64e 100644
                      const socket = new WebSocket
                      const response = new UpgradeResponse
 -- 
-2.47.1
+2.49.0
 

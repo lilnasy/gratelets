@@ -11,13 +11,13 @@
         "astro-adapter",
         "websocket"
     ],
-    "homepage": "https://github.com/lilnasy/gratelets/packages/node-websocket",
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/node-websocket",
     "files": [
-        "withastro/adapters/packages/node/src"
+        "withastro/astro/packages/integrations/node/src"
     ],
     "exports": {
-        ".": "./withastro/adapters/packages/node/src/index.ts",
-        "./websocket": "./withastro/adapters/packages/node/src/runtime/websocket.ts"
+        ".": "./withastro/astro/packages/integrations/node/src/index.ts",
+        "./websocket": "./withastro/astro/packages/integrations/node/src/runtime/websocket.ts"
     },
     "dependencies": {
         "@types/ws": "^8.5.12",
@@ -32,10 +32,10 @@
     },
     "scripts": {
         "clone": "git submodule update --init .",
-        "create_patches": "cd withastro/adapters && git format-patch tags/@astrojs/node@9.0.2 -o ../..",
-        "load_patches": "git submodule update --init . && cd withastro/adapters && git am ../../*.patch",
-        "delete_all_changes_and_unload_patches": "cd withastro/adapters && git reset --hard tags/@astrojs/node@9.0.2",
-        "delete_all_changes_and_reload_patches": "cd withastro/adapters && git reset --hard tags/@astrojs/node@9.0.2 && git am ../../*.patch",
+        "create_patches": "cd withastro/astro && git format-patch tags/@astrojs/node@9.3.0 -o ../..",
+        "load_patches": "git submodule update --init . && cd withastro/astro && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/node@9.3.0",
+        "delete_all_changes_and_reload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/node@9.3.0 && git am ../../*.patch",
         "test": "pnpm -w test node-websocket.test.ts"
     }
 }
