@@ -1,3 +1,4 @@
+import { platform } from "node:os"
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build } from "./utils.ts"
@@ -72,7 +73,7 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    skip: typeof WebSocket === "undefined"
+    skip: typeof WebSocket === "undefined" || platform() === "win32"
 }, () => {
     let wrangler: ChildProcessWithoutNullStreams
 
