@@ -43,7 +43,7 @@ jobs:
     uses: ./.github/workflows/test.yml
     with:
       node: 22
-      os: windows-latest
+      os: windows-2022
   macOS:
     name: "macOS - Node 22"
     needs: prelim

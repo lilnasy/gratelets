@@ -16,9 +16,9 @@
 	branch = main
 	shallow = true
 	active = false
-[submodule "packages/cloudflare-websocket/withastro/adapters"]
-	path = packages/cloudflare-websocket/withastro/adapters
-	url = https://github.com/withastro/adapters
-	branch = cloudflare-astro-v5
+[submodule "packages/cloudflare-websocket/withastro/astro"]
+	path = packages/cloudflare-websocket/withastro/astro
+	url = https://github.com/withastro/astro
+	branch = main
 	shallow = true
 	active = false

@@ -4,7 +4,7 @@
         # exclude the git submodules, they managed manually
         "!packages/node-websocket/withastro/astro/**",
         "!packages/bun-websocket/NuroDev/astro-bun/**",
-        "!packages/cloudflare-websocket/withastro/adapters/**",
+        "!packages/cloudflare-websocket/withastro/astro/**",
         "!packages/deno-websocket/denoland/deno-astro-adapter/**"
     ]
 }

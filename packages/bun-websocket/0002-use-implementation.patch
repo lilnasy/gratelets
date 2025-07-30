@@ -91,7 +91,7 @@ index 7def9a0..1f9063b 100644
      );
  
 +  let viteDevServer: ViteDevServer;
-+  
++
    return {
 -    name: packageName,
 +    name: "astro-bun-websocket",
@@ -178,7 +178,7 @@ index 60c780b..6001366 100644
 +            /**
 +             * bun does not support "blob" binary type
 +             * https://github.com/oven-sh/bun/issues/8721
-+             * 
++             *
 +             * Instead, it can provide either arraybuffer or
 +             * nodebuffer objects, which we will manually
 +             * convert into blobs.
