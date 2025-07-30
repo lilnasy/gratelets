@@ -1,4 +1,4 @@
-From 78cb4d17ef29ffe6b2c12cee9f09d6ab6a24ed64 Mon Sep 17 00:00:00 2001
+From 0700b21f570142b9e5a611524a71ccb39259c279 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 13 Dec 2024 22:43:16 +0530
 Subject: [PATCH 3/3] isUpgradeRequest local
@@ -11,7 +11,7 @@ Subject: [PATCH 3/3] isUpgradeRequest local
  4 files changed, 20 insertions(+), 7 deletions(-)
 
 diff --git a/packages/integrations/node/src/index.ts b/packages/integrations/node/src/index.ts
-index adc3f21ca..45c452b5d 100644
+index adc3f21ca5..45c452b5d0 100644
 --- a/packages/integrations/node/src/index.ts
 +++ b/packages/integrations/node/src/index.ts
 @@ -13,6 +13,11 @@ import type { Options, UserOptions } from './types.js';
@@ -36,7 +36,7 @@ index adc3f21ca..45c452b5d 100644
       *         socket.onmessage = event => {
       *             if (event.data === "ping") {
 diff --git a/packages/integrations/node/src/serve-app.ts b/packages/integrations/node/src/serve-app.ts
-index 7f89e5df3..7c397de6b 100644
+index 100093cd71..80fb6ef7e9 100644
 --- a/packages/integrations/node/src/serve-app.ts
 +++ b/packages/integrations/node/src/serve-app.ts
 @@ -38,9 +38,12 @@ export function createAppHandler(app: NodeApp): RequestHandler {
@@ -56,7 +56,7 @@ index 7f89e5df3..7c397de6b 100644
  		if (routeData) {
  			const response = await als.run(request.url, () =>
 diff --git a/packages/integrations/node/src/websocket/dev-middleware.ts b/packages/integrations/node/src/websocket/dev-middleware.ts
-index d7909411f..21061c5a4 100644
+index d7909411ff..21061c5a4b 100644
 --- a/packages/integrations/node/src/websocket/dev-middleware.ts
 +++ b/packages/integrations/node/src/websocket/dev-middleware.ts
 @@ -96,9 +96,12 @@ export const onRequest = async function websocketDevMiddleware(context: APIConte
@@ -84,7 +84,7 @@ index d7909411f..21061c5a4 100644
          const response = newUpgradeResponse()
          const socket = newWebSocket()
 diff --git a/packages/integrations/node/src/websocket/serve-websocket.ts b/packages/integrations/node/src/websocket/serve-websocket.ts
-index ea9ed9b3b..9421c64e5 100644
+index ea9ed9b3bd..9421c64e59 100644
 --- a/packages/integrations/node/src/websocket/serve-websocket.ts
 +++ b/packages/integrations/node/src/websocket/serve-websocket.ts
 @@ -26,6 +26,7 @@ export function createWebsocketHandler(app: NodeApp): UpgradeHandler {
@@ -96,5 +96,5 @@ index ea9ed9b3b..9421c64e5 100644
                      const socket = new WebSocket
                      const response = new UpgradeResponse
 -- 
-2.49.0
+2.50.1
 

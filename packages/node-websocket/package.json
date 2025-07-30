@@ -33,10 +33,10 @@
     },
     "scripts": {
         "clone": "git submodule update --init .",
-        "create_patches": "cd withastro/astro && git format-patch tags/@astrojs/node@9.3.0 -o ../..",
+        "create_patches": "cd withastro/astro && git format-patch tags/@astrojs/node@9.3.1 -o ../..",
         "load_patches": "git submodule update --init . && cd withastro/astro && git am ../../*.patch",
-        "delete_all_changes_and_unload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/node@9.3.0",
-        "delete_all_changes_and_reload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/node@9.3.0 && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/node@9.3.1",
+        "delete_all_changes_and_reload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/node@9.3.1 && git am ../../*.patch",
         "test": "pnpm -w test node-websocket.test.ts"
     }
 }
