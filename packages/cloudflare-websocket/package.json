@@ -15,37 +15,38 @@
     ],
     "homepage": "https://github.com/lilnasy/gratelets/packages/cloudflare-websocket",
     "files": [
-        "withastro/adapters/packages/cloudflare/src"
+        "withastro/astro/packages/integrations/cloudflare/src"
     ],
     "exports": {
-        ".": "./withastro/adapters/packages/cloudflare/src/index.ts",
+        ".": "./withastro/astro/packages/integrations/cloudflare/src/index.ts",
+        "./handler": "./withastro/astro/packages/integrations/integrations/cloudflare/src/utils/handler.ts",
         "./websocket": {
-            "development": "./withastro/adapters/packages/cloudflare/src/websocket/dev-websocket.ts",
-            "production": "./withastro/adapters/packages/cloudflare/src/websocket/cloudflare-websocket.ts"
+            "development": "./withastro/astro/packages/integrations/cloudflare/src/websocket/dev-websocket.ts",
+            "production": "./withastro/astro/packages/integrations/cloudflare/src/websocket/cloudflare-websocket.ts"
         }
     },
     "dependencies": {
-        "@astrojs/internal-helpers": "0.4.2",
-        "@astrojs/underscore-redirects": "^0.6.0",
-        "@cloudflare/workers-types": "^4.20250109.0",
-        "@types/ws": "^8.5.14",
-        "estree-walker": "^3.0.3",
-        "magic-string": "^0.30.17",
-        "miniflare": "^3.20241230.1",
-        "tiny-glob": "^0.2.9",
-        "vite": "^6.0.7",
-        "wrangler": "^3.101.0",
-        "ws": "^8.18.0"
+        "@astrojs/internal-helpers": "0.6.1",
+        "@astrojs/underscore-redirects": "^1.0.0",
+        "@cloudflare/workers-types": "^4.20250507.0",
+        "@types/ws": "^8.18.1",
+        "tinyglobby": "^0.2.13",
+        "vite": "^6.3.5",
+        "wrangler": "^4.14.1",
+        "ws": "^8.18.3"
+    },
+    "peerDependencies": {
+        "astro": "^5.0.0"
     },
     "devDependencies": {
-        "rollup": "^4.30.1"
+        "rollup": "^4.40.2"
     },
     "scripts": {
         "clone": "git submodule update --init .",
-        "create_patches": "cd withastro/adapters && git format-patch tags/@astrojs/cloudflare@12.2.1 -o ../..",
-        "load_patches": "git submodule update --init . && cd withastro/adapters && git am ../../*.patch",
-        "delete_all_changes_and_unload_patches": "cd withastro/adapters && git reset --hard tags/@astrojs/cloudflare@12.2.1",
-        "delete_all_changes_and_reload_patches": "cd withastro/adapters && git reset --hard tags/@astrojs/cloudflare@12.2.1 && git am ../../*.patch",
+        "create_patches": "cd withastro/astro && git format-patch tags/@astrojs/cloudflare@12.6.0 -o ../..",
+        "load_patches": "git submodule update --init . && cd withastro/astro && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/cloudflare@12.6.0",
+        "delete_all_changes_and_reload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/cloudflare@12.6.0 && git am ../../*.patch",
         "test": "pnpm -w test cloudflare-websocket.test.ts"
     }
 }

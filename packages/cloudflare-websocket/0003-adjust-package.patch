@@ -1,18 +1,18 @@
-From 5e64df12e15bd36196f4511483a700f3c295658e Mon Sep 17 00:00:00 2001
-From: Arsh <69170106+lilnasy@users.noreply.github.com>
-Date: Sun, 22 Dec 2024 01:52:33 +0530
+From e111496cca3d0c675c1f2c5844193a8c6efee516 Mon Sep 17 00:00:00 2001
+From: Arsh <hi@arsh.sh>
+Date: Wed, 30 Jul 2025 17:14:23 +0000
 Subject: [PATCH 3/3] adjust package
 
 ---
- packages/cloudflare/src/index.ts              | 10 +++++-----
- packages/cloudflare/src/utils/image-config.ts |  5 +++--
+ packages/integrations/cloudflare/src/index.ts          | 10 +++++-----
+ .../integrations/cloudflare/src/utils/image-config.ts  |  5 +++--
  2 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/packages/cloudflare/src/index.ts b/packages/cloudflare/src/index.ts
-index b6794d6e..eadeabdb 100644
---- a/packages/cloudflare/src/index.ts
-+++ b/packages/cloudflare/src/index.ts
-@@ -153,7 +153,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+diff --git a/packages/integrations/cloudflare/src/index.ts b/packages/integrations/cloudflare/src/index.ts
+index 6f294733d..9c32dfcbd 100644
+--- a/packages/integrations/cloudflare/src/index.ts
++++ b/packages/integrations/cloudflare/src/index.ts
+@@ -202,7 +202,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  	let platformProxy: PlatformProxy;
  
  	return {
@@ -21,7 +21,7 @@ index b6794d6e..eadeabdb 100644
  		hooks: {
  			'astro:config:setup': ({
  				command,
-@@ -206,7 +206,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -293,7 +293,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					addWatchFile(new URL('./wrangler.jsonc', config.root));
  				}
  				addMiddleware({
@@ -29,39 +29,39 @@ index b6794d6e..eadeabdb 100644
 +					entrypoint: new URL("./entrypoints/middleware.ts", import.meta.url),
  					order: 'pre',
  				});
- 				if (command === "dev") {
-@@ -222,7 +222,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 				if (command === 'dev') {
+@@ -309,7 +309,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  			'astro:config:done': ({ setAdapter, config, buildOutput, logger }) => {
  				if (buildOutput === 'static') {
  					logger.warn(
--						'[@astrojs/cloudflare] This adapter is intended to be used with server rendered pages, which this project does not contain any of. As such, this adapter is unnecessary.'
-+						'This adapter is intended to be used with server rendered pages, which this project does not contain any of. As such, this adapter is unnecessary.'
+-						'[@astrojs/cloudflare] This adapter is intended to be used with server rendered pages, which this project does not contain any of. As such, this adapter is unnecessary.',
++						'This adapter is intended to be used with server rendered pages, which this project does not contain any of. As such, this adapter is unnecessary.',
  					);
  				}
  
-@@ -230,8 +230,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
- 				finalBuildOutput = buildOutput;
+@@ -327,8 +327,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
+ 				}
  
  				setAdapter({
 -					name: '@astrojs/cloudflare',
--					serverEntrypoint: '@astrojs/cloudflare/entrypoints/server.js',
+-					serverEntrypoint: customWorkerEntryPoint ?? '@astrojs/cloudflare/entrypoints/server.js',
 +					name: "astro-cloudflare-websocket",
-+					serverEntrypoint: new URL("./entrypoints/server.ts", import.meta.url),
- 					exports: ['default'],
- 					adapterFeatures: {
- 						edgeMiddleware: false,
-diff --git a/packages/cloudflare/src/utils/image-config.ts b/packages/cloudflare/src/utils/image-config.ts
-index 58e0f76a..6b18b8b9 100644
---- a/packages/cloudflare/src/utils/image-config.ts
-+++ b/packages/cloudflare/src/utils/image-config.ts
++					serverEntrypoint: customWorkerEntryPoint ?? new URL("./entrypoints/server.ts", import.meta.url),
+ 					exports: args?.workerEntryPoint?.namedExports
+ 						? ['default', ...args.workerEntryPoint.namedExports]
+ 						: ['default'],
+diff --git a/packages/integrations/cloudflare/src/utils/image-config.ts b/packages/integrations/cloudflare/src/utils/image-config.ts
+index 967b1b014..5b389a095 100644
+--- a/packages/integrations/cloudflare/src/utils/image-config.ts
++++ b/packages/integrations/cloudflare/src/utils/image-config.ts
 @@ -1,5 +1,6 @@
  import type { AstroConfig, AstroIntegrationLogger, HookParameters } from 'astro';
  import { passthroughImageService, sharpImageService } from 'astro/config';
 +import { fileURLToPath } from "node:url"
  
- export function setImageConfig(
- 	service: string,
-@@ -17,7 +18,7 @@ export function setImageConfig(
+ export type ImageService = 'passthrough' | 'cloudflare' | 'compile' | 'custom';
+ 
+@@ -19,7 +20,7 @@ export function setImageConfig(
  				service:
  					command === 'dev'
  						? sharpImageService()
@@ -70,7 +70,7 @@ index 58e0f76a..6b18b8b9 100644
  			};
  
  		case 'compile':
-@@ -25,7 +26,7 @@ export function setImageConfig(
+@@ -27,7 +28,7 @@ export function setImageConfig(
  				...config,
  				service: sharpImageService(),
  				endpoint: {
@@ -80,5 +80,5 @@ index 58e0f76a..6b18b8b9 100644
  			};
  
 -- 
-2.47.1
+2.50.1
 
