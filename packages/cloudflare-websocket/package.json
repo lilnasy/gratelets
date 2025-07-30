@@ -4,6 +4,16 @@
     "description": "Use WebSockets in your Astro SSR Apps and run it on Cloudflare Workers.",
     "version": "1.0.2",
     "license": "MIT",
+    "author": {
+        "name": "lilnasy",
+        "email": "hi@arsh.sh"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lilnasy/gratelets.git",
+        "directory": "packages/cloudflare-websocket"
+    },
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/cloudflare-websocket",
     "keywords": [
         "withastro",
         "astro",
@@ -13,7 +23,6 @@
         "workers",
         "websocket"
     ],
-    "homepage": "https://github.com/lilnasy/gratelets/packages/cloudflare-websocket",
     "files": [
         "withastro/astro/packages/integrations/cloudflare/src"
     ],
