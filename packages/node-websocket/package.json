@@ -2,7 +2,7 @@
     "name": "astro-node-websocket",
     "type": "module",
     "description": "Use WebSockets in your Astro SSR Apps",
-    "version": "1.2.1",
+    "version": "1.3.0",
     "license": "MIT",
     "author": {
         "name": "lilnasy",

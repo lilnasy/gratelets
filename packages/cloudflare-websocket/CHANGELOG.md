@@ -1,5 +1,11 @@
 # astro-cloudflare-websocket
 
+## 1.1.1
+
+### Patch Changes
+
+- [#153](https://github.com/lilnasy/gratelets/pull/153) [`82716e8`](https://github.com/lilnasy/gratelets/commit/82716e82537f76e7fc2e5f58597a9748dce02ba2) Thanks [@lilnasy](https://github.com/lilnasy)! - The package has been updated to bring in features and improvements from `@astrojs/cloudflare@12.6.3`.
+
 ## 1.1.0
 
 ### Minor Changes
