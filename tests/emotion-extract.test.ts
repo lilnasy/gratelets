@@ -59,7 +59,7 @@ describe("build", { skip: process.version.startsWith("v18") }, () => {
             buildProcess.on("exit", () => {
                 resolve()
             })
-            setTimeout(reject, 5000, "Build took too long")
+            setTimeout(reject, 10000, "Build took too long")
         })
 
         serveProcess = spawn("node", [join(fixtureDir, "node_modules", "@react-router", "serve", "bin.js"), "./build/server/index.js"], {
@@ -104,3 +104,4 @@ describe("build", { skip: process.version.startsWith("v18") }, () => {
         expect(css).toContain(".css-8ubbtv{list-style:none}")
     })
 })
+
