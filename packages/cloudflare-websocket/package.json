@@ -52,10 +52,10 @@
     },
     "scripts": {
         "clone": "git submodule update --init .",
-        "create_patches": "cd withastro/astro && git format-patch tags/@astrojs/cloudflare@12.6.0 -o ../..",
+        "create_patches": "cd withastro/astro && git format-patch tags/@astrojs/cloudflare@12.6.3 -o ../..",
         "load_patches": "git submodule update --init . && cd withastro/astro && git am ../../*.patch",
-        "delete_all_changes_and_unload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/cloudflare@12.6.0",
-        "delete_all_changes_and_reload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/cloudflare@12.6.0 && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/cloudflare@12.6.3",
+        "delete_all_changes_and_reload_patches": "cd withastro/astro && git reset --hard tags/@astrojs/cloudflare@12.6.3 && git am ../../*.patch",
         "test": "pnpm -w test cloudflare-websocket.test.ts"
     }
 }

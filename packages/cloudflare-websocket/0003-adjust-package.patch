@@ -1,5 +1,5 @@
-From e111496cca3d0c675c1f2c5844193a8c6efee516 Mon Sep 17 00:00:00 2001
-From: Arsh <hi@arsh.sh>
+From cc896a2625690612d82262e8cc654a12aa2447af Mon Sep 17 00:00:00 2001
+From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Wed, 30 Jul 2025 17:14:23 +0000
 Subject: [PATCH 3/3] adjust package
 
@@ -9,7 +9,7 @@ Subject: [PATCH 3/3] adjust package
  2 files changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/packages/integrations/cloudflare/src/index.ts b/packages/integrations/cloudflare/src/index.ts
-index 6f294733d..9c32dfcbd 100644
+index 1ca3ecd243..94af59d08c 100644
 --- a/packages/integrations/cloudflare/src/index.ts
 +++ b/packages/integrations/cloudflare/src/index.ts
 @@ -202,7 +202,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
@@ -21,7 +21,7 @@ index 6f294733d..9c32dfcbd 100644
  		hooks: {
  			'astro:config:setup': ({
  				command,
-@@ -293,7 +293,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -276,7 +276,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  					addWatchFile(new URL('./wrangler.jsonc', config.root));
  				}
  				addMiddleware({
@@ -30,7 +30,7 @@ index 6f294733d..9c32dfcbd 100644
  					order: 'pre',
  				});
  				if (command === 'dev') {
-@@ -309,7 +309,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -292,7 +292,7 @@ export default function createIntegration(args?: Options): AstroIntegration {
  			'astro:config:done': ({ setAdapter, config, buildOutput, logger }) => {
  				if (buildOutput === 'static') {
  					logger.warn(
@@ -39,7 +39,7 @@ index 6f294733d..9c32dfcbd 100644
  					);
  				}
  
-@@ -327,8 +327,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
+@@ -310,8 +310,8 @@ export default function createIntegration(args?: Options): AstroIntegration {
  				}
  
  				setAdapter({
@@ -51,7 +51,7 @@ index 6f294733d..9c32dfcbd 100644
  						? ['default', ...args.workerEntryPoint.namedExports]
  						: ['default'],
 diff --git a/packages/integrations/cloudflare/src/utils/image-config.ts b/packages/integrations/cloudflare/src/utils/image-config.ts
-index 967b1b014..5b389a095 100644
+index 967b1b0143..5b389a095f 100644
 --- a/packages/integrations/cloudflare/src/utils/image-config.ts
 +++ b/packages/integrations/cloudflare/src/utils/image-config.ts
 @@ -1,5 +1,6 @@
