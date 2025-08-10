@@ -1,4 +1,4 @@
-From 00149380f45a309aea02d1a987b6a90248495e6a Mon Sep 17 00:00:00 2001
+From 8576e25f45de7ae09a3397a9f06415bcc5e1f23a Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Thu, 12 Dec 2024 19:02:43 +0530
 Subject: [PATCH 2/3] use implementation
@@ -11,7 +11,7 @@ Subject: [PATCH 2/3] use implementation
  4 files changed, 85 insertions(+), 9 deletions(-)
 
 diff --git a/packages/integrations/node/src/index.ts b/packages/integrations/node/src/index.ts
-index f6a142e113..adc3f21ca5 100644
+index 2a99e383bf..e04e834650 100644
 --- a/packages/integrations/node/src/index.ts
 +++ b/packages/integrations/node/src/index.ts
 @@ -10,12 +10,55 @@ import type {
@@ -73,7 +73,7 @@ index f6a142e113..adc3f21ca5 100644
  		exports: ['handler', 'startServer', 'options'],
  		args: options,
  		adapterFeatures: {
-@@ -42,10 +85,11 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+@@ -54,10 +97,11 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
  	let _options: Options;
  	let _config: AstroConfig | undefined = undefined;
  	let _routeToHeaders: RouteToHeaders | undefined = undefined;
@@ -87,7 +87,7 @@ index f6a142e113..adc3f21ca5 100644
  				let session = config.session;
  				_config = config;
  				if (!session?.driver) {
-@@ -69,10 +113,25 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+@@ -81,10 +125,25 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
  					session,
  					vite: {
  						ssr: {
@@ -114,7 +114,7 @@ index f6a142e113..adc3f21ca5 100644
  			},
  			'astro:build:generated': ({ experimentalRouteToHeaders }) => {
  				_routeToHeaders = experimentalRouteToHeaders;
-@@ -89,6 +148,12 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
+@@ -102,6 +161,12 @@ export default function createIntegration(userOptions: UserOptions): AstroIntegr
  				};
  				setAdapter(getAdapter(_options));
  			},
@@ -128,19 +128,19 @@ index f6a142e113..adc3f21ca5 100644
  				if (!_config) {
  					return;
 diff --git a/packages/integrations/node/src/serve-app.ts b/packages/integrations/node/src/serve-app.ts
-index 9cb082e3db..100093cd71 100644
+index 09473e50cc..88b2aebb9a 100644
 --- a/packages/integrations/node/src/serve-app.ts
 +++ b/packages/integrations/node/src/serve-app.ts
-@@ -20,7 +20,7 @@ export function createAppHandler(app: NodeApp): RequestHandler {
- 		console.error(reason);
- 	});
+@@ -33,7 +33,7 @@ export function createAppHandler(app: NodeApp, options: Options): RequestHandler
+ 			}
+ 		: undefined;
  
 -	return async (req, res, next, locals) => {
 +	return async (req, res, next, locals = {}) => {
  		let request: Request;
  		try {
  			request = NodeApp.createRequest(req);
-@@ -31,7 +31,16 @@ export function createAppHandler(app: NodeApp): RequestHandler {
+@@ -44,7 +44,16 @@ export function createAppHandler(app: NodeApp, options: Options): RequestHandler
  			res.end('Internal Server Error');
  			return;
  		}
@@ -159,7 +159,7 @@ index 9cb082e3db..100093cd71 100644
  		if (routeData) {
  			const response = await als.run(request.url, () =>
 diff --git a/packages/integrations/node/src/standalone.ts b/packages/integrations/node/src/standalone.ts
-index 8ef4227a14..ad869ecb07 100644
+index 22587e1a54..804727ffbe 100644
 --- a/packages/integrations/node/src/standalone.ts
 +++ b/packages/integrations/node/src/standalone.ts
 @@ -7,6 +7,7 @@ import enableDestroy from 'server-destroy';
@@ -179,10 +179,10 @@ index 8ef4227a14..ad869ecb07 100644
  	if (process.env.ASTRO_NODE_LOGGING !== 'disabled') {
  		logListeningOn(app.getAdapterLogger(), server.server, host);
 diff --git a/packages/integrations/node/src/types.ts b/packages/integrations/node/src/types.ts
-index 4dae922436..69678722ab 100644
+index 4a318bdeda..a627b0edfb 100644
 --- a/packages/integrations/node/src/types.ts
 +++ b/packages/integrations/node/src/types.ts
-@@ -38,5 +38,5 @@ type RequestHandlerParams = [
+@@ -47,5 +47,5 @@ type RequestHandlerParams = [
  	req: IncomingMessage,
  	res: ServerResponse,
  	next?: (err?: unknown) => void,

@@ -1,4 +1,4 @@
-From 0700b21f570142b9e5a611524a71ccb39259c279 Mon Sep 17 00:00:00 2001
+From e6a0c644955a546d240dda606a45bdc0645286a2 Mon Sep 17 00:00:00 2001
 From: Arsh <69170106+lilnasy@users.noreply.github.com>
 Date: Fri, 13 Dec 2024 22:43:16 +0530
 Subject: [PATCH 3/3] isUpgradeRequest local
@@ -11,7 +11,7 @@ Subject: [PATCH 3/3] isUpgradeRequest local
  4 files changed, 20 insertions(+), 7 deletions(-)
 
 diff --git a/packages/integrations/node/src/index.ts b/packages/integrations/node/src/index.ts
-index adc3f21ca5..45c452b5d0 100644
+index e04e834650..bb0474ee96 100644
 --- a/packages/integrations/node/src/index.ts
 +++ b/packages/integrations/node/src/index.ts
 @@ -13,6 +13,11 @@ import type { Options, UserOptions } from './types.js';
@@ -36,10 +36,10 @@ index adc3f21ca5..45c452b5d0 100644
       *         socket.onmessage = event => {
       *             if (event.data === "ping") {
 diff --git a/packages/integrations/node/src/serve-app.ts b/packages/integrations/node/src/serve-app.ts
-index 100093cd71..80fb6ef7e9 100644
+index 88b2aebb9a..f1b46015e3 100644
 --- a/packages/integrations/node/src/serve-app.ts
 +++ b/packages/integrations/node/src/serve-app.ts
-@@ -38,9 +38,12 @@ export function createAppHandler(app: NodeApp): RequestHandler {
+@@ -51,9 +51,12 @@ export function createAppHandler(app: NodeApp, options: Options): RequestHandler
  		 * The fact that a request is being handled by this function, a listener for the
  		 * `request` event, means that the request was not an upgrade request.
  		 */
