@@ -2,7 +2,7 @@
     "name": "astro-cloudflare-websocket",
     "type": "module",
     "description": "Use WebSockets in your Astro SSR Apps and run it on Cloudflare Workers.",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "license": "MIT",
     "author": {
         "name": "lilnasy",
