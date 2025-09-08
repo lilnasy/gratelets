@@ -71,7 +71,7 @@ Note that this integration does not require any special client-side WebSocket li
 ---
 <script>
     const socket = new WebSocket(`${location.origin}/api/socket`)
-    socket onopen = event => {
+    socket.onopen = event => {
         socket.send("ping")
     }
     socket.onmessage = event => {
