@@ -167,8 +167,8 @@ importers:
   packages/node-websocket:
     dependencies:
       '@astrojs/internal-helpers':
-        specifier: 0.6.1
-        version: 0.6.1
+        specifier: 0.7.2
+        version: 0.7.2
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
@@ -499,6 +499,9 @@ packages:
 
   '@astrojs/internal-helpers@0.6.1':
     resolution: {integrity: sha512-l5Pqf6uZu31aG+3Lv8nl/3s4DbUzdlxTWDof4pEpto6GUJNhhCbelVi9dEyurOVyqaelwmS9oSyOWOENSfgo9A==}
+
+  '@astrojs/internal-helpers@0.7.2':
+    resolution: {integrity: sha512-KCkCqR3Goym79soqEtbtLzJfqhTWMyVaizUi35FLzgGSzBotSw8DB1qwsu7U96ihOJgYhDk2nVPz+3LnXPeX6g==}
 
   '@astrojs/markdown-remark@6.3.3':
     resolution: {integrity: sha512-DDRtD1sPvAuA7ms2btc9A7/7DApKqgLMNrE6kh5tmkfy8utD0Z738gqd3p5aViYYdUtHIyEJ1X4mCMxfCfu15w==}
@@ -5382,6 +5385,8 @@ snapshots:
   '@astrojs/compiler@2.12.2': {}
 
   '@astrojs/internal-helpers@0.6.1': {}
+
+  '@astrojs/internal-helpers@0.7.2': {}
 
   '@astrojs/markdown-remark@6.3.3':
     dependencies:
