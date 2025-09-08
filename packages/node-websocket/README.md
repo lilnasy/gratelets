@@ -71,7 +71,7 @@ The `response` field provides a `Response` object that you can return to accept 
 ---
 <script>
     const socket = new WebSocket(`${location.origin}/api/socket`)
-    socket onopen = event => {
+    socket.onopen = event => {
         socket.send("ping")
     }
     socket.onmessage = event => {
