@@ -81,7 +81,7 @@ describe("build", {
         const fixture = await build("./fixtures/websocket", {
             adapter: cloudflareAdapter()
         })
-        wrangler = spawn("pnpm", [ ..."dlx wrangler pages dev --compatibility-date 2024-12-21".split(" "), fixture.outDir ])
+        wrangler = spawn("pnpm", [ ..."dlx wrangler@4.35.0 pages dev --compatibility-date 2024-12-21".split(" "), fixture.outDir ])
         
         const { promise, resolve, reject } = Promise.withResolvers<void>()
         wrangler.stdout.on("data", function onData(data) {
