@@ -14,8 +14,9 @@ jobs:
     if: ${{ github.repository_owner == 'lilnasy' }}
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      id-token: write # to allow the worker to identify itself to NPM
+      contents: write # to allow tagging and creating releases
+      pull-requests: write # to allow creating release PRs
     steps:
       - uses: actions/checkout@v4
 
@@ -47,4 +48,3 @@ jobs:
           title: "[ci] release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
