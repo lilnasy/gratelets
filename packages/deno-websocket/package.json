@@ -4,6 +4,17 @@
     "description": "Use WebSockets in your Astro SSR Apps and run it on Deno",
     "version": "1.1.0",
     "license": "MIT",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lilnasy/gratelets.git",
+        "directory": "packages/deno-websocket"
+    },
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/deno-websocket",
     "keywords": [
         "withastro",
         "astro",
@@ -12,7 +23,6 @@
         "deno",
         "websocket"
     ],
-    "homepage": "https://github.com/lilnasy/gratelets/packages/deno-websocket",
     "files": [
         "denoland/deno-astro-adapter/src",
         "denoland/deno-astro-adapter/LICENSE"

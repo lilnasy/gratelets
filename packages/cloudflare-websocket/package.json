@@ -29,7 +29,7 @@
     ],
     "exports": {
         ".": "./withastro/astro/packages/integrations/cloudflare/src/index.ts",
-        "./handler": "./withastro/astro/packages/integrations/integrations/cloudflare/src/utils/handler.ts",
+        "./handler": "./withastro/astro/packages/integrations/cloudflare/src/utils/handler.ts",
         "./websocket": {
             "development": "./withastro/astro/packages/integrations/cloudflare/src/websocket/dev-websocket.ts",
             "production": "./withastro/astro/packages/integrations/cloudflare/src/websocket/cloudflare-websocket.ts"

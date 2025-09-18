@@ -4,6 +4,17 @@
     "description": "Use WebSockets in your Astro SSR Apps and run it on Bun",
     "version": "1.0.4",
     "license": "MIT",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lilnasy/gratelets.git",
+        "directory": "packages/bun-websocket"
+    },
+    "homepage": "https://github.com/lilnasy/gratelets/tree/main/packages/bun-websocket",
     "keywords": [
         "withastro",
         "astro",
@@ -12,7 +23,6 @@
         "bun",
         "websocket"
     ],
-    "homepage": "https://github.com/lilnasy/gratelets/packages/bun-websocket",
     "files": [
         "NuroDev/astro-bun/package/src",
         "NuroDev/astro-bun/LICENSE"
