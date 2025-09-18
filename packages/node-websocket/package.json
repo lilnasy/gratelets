@@ -5,8 +5,9 @@
     "version": "1.3.2",
     "license": "MIT",
     "author": {
-        "name": "lilnasy",
-        "email": "hi@arsh.sh"
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
     },
     "repository": {
         "type": "git",

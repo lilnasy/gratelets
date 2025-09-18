@@ -2,7 +2,11 @@
     "name": "astro-global",
     "version": "2.1.0",
     "description": "Access the Astro global from MDX, React, and other framework components.",
-    "author": "Arsh",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
     "license": "Public Domain",
     "keywords": [
         "withastro",

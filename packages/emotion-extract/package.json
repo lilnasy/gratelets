@@ -2,7 +2,11 @@
     "name": "@emotion-extract/vite",
     "version": "1.13.3",
     "description": "Use Emotion CSS with the performance of handwritten stylesheets.",
-    "author": "Arsh",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
     "license": "Public Domain",
     "keywords": [
         "vite",
