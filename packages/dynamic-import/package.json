@@ -1,6 +1,6 @@
 {
     "name": "astro-dynamic-import",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "description": "Let your CMS decide which components to import.",
     "author": {
         "name": "Arsh",

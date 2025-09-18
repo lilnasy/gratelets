@@ -1,6 +1,6 @@
 {
     "name": "@emotion-extract/vite",
-    "version": "1.13.3",
+    "version": "1.13.4",
     "description": "Use Emotion CSS with the performance of handwritten stylesheets.",
     "author": {
         "name": "Arsh",
