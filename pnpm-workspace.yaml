@@ -1,4 +1,5 @@
 {
+    "minimumReleaseAge": 10080,
     "packages": [
         "**",
         # exclude the git submodules, they managed manually
