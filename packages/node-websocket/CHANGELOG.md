@@ -1,5 +1,11 @@
 # astro-node-websocket
 
+## 1.3.2
+
+### Patch Changes
+
+- [#159](https://github.com/lilnasy/gratelets/pull/159) [`dbcde70`](https://github.com/lilnasy/gratelets/commit/dbcde705ea717baf1aeb7cb34f86ccc7fc8504a8) Thanks [@lilnasy](https://github.com/lilnasy)! - The publishing infrastructure for the package has been hardened to mitigate supply chain attacks.
+
 ## 1.3.1
 
 ### Patch Changes
