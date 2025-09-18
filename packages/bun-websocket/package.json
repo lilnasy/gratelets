@@ -2,7 +2,7 @@
     "name": "astro-bun-websocket",
     "type": "module",
     "description": "Use WebSockets in your Astro SSR Apps and run it on Bun",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "license": "MIT",
     "author": {
         "name": "Arsh",
