@@ -2,7 +2,11 @@
     "name": "astro-server-only-modules",
     "version": "1.0.0",
     "description": "Make sure you never leak security-sensitive code to the browser.",
-    "author": "Arsh",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
     "license": "Public Domain",
     "keywords": [
         "withastro",

@@ -1,8 +1,12 @@
 {
     "name": "astro-typed-api",
     "version": "0.5.0",
-    "description": "",
-    "author": "Arsh",
+    "description": "Build and refactor full-stack apps with confidence.",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
     "license": "Public Domain",
     "keywords": [
         "withastro",

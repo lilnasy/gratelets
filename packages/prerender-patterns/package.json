@@ -2,7 +2,11 @@
     "name": "astro-prerender-patterns",
     "version": "1.0.0",
     "description": "Control rendering modes for all pages and endpoints in your Astro project right from the configuration.",
-    "author": "Arsh",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
     "license": "Public Domain",
     "keywords": [
         "withastro",

@@ -2,7 +2,11 @@
     "name": "astro-emotion",
     "version": "3.0.0",
     "description": "Use Emotion CSS to style your Astro site.",
-    "author": "Arsh",
+    "author": {
+        "name": "Arsh",
+        "email": "hi@arsh.sh",
+        "url": "https://arsh.sh"
+    },
     "license": "Public Domain",
     "keywords": [
         "withastro",
