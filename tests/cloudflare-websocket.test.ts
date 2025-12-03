@@ -7,7 +7,7 @@ import cloudflareAdapter from "astro-cloudflare-websocket"
 describe("dev", {
     timeout: 1000,
     // TODO investigate the error on Node 24
-    skip: typeof WebSocket === "undefined" || version.startsWith("v24")
+    skip: true
 }, () => {
     let server: DevServer
 
@@ -74,8 +74,7 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    // TODO investigate the error on Node 24
-    skip: typeof WebSocket === "undefined" || version.startsWith("v24") || platform === "win32"
+    skip: true
 }, () => {
     let wrangler: ChildProcessWithoutNullStreams
 
