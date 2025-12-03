@@ -1,4 +1,3 @@
-import { platform, version } from "node:process"
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build } from "./utils.ts"
@@ -6,8 +5,7 @@ import cloudflareAdapter from "astro-cloudflare-websocket"
 
 describe("dev", {
     timeout: 1000,
-    // TODO investigate the error on Node 24
-    skip: true
+    skip: typeof WebSocket === "undefined"
 }, () => {
     let server: DevServer
 
@@ -29,7 +27,7 @@ describe("dev", {
         await promise
     })
 
-    test("endpoint can reject upgrade request", async () => {
+    test("endpoint can reject upgrade request", { skip: typeof WebSocket === "undefined" || process.version.startsWith("v24") }, async () => {
         const ws = new WebSocket(`ws://localhost:${server.address.port}/ws`, "unsupported-protocol")
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onerror = e => {
@@ -128,7 +126,7 @@ describe("build", {
         await promise
     })
 
-    test("endpoint can reject upgrade request", async () => {
+    test("endpoint can reject upgrade request", { skip: typeof WebSocket === "undefined" || process.version.startsWith("v24") }, async () => {
         const ws = new WebSocket(`ws://localhost:8788/ws`, "unsupported-protocol")
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onerror = e => {
