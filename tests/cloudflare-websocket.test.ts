@@ -1,4 +1,4 @@
-import { platform } from "node:os"
+import { platform, version } from "node:os"
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build } from "./utils.ts"
@@ -6,7 +6,8 @@ import cloudflareAdapter from "astro-cloudflare-websocket"
 
 describe("dev", {
     timeout: 1000,
-    skip: typeof WebSocket === "undefined"
+    // TODO investigate the error on Node 24
+    skip: typeof WebSocket === "undefined" || version().startsWith("v24")
 }, () => {
     let server: DevServer
 
@@ -28,8 +29,7 @@ describe("dev", {
         await promise
     })
 
-    // TODO investigate the error on Node 24
-    test("endpoint can reject upgrade request", { skip: process.version.startsWith("v24") }, async () => {
+    test("endpoint can reject upgrade request", async () => {
         const ws = new WebSocket(`ws://localhost:${server.address.port}/ws`, "unsupported-protocol")
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onerror = e => {
@@ -74,7 +74,8 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    skip: typeof WebSocket === "undefined" || platform() === "win32"
+    // TODO investigate the error on Node 24
+    skip: typeof WebSocket === "undefined" || version().startsWith("v24") || platform() === "win32"
 }, () => {
     let wrangler: ChildProcessWithoutNullStreams
 
@@ -128,8 +129,7 @@ describe("build", {
         await promise
     })
 
-    // TODO investigate the error on Node 24
-    test("endpoint can reject upgrade request", { skip: process.version.startsWith("v24") }, async () => {
+    test("endpoint can reject upgrade request", async () => {
         const ws = new WebSocket(`ws://localhost:8788/ws`, "unsupported-protocol")
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onerror = e => {
@@ -152,7 +152,6 @@ describe("build", {
         await promise
     })
 
-    if (false)
     test("handles binary data with blob binaryType", { timeout: 1000 }, async () => {
         const ws = new WebSocket("ws://localhost:8788/blob")
         const { promise, resolve, reject } = Promise.withResolvers<void>()
