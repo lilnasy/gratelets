@@ -42,7 +42,7 @@
         "magic-string": "0.30"
     },
     "devDependencies": {
-        "@types/node": "22",
+        "@types/node": "24",
         "vite": "6"
     }
 }
