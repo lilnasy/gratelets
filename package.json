@@ -10,9 +10,9 @@
     },
     "packageManager": "pnpm@10.24.0",
     "devDependencies": {
-        "@changesets/changelog-github": "0.5",
-        "@changesets/cli": "2",
-        "astro": "5",
-        "typescript": "5.7"
+        "@changesets/changelog-github": "~0.5.1",
+        "@changesets/cli": "^2.29.7",
+        "astro": "^5.16.1",
+        "typescript": "~5.9.3"
     }
 }
