@@ -72,7 +72,7 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    skip: true
+    skip: typeof WebSocket === "undefined" || process.platform === "win32"
 }, () => {
     let wrangler: ChildProcessWithoutNullStreams
 
@@ -126,7 +126,7 @@ describe("build", {
         await promise
     })
 
-    test("endpoint can reject upgrade request", { skip: typeof WebSocket === "undefined" || process.version.startsWith("v24") }, async () => {
+    test("endpoint can reject upgrade request", { skip: typeof WebSocket === "undefined" || process.platform === "win32" || process.version.startsWith("v24") }, async () => {
         const ws = new WebSocket(`ws://localhost:8788/ws`, "unsupported-protocol")
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onerror = e => {
