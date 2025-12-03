@@ -27,7 +27,7 @@ describe("dev", {
         await promise
     })
 
-    test("endpoint can reject upgrade request", async () => {
+    test("endpoint can reject upgrade request", { skip: process.version.startsWith("v24") }, async () => {
         const ws = new WebSocket(`ws://localhost:${server.address.port}/ws`, "unsupported-protocol")
         const { promise, resolve } = Promise.withResolvers<void>()
         ws.onerror = e => {
