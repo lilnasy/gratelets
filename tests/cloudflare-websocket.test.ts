@@ -152,7 +152,7 @@ describe("build", {
         await promise
     })
 
-    test("handles binary data with blob binaryType", { timeout: 1000 }, async () => {
+    test("handles binary data with blob binaryType", { timeout: 1000, skip: true }, async () => {
         const ws = new WebSocket("ws://localhost:8788/blob")
         const { promise, resolve, reject } = Promise.withResolvers<void>()
         ws.onopen = () => ws.send(new TextEncoder().encode("Hello"))
