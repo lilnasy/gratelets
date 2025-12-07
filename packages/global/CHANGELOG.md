@@ -1,5 +1,11 @@
 # astro-global
 
+## 2.2.0
+
+### Minor Changes
+
+- [#166](https://github.com/lilnasy/gratelets/pull/166) [`0dd6f1c`](https://github.com/lilnasy/gratelets/commit/0dd6f1cf2094259256db13d208e496f0eecfb432) Thanks [@lilnasy](https://github.com/lilnasy)! - The package has been updated to follow changes to the CSP APIs which are now available under the `Astro.csp` namespace.
+
 ## 2.1.1
 
 ### Patch Changes
