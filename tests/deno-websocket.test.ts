@@ -1,7 +1,11 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process"
+import { createRequire } from "node:module"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build } from "./utils.ts"
 import denoAdapter from "astro-deno-websocket"
+
+const require = createRequire(import.meta.url)
+const supportsAstroAppEntrypoint = Object.hasOwn(require("astro/package.json").exports, "./app/entrypoint")
 
 describe("dev", {
     timeout: 1000,
@@ -72,7 +76,7 @@ describe("dev", {
 
 describe("build", {
     timeout: 500,
-    skip: typeof WebSocket === "undefined"
+    skip: typeof WebSocket === "undefined" || !supportsAstroAppEntrypoint
 }, () => {
     let deno: ChildProcessWithoutNullStreams
 
