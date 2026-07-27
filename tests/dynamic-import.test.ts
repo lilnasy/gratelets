@@ -1,7 +1,7 @@
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { build, dev, type BuildFixture, type DevServer } from "./utils.ts"
 
-const buildScriptRegex = /(?<=<script type="module" src=")[\-/_.?&#;=a-zA-Z0-9]*(?="><\/script>)/g
+const buildScriptRegex = /<script type="module">(?<content>[^<]*)<\/script>/g
 const devScriptRegex = /(?<=<script type="module" src=")[\-/_.?&=#;a-zA-Z0-9]*(?="><\/script>)/
 
 describe("build", () => {
@@ -25,21 +25,17 @@ describe("build", () => {
     test("Page A includes styles and scripts from component A", async () => {
         expect(A).to.include("Contents of A")
         expect(A).to.include("background-color:#afeeee")
-        const match = A.match(buildScriptRegex)
-        expect(match).to.not.be.null
-        const [ src ] = match!
-        const js = fixture.readTextFile(`.${src}`)
-        expect(js).to.include("script of A")
+        const scripts = [...A.matchAll(buildScriptRegex)]
+        expect(scripts).to.have.lengthOf(1)
+        expect(scripts[0].groups!.content).to.include("script of A")
     })
     
     test("Page B includes styles and scripts from component B", async () => {
         expect(B).to.include("Contents of B")
         expect(B).to.include("background-color:#fff8dc")
-        const match = B.match(buildScriptRegex)
-        expect(match).to.not.be.null
-        const [ src ] = match!
-        const js = fixture.readTextFile(`.${src}`)
-        expect(js).to.include("script of B")
+        const scripts = [...B.matchAll(buildScriptRegex)]
+        expect(scripts).to.have.lengthOf(1)
+        expect(scripts[0].groups!.content).to.include("script of B")
     })
     
     test("Assets don't leak into unrelated pages", async () => {
@@ -48,11 +44,11 @@ describe("build", () => {
         const matches = [...A.matchAll(buildScriptRegex)]
         expect(matches).to.not.be.empty
         expect(matches).to.have.lengthOf(1)
-        const [ scriptA ] = matches!
+        const scriptA = matches[0].groups!.content
         {
             const matches = [...B.matchAll(buildScriptRegex)]
             expect(matches).to.have.lengthOf(1)
-            const [ scriptB ] = matches!
+            const scriptB = matches[0].groups!.content
             expect(scriptA).to.not.equal(scriptB)
         }
     })
@@ -60,9 +56,9 @@ describe("build", () => {
     test("Components in a subfolder can be dynamically imported", async () => {
         expect(C).to.include("Contents of C")
         expect(C).to.include("background-color:#deb887")
-        const [ src ] = C.match(buildScriptRegex)!
-        const js = fixture.readTextFile(`.${src}`)
-        expect(js).to.include("script of C")
+        const scripts = [...C.matchAll(buildScriptRegex)]
+        expect(scripts).to.have.lengthOf(1)
+        expect(scripts[0].groups!.content).to.include("script of C")
     })
 
     test("Props can be sent to the component", () => {
@@ -92,7 +88,7 @@ describe("dev", () => {
     test("Page A includes styles and scripts from component A", async () => {
         A = await server.fetch("/A")
         expect(A).to.include("Contents of A")
-        expect(A).to.include("background-color:paleturquoise")
+        expect(A).to.match(/background-color:\s*(paleturquoise|#afeeee)/)
         const [ src ] = devScriptRegex.exec(A)!
         const js = await server.fetch(src)
         expect(js).to.include("script of A")
@@ -101,15 +97,15 @@ describe("dev", () => {
     test("Page B includes styles and scripts from component B", async () => {
         B = await server.fetch("/B")
         expect(B).to.include("Contents of B")
-        expect(B).to.include("background-color:cornsilk")
+        expect(B).to.match(/background-color:\s*(cornsilk|#fff8dc)/)
         const [ src ] = devScriptRegex.exec(B)!
         const js = await server.fetch(src)
         expect(js).to.include("script of B")
     })
     
     test("Assets don't leak into unrelated pages", async () => {
-        expect(A).to.not.include("background-color:cornsilk")
-        expect(B).to.not.include("background-color:paleturquoise")
+        expect(A).to.not.match(/background-color:\s*(cornsilk|#fff8dc)/)
+        expect(B).to.not.match(/background-color:\s*(paleturquoise|#afeeee)/)
         const matches = devScriptRegex.exec(A)
         expect(matches).to.have.lengthOf(1)
         const [ scriptA ] = matches!
@@ -124,7 +120,7 @@ describe("dev", () => {
     test("Components in a subfolder can be dynamically imported", async () => {
         const C = await server.fetch("/C")
         expect(C).to.include("Contents of C")
-        expect(C).to.include("background-color:burlywood")
+        expect(C).to.match(/background-color:\s*(burlywood|#deb887)/)
         const [ src ] = devScriptRegex.exec(C)!
         const js = await server.fetch(src)
         expect(js).to.include("script of C")
@@ -144,7 +140,7 @@ describe("dev", () => {
         const components = [...multipleInstances.matchAll(/Contents of A/g)]
         expect(components).to.have.lengthOf(3)
         
-        const stylesheets = [...multipleInstances.matchAll(/background-color:paleturquoise/g)]
+        const stylesheets = [...multipleInstances.matchAll(/background-color:\s*(?:paleturquoise|#afeeee)/g)]
         expect(stylesheets).to.have.lengthOf(1)
         
         const scripts = [...multipleInstances.matchAll(new RegExp(devScriptRegex, "g"))]

@@ -3,3 +3,4 @@
 **/dist_*
 **/.astro
 tests/.wrangler
+.DS_Store

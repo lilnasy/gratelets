@@ -1,10 +1,9 @@
 import url from "node:url"
-import type { AstroInlineConfig } from "astro"
 import type { createExports } from "@astrojs/node/server.js"
 //@ts-expect-error
 import globals from "./node_modules/playwright/lib/common/globals.js"
 import { test as base } from "playwright/test"
-import { build, type BuildFixture, dev, type DevServer, preview, type PreviewServer } from "../tests/utils.ts"
+import { type AstroInlineConfig, build, type BuildFixture, dev, type DevServer, preview, type PreviewServer } from "../tests/utils.ts"
 
 interface TestExtension {
     build: BuildFixture

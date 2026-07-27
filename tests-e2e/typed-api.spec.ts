@@ -1,7 +1,7 @@
 import type { Page } from "playwright/test"
 import { testFactory } from "./utils.ts"
 import { expect } from "playwright/test"
-import type { AstroInlineConfig as Config } from "astro"
+import type { AstroInlineConfig as Config } from "../tests/utils.ts"
 
 const setups: Record<string, Config> = {
     "default config": {},

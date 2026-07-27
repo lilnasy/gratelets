@@ -1,7 +1,10 @@
-import { fileURLToPath } from "node:url"
+import { fileURLToPath, pathToFileURL } from "node:url"
 import { join } from "node:path"
 import { readFileSync, existsSync } from "node:fs"
-import * as Astro from "astro"
+import { createRequire } from "node:module"
+import type * as Astro from "astro"
+
+export type AstroInlineConfig = Astro.AstroInlineConfig
 
 export interface BuildFixture {
     outDir: string
@@ -53,7 +56,10 @@ async function command<Command extends "dev" | "build" | "preview">(
     options?: Astro.AstroInlineConfig
 ) {
     const root = fileURLToPath(new URL(root_, import.meta.url))
-    return await Astro[command]({
+    // each fixture runs the astro version it declares, which may differ from the one in tests/package.json
+    const require = createRequire(join(root, "package.json"))
+    const astro: typeof Astro = await import(pathToFileURL(require.resolve("astro")).href)
+    return await astro[command]({
         root,
         logLevel: "silent",
         ...options,

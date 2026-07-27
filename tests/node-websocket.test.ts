@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { once } from "node:events"
 import { describe, beforeAll, test, expect, afterAll } from "vitest"
 import { dev, type DevServer, build, type BuildFixture } from "./utils.ts"
 import nodeWsAdapter from "astro-node-websocket"
@@ -89,6 +90,8 @@ describe("build", {
         })
         exports = await import(fixture.serverEntry)
         server = exports.startServer()
+        // The adapter does not await listen(), so the port may still be unbound here. Connecting too early is refused, which the tests below surface as a timeout.
+        if (!server.server.server.listening) await once(server.server.server, "listening")
     })
 
     afterAll(() => {
