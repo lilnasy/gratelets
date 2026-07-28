@@ -29,7 +29,7 @@
     ],
     "exports": {
         ".": "./denoland/deno-astro-adapter/src/index.ts",
-        "./__deno_imports.ts": "./denoland/deno-astro-adapter/src/__deno_imports.ts",
+        "./server.ts": "./denoland/deno-astro-adapter/src/server.ts",
         "./websocket": {
             "development": "./denoland/deno-astro-adapter/src/websocket/dev-websocket.ts",
             "production": "./denoland/deno-astro-adapter/src/websocket/deno-websocket.ts"
@@ -44,10 +44,10 @@
     },
     "scripts": {
         "clone": "git submodule update --init .",
-        "create_patches": "cd denoland/deno-astro-adapter && git format-patch 7789dc0 -o ../..",
+        "create_patches": "cd denoland/deno-astro-adapter && git format-patch 0.5.1 -o ../..",
         "load_patches": "git submodule update --init . && cd denoland/deno-astro-adapter && git am ../../*.patch",
-        "delete_all_changes_and_unload_patches": "cd denoland/deno-astro-adapter && git reset --hard 7789dc0",
-        "delete_all_changes_and_reload_patches": "cd denoland/deno-astro-adapter && git reset --hard 7789dc0 && git am ../../*.patch",
+        "delete_all_changes_and_unload_patches": "cd denoland/deno-astro-adapter && git reset --hard 0.5.1",
+        "delete_all_changes_and_reload_patches": "cd denoland/deno-astro-adapter && git reset --hard 0.5.1 && git am ../../*.patch",
         "test": "pnpm -w test deno-websocket.test.ts"
     }
 }
